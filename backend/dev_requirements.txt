@@ -1,0 +1,8 @@
+pytest==7.1.2
+pytest-cov==3.0.0
+pur==7.0.0
+pyflakes==2.4.0
+pylint==2.14.0
+flake8==4.0.1
+mypy===0.960
+bandit===1.7.4
