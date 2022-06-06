@@ -48,7 +48,7 @@ class CommandCode(IntEnum):
 
     ######
     # 41 - 69: commands related to actuators.
-    SERVO = 41  # ascii )
+    SERVO = 41  # ascii: )
 
     ######
     # 70 - 97: commands related to sensors/inputs
@@ -64,6 +64,7 @@ class AbstractCommand(metaclass=MetaPluginType):
     def __init__(self, code: CommandCode, name: str):
         self.code: CommandCode = code
         self.name: str = name
+        self._payload: bytearray
 
     def __str__(self):
         return f'Command {self.name}'

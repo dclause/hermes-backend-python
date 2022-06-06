@@ -2,6 +2,9 @@
 #define ARDUINO_COMMAND_H
 
 #include <Arduino.h>
+#include "../debugger.h"
+#include "../helper/ioserial.h"
+
 
 /**
  * Class AbstractCommand: all commands must implement this class.
@@ -26,8 +29,21 @@
  * @see CommandFactory.h
  */
 class AbstractCommand {
+
+    protected:
+        uint8_t payload_size_;
+        uint8_t *payload_;
+
     public:
-        virtual ~AbstractCommand() = default;
+
+        AbstractCommand(const uint8_t payload_size = 0) :
+                payload_(static_cast<uint8_t *>(malloc(payload_size * sizeof(uint8_t)))),
+                payload_size_(payload_size) {}
+
+        virtual ~AbstractCommand() {
+            free(this->payload_);
+            this->payload_ = NULL;
+        };
 
         /**
          * Returns a human readable name for the command.
@@ -36,11 +52,12 @@ class AbstractCommand {
          */
         virtual String getName() const = 0;
 
-        // @todo implement sending the command.
-        // virtual void send() = 0;
-
-        // @todo implement receiving parameters.
-        // virtual void receive() = 0;
+        void receive() {
+            if (this->payload_size_) {
+                IO::wait_for_bytes(this->payload_size_, 100);
+                IO::read_bytes(payload_, this->payload_size_);
+            }
+        }
 
         /**
          * Processes the command when received from the serial port.

@@ -6,6 +6,7 @@
 #include "commands/AckCommand.h"
 #include "commands/BlinkCommand.h"
 #include "commands/VoidCommand.h"
+#include "commands/ServoCommand.h"
 
 #include "commands/CommandCode.h"
 #include "commands/AbstractCommand.h"

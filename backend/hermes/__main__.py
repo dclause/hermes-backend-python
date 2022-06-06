@@ -9,6 +9,7 @@ from flask_cors import CORS
 from hermes import __version__
 from hermes.core import boards, logger, config
 from hermes.core.boards import BOARDS
+from hermes.core.command import CommandFactory, CommandCode
 from hermes.core.config import CONFIG
 
 
@@ -37,11 +38,12 @@ class App:
 
         while True:
             command_name = input('Get a command?\n')
-            command = command.CommandFactory().get_by_name(command_name)
+            command = CommandFactory().get_by_name(command_name)
             if command is None:
                 logger.error('Command %s do not exists.', command_name)
                 continue
-            BOARDS[1].send_command(command.code)
+
+            BOARDS[1].send_command(command.code, 1, 180)
             print(f'{str(command)} => DONE')
 
     @classmethod

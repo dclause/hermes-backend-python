@@ -47,7 +47,7 @@ class AbstractProtocol(metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def send_command(self, command_code: CommandCode) -> None:
+    def send_command(self, command_code: CommandCode, *args, **kwargs) -> None:
         """ Sends a command. """
 
     @abstractmethod

@@ -12,3 +12,13 @@ class ServoCommand(AbstractCommand):
 
     def __init__(self):
         super().__init__(CommandCode.SERVO, 'SERVO')
+
+    def send(self, connexion):
+        """ Sends the command. """
+
+    def receive(self, connexion):
+        """ Reads the additional parameters sent with the command. """
+
+    # @logthis
+    def process(self):
+        """ Processes the command """

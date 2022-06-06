@@ -45,6 +45,7 @@ enum class CommandCode : uint8_t {
 
     // ######
     // 41 - 69: commands related to actuators.
+    SERVO = 41,         // ascii: )
 
     // ######
     // 70 - 97: commands related to sensors/inputs

@@ -74,9 +74,9 @@ class SerialProtocol(AbstractProtocol):
         logger.debug('Serial protocol: Received command code %s', str(bytes_array[0]))
         return CommandCode(bytes_array[0])
 
-    def send_command(self, command_code: CommandCode) -> None:
-        data = bytes(chr(command_code), encoding='utf8')
-        logger.debug('Serial protocol: Send command %s', data)
+    def send_command(self, command_code: CommandCode, *args, **kwargs) -> None:
+        data = bytearray([command_code, *args])  # SERVO, device 1, position 180
+        logger.error('Serial protocol: Send command %s', data)
         self._serial.write(data)
 
     def read_line(self) -> str:

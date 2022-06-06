@@ -109,14 +109,14 @@ class AbstractBoard(metaclass=ABCMeta):
         logger.info('Handshake received code: %s', code)
         return code == CommandCode.CONNECTED
 
-    def send_command(self, command_code: CommandCode):
+    def send_command(self, command_code: CommandCode, *args, **kwargs):
         """
         Sends the given command.
 
         Args:
             command_code (CommandCode)
         """
-        self._connexion.send_command(command_code)
+        self._connexion.send_command(command_code, *args, **kwargs)
 
 
 # Globally available boards.
