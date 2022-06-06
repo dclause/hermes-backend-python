@@ -6,6 +6,7 @@
 #include "CommandCode.h"
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
+#include "../helper/ioserial.h"
 
 /**
  * HANDSHAKE Command: performs the HANDSHAKE sequence.
@@ -21,7 +22,7 @@ class HandshakeCommand : public AbstractCommand {
 
         void process() {
             TRACE((String) F("Start Handshake"));
-            Serial.write((uint8_t) CommandCode::CONNECTED);
+            IO::send_command(CommandCode::CONNECTED);
         }
 };
 

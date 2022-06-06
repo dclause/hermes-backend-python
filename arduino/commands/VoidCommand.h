@@ -1,7 +1,6 @@
 #ifndef ARDUINO_VOID_COMMAND_H
 #define ARDUINO_VOID_COMMAND_H
 
-#include <HardwareSerial.h>
 #include "CommandCode.h"
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
