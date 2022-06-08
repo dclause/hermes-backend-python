@@ -134,3 +134,11 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+html {
+  body {
+    background-color: red;
+  }
+}
+</style>

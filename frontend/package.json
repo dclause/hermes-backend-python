@@ -2,12 +2,10 @@
   "name": "frontend",
   "version": "1.0.0-alpha1",
   "scripts": {
-    "serve": "vite preview",
     "build": "vite build",
     "test:unit": "vitest --environment jsdom",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:4173/ 'cypress open --e2e'",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "build-only": "vite build",
     "dev": "vite",
     "preview": "vite preview --port 4173",
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:4173/ 'cypress run --e2e'",
@@ -18,11 +16,13 @@
     "pinia": "^2.0.14",
     "roboto-fontface": "*",
     "vue": "^3.2.36",
+    "vue-i18n": "^9.1.10",
     "vue-router": "^4.0.15",
     "vuetify": "^3.0.0-beta.0",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {
+    "@intlify/vite-plugin-vue-i18n": "^3.4.0",
     "@rushstack/eslint-patch": "^1.1.0",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^16.11.36",
