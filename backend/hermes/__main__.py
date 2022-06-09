@@ -2,15 +2,17 @@
 # -*- coding: utf-8 -*-
 
 """ HERMES application entry point. """
+import threading
+from multiprocessing import Process, Value
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_file
 from flask_cors import CORS
 
 from hermes import __version__
-from hermes.core import boards, logger, config
+from hermes.core import boards, logger
+from hermes.core import config
 from hermes.core.boards import BOARDS
-from hermes.core.command import CommandFactory, CommandCode
-from hermes.core.config import CONFIG
+from hermes.core.command import CommandFactory
 
 
 class App:
@@ -25,12 +27,12 @@ class App:
         logger.init()
         config.init()
         boards.init()
+        # socket.init()
 
         print('All boards')
         print(BOARDS)
 
-    @classmethod
-    def start(cls):
+    def start(self):
         """ Bootstraps the application. """
         print('== Starting HERMES ==')
         logger.info('== Starting HERMES ==')
@@ -54,7 +56,7 @@ class App:
         for _, board in BOARDS.items():
             board.close()
 
-    def _start_gui(self, configuration=None):
+    def start_gui(self, configuration=None):
         """ Starts the flask server to serve the UI. """
         self._server = Flask(__name__)
 
@@ -66,24 +68,32 @@ class App:
         # https://flask-cors.readthedocs.io/en/latest/
         CORS(self._server)
 
-        # Definition of the routes. Put them into their own file. See also
-        # Flask Blueprints: http://flask.pocoo.org/docs/latest/blueprints
-        @self._server.route("/")
-        def hello_world():
-            logger.info("/")
-            return "Hello World"
+        @self._server.route("/heartbeat")
+        def heartbeat():
+            return jsonify({
+                'status': 'healthy',
+                'version': __version__
+            })
 
-        @self._server.route("/ping")
-        def ping():
-            logger.info("/ping")
-            return jsonify({"echo": __version__})
+        @self._server.route('/', defaults={'path': ''})
+        @self._server.route('/<string:path>')
+        @self._server.route('/<path:path>')
+        def index(path):
+            # Defaults all what is not a static file to index.html:
+            # ie defer the handling to vue (@see `frontend` folder).
+            if '.' not in path:
+                path = 'index.html'
+            return send_file("../../frontend/dist/" + path)
 
-        self._server.run(host="127.0.0.1", port=CONFIG['port'])
+        self._server.run(host="127.0.0.1", port=config.CONFIG['port'], debug=True, use_reloader=False)
 
 
 if __name__ == "__main__":
     hermes = App()
+    p = Process(target=hermes.start(), args=(Value('b', True),))
     try:
-        hermes.start()
+        p.start()
+        hermes.start_gui()
     except KeyboardInterrupt:
+        p.join()
         hermes.close()
