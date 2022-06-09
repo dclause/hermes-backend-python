@@ -10,9 +10,10 @@ services:
       dockerfile: ./node/Dockerfile
       args:
         NODE_VERSION: ${NODE_VERSION}
+    entrypoint: /bin/bash
     container_name: "${PROJECT_NAME}_node"
     working_dir: /opt/project
-    user: node
+    user: root
     environment:
       - NODE_ENV=${NODE_ENV}
     volumes:
@@ -20,6 +21,7 @@ services:
     ports:
       - "4000:4000"
       - "4010:4010"
+      - "4173:4173"
     labels:
       - traefik.enable=true
       - "traefik.docker.network=${PROJECT_NAME}"
@@ -31,7 +33,7 @@ services:
     build:
       dockerfile: ./python/Dockerfile
       args:
-        NODE_VERSION: ${PYTHON_VERSION}
+        PYTHON_VERSION: ${PYTHON_VERSION}
     container_name: "${PROJECT_NAME}_python"
     working_dir: /opt/project
     volumes:

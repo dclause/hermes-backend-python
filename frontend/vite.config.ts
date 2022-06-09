@@ -28,9 +28,20 @@ export default defineConfig({
     }),
     vuetify({ autoImport: true, styles: "expose" }),
   ],
+  define: { "process.env": {} },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+  test: {
+    setupFiles: "vuetify.config.js",
+    deps: {
+      inline: ["vuetify"],
+    },
+    globals: true,
+    coverage: {
+      reporter: ["text", "json", "html"],
     },
   },
 });

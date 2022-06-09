@@ -14,8 +14,11 @@ dist-ssr
 coverage
 *.local
 
+# Unit and end-to-end tests
 /cypress/videos/
 /cypress/screenshots/
+/cypress/report/
+/coverage/
 
 # Editor directories and files
 .vscode/*
