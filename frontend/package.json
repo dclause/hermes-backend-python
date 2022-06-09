@@ -15,6 +15,7 @@
     "@mdi/font": "5.9.55",
     "pinia": "^2.0.14",
     "roboto-fontface": "*",
+    "socket.io-client": "^4.5.1",
     "vue": "^3.2.36",
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.0.15",
