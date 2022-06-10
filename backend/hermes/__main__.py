@@ -3,16 +3,18 @@
 
 """ HERMES application entry point. """
 import threading
+import time
 from multiprocessing import Process, Value
 
 from flask import Flask, jsonify, send_file
 from flask_cors import CORS
 
 from hermes import __version__
-from hermes.core import boards, logger
+from hermes.core import boards, logger, webserver
 from hermes.core import config
 from hermes.core.boards import BOARDS
 from hermes.core.command import CommandFactory
+from hermes.core.socketThread import SocketThread1, SocketThread2, SocketThread
 
 
 class App:
@@ -27,10 +29,8 @@ class App:
         logger.init()
         config.init()
         boards.init()
-        # socket.init()
-
-        print('All boards')
-        print(BOARDS)
+        webserver.init()
+        print('== Start HERMES ==')
 
     def start(self):
         """ Bootstraps the application. """
@@ -38,23 +38,24 @@ class App:
         logger.info('== Starting HERMES ==')
         # self._start_gui()
 
-        while True:
-            command_name = input('Get a command?\n')
-            command = CommandFactory().get_by_name(command_name)
-            if command is None:
-                logger.error('Command %s do not exists.', command_name)
-                continue
-
-            BOARDS[1].send_command(command.code, 1, 180)
-            print(f'{str(command)} => DONE')
+        # while True:
+            # command_name = input('Get a command?\n')
+            # command = CommandFactory().get_by_name(command_name)
+            # if command is None:
+            #     logger.error('Command %s do not exists.', command_name)
+            #     continue
+            #
+            # BOARDS[1].send_command(command.code, 1, 180)
+            # print(f'{str(command)} => DONE')
+            # time.sleep(1)
+            # print('PING')
 
     @classmethod
     def close(cls):
         """ Closes the application. """
         print('== Stopping HERMES ==')
-        print('> Close boards connection')
-        for _, board in BOARDS.items():
-            board.close()
+        boards.close()
+        webserver.close()
 
     def start_gui(self, configuration=None):
         """ Starts the flask server to serve the UI. """
@@ -90,10 +91,19 @@ class App:
 
 if __name__ == "__main__":
     hermes = App()
-    p = Process(target=hermes.start(), args=(Value('b', True),))
     try:
-        p.start()
-        hermes.start_gui()
+        # socket.init()
+        hermes.start()
+        # hermes.start_gui()
+
+        # SocketThread1()
+        # SocketThread2()
+        # SocketThread()
+
+        while True:
+            pass
+
     except KeyboardInterrupt:
-        p.join()
+        pass
+        # p.join()
         hermes.close()

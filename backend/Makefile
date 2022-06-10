@@ -14,7 +14,7 @@ help: ## Print help for each target
 		| sort | awk 'BEGIN {FS=":.* ## "}; {printf "%-25s %s\n", $$1, $$2};'
 
 run: ## Run the code
-	@$(PYTHON) -m $(MODULE)
+	@$(PYTHON) -m $(MODULE) -w
 
 test: ## Test the code
 	@type pytest >/dev/null 2>&1 || (echo "Run '$(PIP) install pytest' first." >&2 ; exit 1)

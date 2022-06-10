@@ -75,7 +75,7 @@ namespace IO {
      */
     void wait_for_bytes(const uint8_t length, const uint32_t timeout) {
         TRACE((String) F("Wait for ") + (uint8_t) length + F(" bytes"));
-        uint32_t startTime = millis();
+        const uint32_t startTime = millis();
         while ((Serial.available() < length) && (millis() - startTime < timeout)) {}
     }
 
@@ -85,7 +85,7 @@ namespace IO {
      * @return CommandCode
      */
     CommandCode read_command() {
-        CommandCode code = (CommandCode) Serial.read();
+        const CommandCode code = (CommandCode) Serial.read();
         TRACE((String) F("Command code received: ") + (uint8_t) code);
         return code;
     }
@@ -100,7 +100,7 @@ namespace IO {
      * @param buffer (uint8_t*) A buffer array of uint8_t where the result will be stored.
      * @param length (uint8_t) The number of bytes to read.
      */
-    void read_bytes(uint8_t *buffer, uint8_t length) {
+    void read_bytes(const uint8_t *buffer, const uint8_t length) {
         TRACE((String) F("Try to read: ") + (String) length + F(" characters"));
         uint8_t index = 0;
         uint8_t byte;
@@ -119,7 +119,7 @@ namespace IO {
      *
      * @param command (CommandCode)
      */
-    void send_command(CommandCode command) {
+    void send_command(const CommandCode command) {
         TRACE((String) F("Send command: ") + (uint8_t) command);
         Serial.write(static_cast<uint8_t>(command));
     }
@@ -130,7 +130,7 @@ namespace IO {
      * @param buffer (uint8_t*) A buffer array of uint8_t of data to send.
      * @param length (uint8_t) The number of bytes to write.
      */
-    void send_bytes(const uint8_t *buffer, uint8_t length) {
+    void send_bytes(const uint8_t *buffer, const uint8_t length) {
         Serial.write(buffer, length);
     }
 }

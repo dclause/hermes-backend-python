@@ -1,3 +1,7 @@
+<!--
+Main app component: defines a single layout for all pages.
+-->
+
 <template>
   <v-app id="hermes">
     <!-- Drawer: sidebar on the left-->
@@ -21,8 +25,7 @@
       <v-app-bar-title>HERMES</v-app-bar-title>
 
       <template v-slot:append>
-        <v-btn icon="mdi-lan-check"></v-btn>
-        <!-- lan-pending-->
+        <LanControl />
         <v-btn icon="mdi-cog"></v-btn>
       </template>
     </v-app-bar>
@@ -38,6 +41,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
+import LanControl from "@/components/LanControl.vue";
 
 const drawer = ref(true);
 </script>

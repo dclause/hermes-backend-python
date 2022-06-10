@@ -5,3 +5,4 @@ flask_socketio===5.2.0
 logzero===1.7.0
 pyserial===3.5
 func-timeout===4.3.5
+simple-websocket===0.5.2
