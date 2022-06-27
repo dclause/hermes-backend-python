@@ -123,7 +123,7 @@ class AbstractBoard(metaclass=ABCMeta):
 BOARDS: dict[int, AbstractBoard] = {}
 
 
-# @todo Implement properly.
+# @todo Initialize boards from the configuration.
 def init():
     """ Initializes the BOARDS structure with available boards from config YAML files. """
     print(' > Init boards')
@@ -131,6 +131,13 @@ def init():
     BOARDS[1].open()
     BOARDS[2] = AbstractBoard('RIGHT B', 'COM4')
     BOARDS[2].open()
+
+
+def close():
+    """ Closes properly the board' connection. """
+    print(' > Close boards connection')
+    for _, board in BOARDS.items():
+        board.close()
 
 
 def add_board(board: AbstractBoard):

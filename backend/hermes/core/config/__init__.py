@@ -27,8 +27,11 @@ def _get_cmd_config() -> dict[str, Any]:
     parser = argparse.ArgumentParser()
 
     # Optional PORT number argument (eg. -p 9999)
-    parser.add_argument('-p', '--port', action='store', dest='port', default=9999,
-                        help='PORT number for the GUI')
+    parser.add_argument('-p', '--port', action='store', dest='port', default=9999, help='PORT number for the GUI')
+
+    # Optional WEBGUI boolean argument (eg. -w)
+    parser.add_argument('-w', '--webGUI', action='store_true', dest='webGUI', help='Starts serving the GUI')
+
     # Specify output of "--version"
     parser.add_argument('--version', action='version', version=f'RMS version {__version__}')
 
