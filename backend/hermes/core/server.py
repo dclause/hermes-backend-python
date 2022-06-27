@@ -5,15 +5,19 @@ This webserver is responsible for :
 """
 
 from threading import Thread
+from typing import Any
 
 from flask import Flask, jsonify, send_file
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
 from hermes import __version__
-from hermes.core import config
+from hermes.core import config, logger
 
 # @todo Move this to a configurable
+from hermes.core.boards import BOARDS
+from hermes.core.commands import CommandFactory
+
 _PORT = 9999
 
 
@@ -45,9 +49,15 @@ class _WebServerThread(Thread):
         self._socketio = SocketIO(self._server, cors_allowed_origins='*')
 
         @self._socketio.on('mutation')
-        def mutation(message):
+        def mutation(message: dict[str, Any]):
             print('## received', message)
             emit('patch', message, broadcast=True)
+            config.update(message)
+            command_name = list(message.keys())[0]
+            command = CommandFactory().get_by_name(command_name)
+            if command is None:
+                logger.error('Command %s do not exists.', command_name)
+            BOARDS[1].send_command(command.code, message[command_name])
 
         @self._socketio.on('connect')
         def connect(payload):
@@ -75,6 +85,7 @@ class _WebServerThread(Thread):
         self._socketio.run(self._server, host="0.0.0.0", port=_PORT, debug=True, use_reloader=False)
 
     def close(self):
+        """ Closes the socketIO connection. """
         self._socketio.stop()
 
 
@@ -84,13 +95,18 @@ WEBSERVER: _WebServerThread
 def init():
     """ Starts the webserver. """
     print(' > Loading webserver')
-    # pylint: disable-next=global-statement
+
+
+def start():
+    """ Starts the webserver. """
+    print(' > Start webserver')
     global WEBSERVER
     WEBSERVER = _WebServerThread()
     WEBSERVER.start()
 
 
 def close():
+    """ Stops the webserver. """
     print(' > Close webserver')
     if WEBSERVER.is_alive():
         WEBSERVER.close()

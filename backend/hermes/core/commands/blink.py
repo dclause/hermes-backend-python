@@ -4,7 +4,7 @@ BLINK Command: blinks a LED.
 code: CommandCode::BLINK
 """
 
-from hermes.core.command import AbstractCommand, CommandCode
+from hermes.core.commands import AbstractCommand, CommandCode
 
 
 class BlinkCommand(AbstractCommand):

@@ -5,10 +5,10 @@
 
 import unittest
 
-from hermes.core.command import CommandFactory
-from hermes.core.command.blink import CommandCode
-from hermes.core.command.debug import DebugCommand
-from hermes.core.command.servo import ServoCommand
+from hermes.core.commands import CommandFactory
+from hermes.core.commands.blink import CommandCode
+from hermes.core.commands.debug import DebugCommand
+from hermes.core.commands.servo import ServoCommand
 
 
 class CommandFactoryTest(unittest.TestCase):

@@ -1,9 +1,5 @@
 """ Commands package """
-import glob
-import importlib
 from enum import IntEnum
-from os import scandir
-from os.path import dirname, join, basename, isfile
 
 from hermes.core.struct import MetaPluginType, MetaSingleton
 
@@ -56,6 +52,7 @@ class CommandCode(IntEnum):
     ######
     # 98 - 126: commands related to passive components (displays, leds, etc...)
     BLINK = 98  # ascii: b
+    ON_OFF = 99  # ascii: c
 
 
 class AbstractCommand(metaclass=MetaPluginType):
@@ -118,14 +115,3 @@ class CommandFactory(metaclass=MetaSingleton):
 
 
 __ALL__ = ["AbstractCommand", "CommandCode", "CommandFactory"]
-
-# Auto-import all commands within the directory and happen it to __ALL__.
-# By doing so, we let the commands to auto-register to the factory.
-# @see CommandFactory
-# @see MetaPluginType
-modules = glob.glob(join(dirname(__file__), "*.py"))
-for f in modules:
-    if isfile(f) and not f.endswith('__init__.py'):
-        module = basename(f)[:-3]
-        importlib.import_module(f'hermes.core.command.{module}')
-        __ALL__.append(module)
