@@ -22,9 +22,8 @@ import importlib
 import itertools
 import os
 
-from hermes.core import devices
+from hermes.core import devices, boards
 from hermes.core.helpers import ROOT_DIR
-from hermes.core.struct import MetaPluginType
 
 
 def tag(tag_name):
@@ -38,7 +37,7 @@ def tag(tag_name):
 
 
 @tag('!Plugin')
-class AbstractPlugin(metaclass=MetaPluginType):
+class AbstractPlugin:
     """
     A serializable plugin base class.
 
@@ -49,14 +48,14 @@ class AbstractPlugin(metaclass=MetaPluginType):
         - named: it has a human-readable name
     """
 
-    id_iter = itertools.count()
+    _id_iter = itertools.count(1)
 
     def __init__(self, name):
-        self.id = next(self.id_iter)
+        self.id = next(self._id_iter)
         self.name: str = name
 
     def __str__(self):
-        return f'Plugin {self.name}'
+        return f'{self.__class__.__name__} {self.name}({self.id})'
 
     @classmethod
     def from_yaml(cls, loader, node):
@@ -66,8 +65,20 @@ class AbstractPlugin(metaclass=MetaPluginType):
     @classmethod
     def to_yaml(cls, dumper, data):
         """ Converts a Python object to a representation node. """
+        state = data.__dict__.copy()
+        for attr in data.__dict__:
+
+            # Remove the private attributes to prevent them being serialized.
+            if attr.startswith("_") and not attr.startswith("__"):
+                del state[attr]
+                continue
+
+            # Convert plugins reference to IDs (will be undone in CONFIG loading).
+            if isinstance(state[attr], AbstractPlugin):
+                state[attr] = state[attr].id
+
         # pylint: disable-next=no-member
-        return dumper.represent_mapping(cls.TAG, repr(data))
+        return dumper.represent_mapping(cls.TAG, state)
 
     def __repr__(self):
         return f"{self.__class__.__name__,}(name={self.name})"
@@ -78,10 +89,16 @@ def init():
     print(" > Init application")
     _discover_plugins()
     devices.init()
+    boards.init()
 
 
 def _discover_plugins():
-    """ Discovers all plugins. """
+    """
+    Discovers all plugins.
+
+    Explores the directory structure and search for all .py files within directories corresponding to plugin types.
+    The plugins should be in the core or the modules directories.
+    """
     plugin_types = ['protocol', 'board', 'device', 'command']
     modules = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
     for filepath in modules:

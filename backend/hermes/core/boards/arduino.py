@@ -3,6 +3,7 @@ Represents a connexion to an electronic board (arduino-like) by embedding its py
 """
 
 import threading
+from enum import IntEnum, Enum
 
 from func_timeout import FunctionTimedOut, func_set_timeout
 
@@ -14,6 +15,18 @@ from hermes.core.protocols import AbstractProtocol, ProtocolException
 from hermes.core.protocols.usbserial import SerialProtocol, CommandListenerThread
 
 
+class StringEnum(str, Enum):
+    """ Enum where members are also (and must be) strings. """
+
+
+# @todo should be removed ?
+class ArduinoBoardType(StringEnum):
+    """ Defines the arduino board types. """
+    NANO = 'NANO'
+    UNO = 'UNO'
+    MEGA = 'MEGA'
+
+
 @tag('!ARDUINO')
 class ArduinoBoard(AbstractBoard):
     """ ArduinoBoard implementation """
@@ -21,7 +34,8 @@ class ArduinoBoard(AbstractBoard):
     def __init__(self, name, serial_port: str):
         super().__init__(name)
         self._is_connected: bool = True
-        self._connexion: AbstractProtocol = SerialProtocol(serial_port)
+        self.port = serial_port
+        self._connexion: AbstractProtocol = SerialProtocol(self.port)
         # Event to notify threads that they should terminate
         self._exit_event = threading.Event()
         # Number of messages we can send to the Arduino without receiving an acknowledgment

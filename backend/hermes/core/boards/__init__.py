@@ -16,17 +16,17 @@ from abc import abstractmethod
 from func_timeout import func_set_timeout
 
 from hermes.core.commands.blink import CommandCode
-from hermes.core.devices import tag
+from hermes.core.devices import tag, DataLoader, DataDumper
 from hermes.core.plugins import AbstractPlugin
+from hermes.core.struct import MetaPluginType
 
 
 class BoardException(Exception):
     """ Base class for board related exceptions. """
 
 
-# @todo move implementation to Arduino and make the methods @abstractmethod
 @tag('!Board')
-class AbstractBoard(AbstractPlugin):
+class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     """ Handles the serial communication with an external board. """
 
     @abstractmethod
@@ -60,20 +60,25 @@ class AbstractBoard(AbstractPlugin):
             command_code (CommandCode)
         """
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}(" \
+               f"id={self.id}," \
+               f" name='{self.name}')"
+
 
 # Globally available boards.
+# @todo: should be removed ?
 BOARDS: dict[int, AbstractBoard] = {}
 
 
-# @todo Initialize boards from the configuration.
 def init():
-    pass
-#     """ Initializes the BOARDS structure with available boards from config YAML files. """
-#     print(' > Init boards')
-#     BOARDS[1] = ArduinoBoard('LEFT A', 'COM3')
-#     BOARDS[1].open()
-#     BOARDS[2] = ArduinoBoard('RIGHT B', 'COM4')
-#     BOARDS[2].open()
+    """ Registers all devices with the proper YAML loader/representer. """
+    print("     - Register boards")
+    for board in AbstractBoard.plugins:
+        # Registers custom tag in the loader to safely load the yaml to Device object.
+        DataLoader.add_constructor(board.TAG, board.from_yaml)
+        # Registers the method to serialize the object to yaml using the appropriate method.
+        DataDumper.add_representer(board, board.to_yaml)
 
 
 def close():
@@ -83,4 +88,4 @@ def close():
         board.close()
 
 
-__all__ = ["BOARDS", "AbstractBoard", "BoardException"]
+__all__ = ["BOARDS", "AbstractBoard", "BoardException", "init"]

@@ -6,7 +6,10 @@ import yaml
 
 from hermes.core import boards, logger, server, plugins
 from hermes.core import config
-from hermes.core.devices import DataLoader
+from hermes.core.boards.arduino import ArduinoBoard
+from hermes.core.commands import CommandFactory
+from hermes.core.devices import DataDumper, DataLoader
+from hermes.core.devices.led import LedDevice
 
 
 class App:
@@ -21,7 +24,6 @@ class App:
         logger.init()
         plugins.init()
         config.init()
-        boards.init()
         server.init()
         print('== Start HERMES ==')
 
@@ -51,12 +53,6 @@ class App:
         boards.close()
         server.close()
 
-    def __enter__(self):
-        self.start()
-
-    def __exit__(self):
-        self.close()
-
 
 if __name__ == "__main__":
 
@@ -68,11 +64,23 @@ if __name__ == "__main__":
     try:
         hermes.start()
 
+        CommandFactory()
+
+        board1 = ArduinoBoard('Board A', 'COM3')
+        boards = [board1, ArduinoBoard('Board B', 'COM4')]
+        devices = [
+            LedDevice('myled1', board1, 13, False),
+            LedDevice('myled2', board1, 14, False),
+            LedDevice('myled3', boards[1], 15, False)
+        ]
+        with open('output_file.txt', 'w') as file:
+            yaml.dump_all(devices, file, Dumper=DataDumper)
+
         with open('output_file.txt', 'r') as file:
             docs = yaml.load_all(file, Loader=DataLoader)
             for doc in docs:
                 print(doc)
-
+                print('associated board', doc.board)
         while True:
             pass
 
