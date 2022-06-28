@@ -1,5 +1,4 @@
 """ Implements agnostic custom structure types to be reused through the application. """
-
 from abc import ABCMeta
 from queue import Queue
 
@@ -22,7 +21,7 @@ class ClearableQueue(Queue):
 
 
 class ReadOnlyDict(dict):
-    """ A dictionary where items cannot be updated. """
+    """ A dictionary subclass where items cannot be updated. """
 
     def __setitem__(self, key, value):
         if key not in self:
@@ -32,7 +31,7 @@ class ReadOnlyDict(dict):
 
 
 class MetaSingleton(type):
-    """ A type for Singleton classes. """
+    """ A meta type for Singleton classes. """
 
     def __init__(cls, *args):
         type.__init__(cls, *args)

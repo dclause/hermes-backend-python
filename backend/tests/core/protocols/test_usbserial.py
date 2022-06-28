@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 import serial
 from serial import SerialException
 
-from hermes.core.command import CommandCode
+from hermes.core.commands import CommandCode
 from hermes.core.protocols import ProtocolException
 from hermes.core.protocols.usbserial import SerialProtocol
 

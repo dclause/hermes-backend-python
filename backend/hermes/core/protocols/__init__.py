@@ -2,16 +2,17 @@
 Protocol communication definition.
 """
 
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 
-from hermes.core.command.blink import CommandCode
+from hermes.core.commands.blink import CommandCode
+from hermes.core.struct import MetaPluginType
 
 
 class ProtocolException(Exception):
     """ Base class for protocol related exceptions. """
 
 
-class AbstractProtocol(metaclass=ABCMeta):
+class AbstractProtocol(metaclass=MetaPluginType):
     """ Abstract class representing a Connexion protocol connexion of some kind."""
 
     @abstractmethod

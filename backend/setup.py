@@ -17,7 +17,7 @@ setup(
         'hermes.core',
         'hermes.core.boards',
         'hermes.core.config',
-        'hermes.core.command',
+        'hermes.core.commands',
         'hermes.core.protocols',
         'hermes.core.communication'
     ],

@@ -5,7 +5,7 @@ code: CommandCode::DEBUG
 """
 
 from hermes.core import logger
-from hermes.core.command import AbstractCommand, CommandCode
+from hermes.core.commands import AbstractCommand, CommandCode
 from hermes.core.protocols import AbstractProtocol
 
 

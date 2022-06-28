@@ -1,3 +1,3 @@
 """ Core package """
 
-__all__ = ["logger", "struct", "boards", "command", "config"]
+__all__ = ["logger", "struct", "boards", "commands", "config"]

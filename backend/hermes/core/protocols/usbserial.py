@@ -29,7 +29,7 @@ import threading
 from serial import Serial, SerialException
 
 from hermes.core import logger
-from hermes.core.command import CommandCode, CommandFactory
+from hermes.core.commands import CommandCode, CommandFactory
 from hermes.core.protocols import AbstractProtocol, ProtocolException
 
 

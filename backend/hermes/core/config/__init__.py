@@ -10,6 +10,7 @@ given "space".
 """
 
 import argparse
+import collections.abc
 from typing import Any
 
 import logzero
@@ -77,12 +78,25 @@ def _get_default_config() -> dict[str, Any]:
 
 
 # Globally available CONFIG object.
-CONFIG: dict[str, Any] = {}
+CONFIG: dict[str, Any] = {
+    'STATE': {},  # Stores the current application state as a whole @todo evaluate if necessary when devices are done.
+}
+
+
+# @todo rework when needs get better defined
+def update(new_values):
+    """ Patches the GLOBAL states with given values. """
+    for key, value in new_values.items():
+        if isinstance(value, collections.abc.Mapping):
+            CONFIG[key] = new_values(CONFIG.get(key, {}), value)
+        else:
+            CONFIG[key] = value
+    return CONFIG
 
 
 def init():
     """
-    Initializes the Global CONFIG Object.
+    Initializes the global CONFIG Object.
 
     By order of importance, the configurations are :
         - extracted from commandline data
@@ -90,7 +104,6 @@ def init():
         - extracted from core YAMLs
     """
     print(' > Loading config')
-    # pylint: disable-next=global-statement
     global CONFIG
     CONFIG = {**_get_cmd_config(), **_get_plugins_config(), **_get_core_config()}
 
