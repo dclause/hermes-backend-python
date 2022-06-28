@@ -14,8 +14,11 @@ import collections.abc
 from typing import Any
 
 import logzero
+from mergedeep import merge
 
 from hermes import __version__
+from hermes.core import storage
+from hermes.core.storage import StorageNamespace, StorageType
 
 
 def _get_cmd_config() -> dict[str, Any]:
@@ -36,15 +39,23 @@ def _get_cmd_config() -> dict[str, Any]:
     # Specify output of "--version"
     parser.add_argument('--version', action='version', version=f'RMS version {__version__}')
 
-    _args = vars(parser.parse_args())
-    logzero.logger.debug(_args)
-    return _args
+    cmdline_args = vars(parser.parse_args())
+    config = {
+        'web': {
+            'enabled': cmdline_args['webGUI'],
+            'port': cmdline_args['port']
+        }
+    }
+
+    logzero.logger.debug('> Read configuration from cmdline:')
+    logzero.logger.debug(config)
+    return config
 
 
 # @todo implement this method
-def _get_plugins_config() -> dict[str, Any]:
+def _get_module_config() -> dict[str, Any]:
     """
-    Build configuration object from plugins YAML files.
+    Build configuration object from modules YAML files.
 
     Returns:
         List(str, object): A list of argument
@@ -53,6 +64,16 @@ def _get_plugins_config() -> dict[str, Any]:
 
 
 # @todo implement this method
+def _get_profile_config() -> dict[str, Any]:
+    """
+    Build configuration object from profile YAML files.
+
+    Returns:
+        List(str, object): A list of argument
+    """
+    return {}
+
+
 def _get_core_config() -> dict[str, Any]:
     """
     Build configuration object from core YAML files.
@@ -60,27 +81,14 @@ def _get_core_config() -> dict[str, Any]:
     Returns:
         List(str, object): A list of argument
     """
-    return {}
-
-
-# @todo implement this method
-def _get_default_config() -> dict[str, Any]:
-    """
-    Build configuration object from default configuration that is built-in the application.
-
-    Returns:
-        List(str, object): A list of argument
-    """
-    return {
-        # Defines the number of orders that can be received / sent at a time to a board.
-        'semaphore': 5,
-    }
+    config = storage.read(StorageNamespace.CORE, StorageType.GLOBAL)
+    logzero.logger.debug('> Read configuration from core:')
+    logzero.logger.debug(config)
+    return config
 
 
 # Globally available CONFIG object.
-CONFIG: dict[str, Any] = {
-    'STATE': {},  # Stores the current application state as a whole @todo evaluate if necessary when devices are done.
-}
+CONFIG: dict[str, Any] = {}
 
 
 # @todo rework when needs get better defined
@@ -109,13 +117,11 @@ def init():
     """
     print(' > Loading config')
 
-    # Add a specific dumper for string (to be surrounded by quotes)
-    # DataDumper.add_representer(str, _quoted_presenter)
-    # devices.init()
-    # boards.init()
-
+    # pylint: disable-next=global-statement
     global CONFIG
-    CONFIG = {**_get_cmd_config(), **_get_plugins_config(), **_get_core_config()}
+    CONFIG = merge(_get_core_config(), _get_cmd_config(), _get_module_config(), _get_profile_config())
+    logzero.logger.debug('> Total build configuration:')
+    logzero.logger.debug(CONFIG)
 
 
 __ALL__ = ["CONFIG", "init"]

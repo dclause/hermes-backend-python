@@ -33,7 +33,7 @@ class SerialProtocolTest(unittest.TestCase):
             self._serial_protocol.open()
         except ProtocolException:
             self.fail()
-        # pylint: disable=no-member
+        # pylint: disable-next=no-member
         serial.Serial.open.assert_called_once()  # noqa
 
     def test_open_fail(self):
@@ -47,7 +47,7 @@ class SerialProtocolTest(unittest.TestCase):
             self._serial_protocol.close()
         except ProtocolException:
             self.fail()
-        # pylint: disable=no-member
+        # pylint: disable-next=no-member
         serial.Serial.close.assert_called_once()  # noqa
 
     def test_isopen(self):
@@ -55,12 +55,12 @@ class SerialProtocolTest(unittest.TestCase):
         # True
         serial.Serial.isOpen = MagicMock(name='serial.Serial.isOpen', return_value=True)
         self.assertTrue(self._serial_protocol.is_open())
-        # pylint: disable=no-member
+        # pylint: disable-next=no-member
         serial.Serial.isOpen.assert_called_once()  # noqa
         # False
         serial.Serial.isOpen = MagicMock(name='serial.Serial.isOpen', return_value=False)
         self.assertFalse(self._serial_protocol.is_open())
-        # pylint: disable=no-member
+        # pylint: disable-next=no-member
         serial.Serial.isOpen.assert_called_once()  # noqa
 
     def test_read_command(self):
@@ -71,7 +71,7 @@ class SerialProtocolTest(unittest.TestCase):
     def test_send_command(self):
         """ Tests serial protocol send_command. """
         self._serial_protocol.send_command(CommandCode.DEBUG)
-        # pylint: disable=no-member
+        # pylint: disable-next=no-member
         serial.Serial.write.assert_called_once_with(b'#')  # noqa
 
     def test_read_line(self):

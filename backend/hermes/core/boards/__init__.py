@@ -68,17 +68,4 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         self.close()
 
 
-# Globally available boards.
-# @todo: should be removed ?
-BOARDS: dict[int, AbstractBoard] = {}
-
-
-# @todo call automatically on object destruction.
-def close():
-    """ Closes properly the board' connection. """
-    print(' > Close boards connection')
-    for _, board in BOARDS.items():
-        board.close()
-
-
-__all__ = ["BOARDS", "AbstractBoard", "BoardException"]
+__all__ = ["AbstractBoard", "BoardException"]

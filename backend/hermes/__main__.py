@@ -7,6 +7,7 @@ from hermes.core import boards, logger, server, plugins, storage
 from hermes.core import config
 from hermes.core.boards.arduino import ArduinoBoard
 from hermes.core.devices.led import LedDevice
+from hermes.core.storage import StorageType
 
 
 class App:
@@ -67,39 +68,38 @@ if __name__ == "__main__":
 
         # CommandFactory()
 
-        board1 = ArduinoBoard('Board A', 'COM3')
-        boards = [board1, ArduinoBoard('Board B', 'COM4')]
-        devices = [
-            LedDevice('myled1', board1, 13, False),
-            LedDevice('myled2', board1, 14, False),
-            LedDevice('myled3', boards[1], 15, False)
-        ]
-
-        # with open('output_file.txt', 'w') as file:
-        #     yaml.dump_all(devices, file, Dumper=DataDumper)
+        # board1 = ArduinoBoard('Board A', 'COM3')
+        # boards = [board1, ArduinoBoard('Board B', 'COM4')]
+        # devices = [
+        #     LedDevice('myled1', board1, 13, False),
+        #     LedDevice('myled2', board1, 14, False),
+        #     LedDevice('myled3', boards[1], 15, False)
+        # ]
         #
-        # with open('output_file.txt', 'r') as file:
-        #     docs = yaml.load_all(file, Loader=DataLoader)
+        # with open('output_file.yaml', 'w') as file:
+        #     storage.storage.dump_all(devices, file)
+        #
+        # with open('output_file.yaml', 'r') as file:
+        #     docs = storage.storage.load_all(file)
         #     for doc in docs:
         #         print(doc)
         #         print('associated board', doc.board)
 
-        with open('output_file.yaml', 'w') as file:
-            storage.storage.dump_all(devices, file)
-
-        with open('output_file.yaml', 'r') as file:
-            docs = storage.storage.load_all(file)
-            for doc in docs:
-                print(doc)
-                print('associated board', doc.board)
-
         # obj: dict[str: str] = {
-        #     'name': "Demo profile",
-        #     'description': "Profile for simple testing between computer and arduino board using the included led"
+        #     'server': {
+        #         'host': '0.0.0.0',
+        #         'port': 4000,
+        #     },
+        #     'socket': {
+        #         'host': '0.0.0.0',
+        #         'port': 9999,
+        #     },
+        #     'web': {
+        #         'host': '0.0.0.0',
+        #         'port': 4000,
+        #     }
         # }
-        # with open('output_file.yaml', 'w') as file:
-        #     # yaml.dump(obj, file, Dumper=DataDumper, sort_keys=False, width=123)
-        #     storage.storage.dump(obj)
+        # storage.write(StorageType.GLOBAL, obj)
 
         while True:
             pass

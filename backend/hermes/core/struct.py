@@ -1,5 +1,6 @@
 """ Implements agnostic custom structure types to be reused through the application. """
 from abc import ABCMeta
+from enum import Enum
 from queue import Queue
 
 
@@ -52,3 +53,7 @@ class MetaPluginType(type, metaclass=ABCMeta):
             cls.plugins = []
         else:
             cls.plugins.append(cls)
+
+
+class StringEnum(str, Enum):
+    """ Enum where members are also (and must be) strings. """

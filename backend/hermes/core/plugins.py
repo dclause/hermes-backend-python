@@ -83,10 +83,12 @@ def init():
     print(" > Plugin discovery")
 
     plugin_types = ['protocol', 'board', 'device', 'command']
+    # Find all python files within the ROOT_DIR.
     modules = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
     for filepath in modules:
         for plugin_type in plugin_types:
             plugin_type = plugin_type + 's'
+            # If the file is in one of plugin_types folders, it surely is a plugin, hence load it.
             if plugin_type in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
                 modulename = os.path.basename(filepath)[:-3]
                 importlib.import_module(f'hermes.core.{plugin_type}.{modulename}')

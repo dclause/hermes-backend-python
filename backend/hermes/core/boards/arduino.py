@@ -3,7 +3,6 @@ Represents a connexion to an electronic board (arduino-like) by embedding its py
 """
 
 import threading
-from enum import Enum
 
 from func_timeout import FunctionTimedOut, func_set_timeout
 
@@ -12,13 +11,9 @@ from hermes.core.boards import AbstractBoard, BoardException
 from hermes.core.commands.blink import CommandCode
 from hermes.core.protocols import AbstractProtocol, ProtocolException
 from hermes.core.protocols.usbserial import SerialProtocol, CommandListenerThread
+from hermes.core.struct import StringEnum
 
 
-class StringEnum(str, Enum):
-    """ Enum where members are also (and must be) strings. """
-
-
-# @todo should be removed ?
 class ArduinoBoardType(StringEnum):
     """ Defines the arduino board types. """
     NANO = 'NANO'
