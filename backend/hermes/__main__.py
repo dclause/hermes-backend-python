@@ -2,13 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """ HERMES application entry point. """
-import yaml
 
-from hermes.core import boards, logger, server, plugins
+from hermes.core import boards, logger, server, plugins, storage
 from hermes.core import config
 from hermes.core.boards.arduino import ArduinoBoard
-from hermes.core.commands import CommandFactory
-from hermes.core.devices import DataDumper, DataLoader
 from hermes.core.devices.led import LedDevice
 
 
@@ -23,9 +20,9 @@ class App:
         print('== Loading HERMES ==')
         logger.init()
         plugins.init()
+        storage.init()
         config.init()
         server.init()
-        print('== Start HERMES ==')
 
     @classmethod
     def start(cls):
@@ -50,7 +47,7 @@ class App:
     def close(cls):
         """ Closes the application. """
         print('== Stopping HERMES ==')
-        boards.close()
+        logger.info('== Stopping HERMES ==')
         server.close()
 
 
@@ -64,7 +61,11 @@ if __name__ == "__main__":
     try:
         hermes.start()
 
-        CommandFactory()
+        # @todo: logger.info should print on screen and avoid duplicate here.
+        print('== Running HERMES ==')
+        logger.info('== Running HERMES ==')
+
+        # CommandFactory()
 
         board1 = ArduinoBoard('Board A', 'COM3')
         boards = [board1, ArduinoBoard('Board B', 'COM4')]
@@ -73,14 +74,33 @@ if __name__ == "__main__":
             LedDevice('myled2', board1, 14, False),
             LedDevice('myled3', boards[1], 15, False)
         ]
-        with open('output_file.txt', 'w') as file:
-            yaml.dump_all(devices, file, Dumper=DataDumper)
 
-        with open('output_file.txt', 'r') as file:
-            docs = yaml.load_all(file, Loader=DataLoader)
+        # with open('output_file.txt', 'w') as file:
+        #     yaml.dump_all(devices, file, Dumper=DataDumper)
+        #
+        # with open('output_file.txt', 'r') as file:
+        #     docs = yaml.load_all(file, Loader=DataLoader)
+        #     for doc in docs:
+        #         print(doc)
+        #         print('associated board', doc.board)
+
+        with open('output_file.yaml', 'w') as file:
+            storage.storage.dump_all(devices, file)
+
+        with open('output_file.yaml', 'r') as file:
+            docs = storage.storage.load_all(file)
             for doc in docs:
                 print(doc)
                 print('associated board', doc.board)
+
+        # obj: dict[str: str] = {
+        #     'name': "Demo profile",
+        #     'description': "Profile for simple testing between computer and arduino board using the included led"
+        # }
+        # with open('output_file.yaml', 'w') as file:
+        #     # yaml.dump(obj, file, Dumper=DataDumper, sort_keys=False, width=123)
+        #     storage.storage.dump(obj)
+
         while True:
             pass
 

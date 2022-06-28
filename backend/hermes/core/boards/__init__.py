@@ -16,7 +16,6 @@ from abc import abstractmethod
 from func_timeout import func_set_timeout
 
 from hermes.core.commands.blink import CommandCode
-from hermes.core.devices import tag, DataLoader, DataDumper
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
@@ -25,7 +24,6 @@ class BoardException(Exception):
     """ Base class for board related exceptions. """
 
 
-@tag('!Board')
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     """ Handles the serial communication with an external board. """
 
@@ -65,22 +63,17 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
                f"id={self.id}," \
                f" name='{self.name}')"
 
+    def __del__(self):
+        print(f' > Close board {self.id}')
+        self.close()
+
 
 # Globally available boards.
 # @todo: should be removed ?
 BOARDS: dict[int, AbstractBoard] = {}
 
 
-def init():
-    """ Registers all devices with the proper YAML loader/representer. """
-    print("     - Register boards")
-    for board in AbstractBoard.plugins:
-        # Registers custom tag in the loader to safely load the yaml to Device object.
-        DataLoader.add_constructor(board.TAG, board.from_yaml)
-        # Registers the method to serialize the object to yaml using the appropriate method.
-        DataDumper.add_representer(board, board.to_yaml)
-
-
+# @todo call automatically on object destruction.
 def close():
     """ Closes properly the board' connection. """
     print(' > Close boards connection')
@@ -88,4 +81,4 @@ def close():
         board.close()
 
 
-__all__ = ["BOARDS", "AbstractBoard", "BoardException", "init"]
+__all__ = ["BOARDS", "AbstractBoard", "BoardException"]

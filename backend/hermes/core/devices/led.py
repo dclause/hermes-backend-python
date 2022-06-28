@@ -3,10 +3,9 @@ LED device: this device represents a simple LED.
 https://en.wikipedia.org/wiki/Light-emitting_diode
 """
 from hermes.core.boards import AbstractBoard
-from hermes.core.devices import AbstractDevice, tag
+from hermes.core.devices import AbstractDevice
 
 
-@tag('!LED')
 class LedDevice(AbstractDevice):
     """ LED class """
 

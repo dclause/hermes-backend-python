@@ -94,6 +94,10 @@ def update(new_values):
     return CONFIG
 
 
+def _quoted_presenter(dumper, data):
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='"')
+
+
 def init():
     """
     Initializes the global CONFIG Object.
@@ -104,6 +108,12 @@ def init():
         - extracted from core YAMLs
     """
     print(' > Loading config')
+
+    # Add a specific dumper for string (to be surrounded by quotes)
+    # DataDumper.add_representer(str, _quoted_presenter)
+    # devices.init()
+    # boards.init()
+
     global CONFIG
     CONFIG = {**_get_cmd_config(), **_get_plugins_config(), **_get_core_config()}
 

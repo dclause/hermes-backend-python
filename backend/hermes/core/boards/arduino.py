@@ -3,14 +3,13 @@ Represents a connexion to an electronic board (arduino-like) by embedding its py
 """
 
 import threading
-from enum import IntEnum, Enum
+from enum import Enum
 
 from func_timeout import FunctionTimedOut, func_set_timeout
 
 from hermes.core import logger
 from hermes.core.boards import AbstractBoard, BoardException
 from hermes.core.commands.blink import CommandCode
-from hermes.core.devices import tag
 from hermes.core.protocols import AbstractProtocol, ProtocolException
 from hermes.core.protocols.usbserial import SerialProtocol, CommandListenerThread
 
@@ -27,7 +26,6 @@ class ArduinoBoardType(StringEnum):
     MEGA = 'MEGA'
 
 
-@tag('!ARDUINO')
 class ArduinoBoard(AbstractBoard):
     """ ArduinoBoard implementation """
 

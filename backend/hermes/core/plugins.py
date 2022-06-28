@@ -22,21 +22,9 @@ import importlib
 import itertools
 import os
 
-from hermes.core import devices, boards
 from hermes.core.helpers import ROOT_DIR
 
 
-def tag(tag_name):
-    """ Adds a decorator for the TAG implementation: adds the TAG static attribute. """
-
-    def decorate(func):
-        setattr(func, 'TAG', tag_name)
-        return func
-
-    return decorate
-
-
-@tag('!Plugin')
 class AbstractPlugin:
     """
     A serializable plugin base class.
@@ -65,6 +53,7 @@ class AbstractPlugin:
     @classmethod
     def to_yaml(cls, dumper, data):
         """ Converts a Python object to a representation node. """
+
         state = data.__dict__.copy()
         for attr in data.__dict__:
 
@@ -77,28 +66,22 @@ class AbstractPlugin:
             if isinstance(state[attr], AbstractPlugin):
                 state[attr] = state[attr].id
 
-        # pylint: disable-next=no-member
-        return dumper.represent_mapping(cls.TAG, state)
+        tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
+        return dumper.represent_mapping(tag, state)
 
     def __repr__(self):
         return f"{self.__class__.__name__,}(name={self.name})"
 
 
 def init():
-    """ Load all plugins. """
-    print(" > Init application")
-    _discover_plugins()
-    devices.init()
-    boards.init()
-
-
-def _discover_plugins():
     """
-    Discovers all plugins.
+    Loads all plugins.
 
     Explores the directory structure and search for all .py files within directories corresponding to plugin types.
     The plugins should be in the core or the modules directories.
     """
+    print(" > Plugin discovery")
+
     plugin_types = ['protocol', 'board', 'device', 'command']
     modules = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
     for filepath in modules:
