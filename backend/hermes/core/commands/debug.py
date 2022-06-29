@@ -26,6 +26,5 @@ class DebugCommand(AbstractCommand):
         """ Processes the command """
         logger.debug('> start command: %s', str(self))
         if self._data:
-            logger.info('DEBUG command: Received data: %s', self._data)
-            print(f'## DEBUG ARDUINO: {self._data} ##')
+            logger.info('## DEBUG command: Received data: %s ##', self._data)
         logger.debug('> command done: %s', str(self))

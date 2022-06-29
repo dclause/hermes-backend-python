@@ -1,0 +1,6 @@
+!LedDevice
+id: 1
+name: 'Arduino LED'
+board: 1
+pin: 13
+default: false

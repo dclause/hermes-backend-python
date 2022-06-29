@@ -3,7 +3,7 @@ This webserver is responsible for :
     - expose (mandatory) the socket.io API to help remote UIs to send commands (@see `frontend` directory)
     - expose (optional)  the http server to serve a default UI (@see `frontend` directory)
 """
-
+import os
 from threading import Thread
 from typing import Any
 
@@ -13,12 +13,8 @@ from flask_socketio import SocketIO, emit
 
 from hermes import __version__
 from hermes.core import config, logger
-
-# @todo Move this to a configurable
-from hermes.core.boards import BOARDS
 from hermes.core.commands import CommandFactory
-
-_PORT = 9999
+from hermes.core.helpers import ROOT_DIR
 
 
 class _WebServerThread(Thread):
@@ -57,7 +53,7 @@ class _WebServerThread(Thread):
             command = CommandFactory().get_by_name(command_name)
             if command is None:
                 logger.error('Command %s do not exists.', command_name)
-            BOARDS[1].send_command(command.code, message[command_name])
+            config.BOARDS[1].send_command(command.code, message[command_name])
 
         @self._socketio.on('connect')
         def connect(payload):
@@ -70,7 +66,7 @@ class _WebServerThread(Thread):
         # ----------------------------------------
         # WebGUI optional definition
         # ----------------------------------------
-        if config.CONFIG['webGUI']:
+        if config.GLOBAL['web']['enabled']:
             @self._server.route('/', defaults={'path': ''})
             @self._server.route('/<string:path>')
             @self._server.route('/<path:path>')
@@ -79,17 +75,23 @@ class _WebServerThread(Thread):
                 # ie defer the handling to vue (@see `frontend` folder).
                 if '.' not in path:
                     path = 'index.html'
-                return send_file("../../frontend/dist/" + path)
+                return send_file(os.path.join(ROOT_DIR, '..', '..', 'frontend', 'dist', path))
 
     def run(self):
-        self._socketio.run(self._server, host="0.0.0.0", port=_PORT, debug=True, use_reloader=False)
+        self._socketio.run(
+            self._server,
+            host=config.GLOBAL['server']['host'],
+            port=config.GLOBAL['server']['port'],
+            debug=config.GLOBAL['server']['debug'],
+            use_reloader=False
+        )
 
     def close(self):
         """ Closes the socketIO connection. """
         self._socketio.stop()
 
 
-WEBSERVER: _WebServerThread
+_WEBSERVER: _WebServerThread
 
 
 def init():
@@ -100,14 +102,15 @@ def init():
 def start():
     """ Starts the webserver. """
     print(' > Start webserver')
-    global WEBSERVER
-    WEBSERVER = _WebServerThread()
-    WEBSERVER.start()
+    # pylint: disable-next=global-statement
+    global _WEBSERVER
+    _WEBSERVER = _WebServerThread()
+    _WEBSERVER.start()
 
 
 def close():
     """ Stops the webserver. """
     print(' > Close webserver')
-    if WEBSERVER.is_alive():
-        WEBSERVER.close()
-        WEBSERVER.join()
+    if _WEBSERVER.is_alive():
+        _WEBSERVER.close()
+        _WEBSERVER.join()

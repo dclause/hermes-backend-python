@@ -1,0 +1,3 @@
+name: Demo profile
+description: Made to be run on a computer/raspberryPI connected via serial to an arduino board. This simple profile makes 
+  use of the embedded LED on the arduino pin 13.

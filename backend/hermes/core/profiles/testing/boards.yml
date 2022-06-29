@@ -1,0 +1,5 @@
+!ArduinoBoard
+name: 'Arduino board'
+id: 1
+type: 'MEGA'
+port: 'COM3'
