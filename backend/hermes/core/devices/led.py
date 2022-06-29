@@ -14,13 +14,4 @@ class LedDevice(AbstractDevice):
         self.pin: int = pin
         self.board: AbstractBoard = board
         self.default: bool = default
-        self.value: bool = default
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(" \
-               f"id={self.id}, " \
-               f"name={self.name}, " \
-               f"board={self.board}, " \
-               f"pin={self.pin}, " \
-               f"default={self.default}, " \
-               f"value={self.value})"
+        self._value: bool = default

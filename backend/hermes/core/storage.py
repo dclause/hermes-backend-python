@@ -21,7 +21,7 @@ _storage = ruamel.yaml.YAML(typ='safe')
 class StorageNamespace(StringEnum):
     """ Defines the existing namespace within the application. """
     CORE = os.path.join('core', 'configs')  # Any configuration provided by core.
-    MODULE = 'modules'  # Any configuration provided by a module.
+    MODULE = os.path.join('modules', 'configs')  # Any configuration provided by a module.
     PROFILE = 'configs'  # Any configuration from the active profile.
 
 
@@ -46,7 +46,7 @@ def init():
         _storage.register_class(device_type)
 
 
-def read(namespace: StorageNamespace, config_type: StorageType) -> dict[str, Any]:
+def read(namespace: StorageNamespace, config_type: StorageType) -> dict:
     """
     Reads the given config type from the given namespace.
 
@@ -65,11 +65,15 @@ def read(namespace: StorageNamespace, config_type: StorageType) -> dict[str, Any
     filenames = glob.glob(os.path.join(ROOT_DIR, namespace, '**', f'{config_type}.yml'), recursive=True)
     for filename in filenames:
         with open(filename, 'r', encoding='utf-8') as file:
-            if config_type is StorageType.GLOBAL:
+            if config_type is StorageType.GLOBAL or config_type is StorageType.PROFILE:
                 data = _storage.load(file)
+                configs = merge(configs, data)
             else:
-                data = _storage.load_all(file)
-            configs = merge(configs, data)
+                data = {}
+                plugins = _storage.load_all(file)
+                for plugin in plugins:
+                    data[plugin.id] = plugin
+                configs = {**configs, **data}
 
     return configs
 

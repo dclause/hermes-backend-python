@@ -10,10 +10,9 @@ It operates in coordination with the arduino code defined in the `arduino` folde
 1. Create and setup a virtual environment:
 
 ```
-virtualenv .env &&\
-    source .env/bin/activate &&\
-    pip install -r requirements.txt &&\
-    pip install -r dev-requirements.txt
+python3 -m venv .venv
+source ./.venv/Scripts/activate # can vary depending on your system
+pip install -r requirements.txt && pip install -r dev_requirements.txt
 ```
 
 2. Start the program: `python3 -m hermes`

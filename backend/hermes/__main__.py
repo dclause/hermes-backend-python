@@ -89,6 +89,7 @@ if __name__ == "__main__":
         #     'server': {
         #         'host': '0.0.0.0',
         #         'port': 4000,
+        #         'debug': True
         #     },
         #     'socket': {
         #         'host': '0.0.0.0',

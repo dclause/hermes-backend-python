@@ -3,7 +3,7 @@ This webserver is responsible for :
     - expose (mandatory) the socket.io API to help remote UIs to send commands (@see `frontend` directory)
     - expose (optional)  the http server to serve a default UI (@see `frontend` directory)
 """
-
+import os
 from threading import Thread
 from typing import Any
 
@@ -14,7 +14,7 @@ from flask_socketio import SocketIO, emit
 from hermes import __version__
 from hermes.core import config, logger
 from hermes.core.commands import CommandFactory
-from hermes.core.config import CONFIG
+from hermes.core.helpers import ROOT_DIR
 
 
 class _WebServerThread(Thread):
@@ -53,7 +53,7 @@ class _WebServerThread(Thread):
             command = CommandFactory().get_by_name(command_name)
             if command is None:
                 logger.error('Command %s do not exists.', command_name)
-            CONFIG['boards'][1].send_command(command.code, message[command_name])
+            config.BOARDS[1].send_command(command.code, message[command_name])
 
         @self._socketio.on('connect')
         def connect(payload):
@@ -66,7 +66,7 @@ class _WebServerThread(Thread):
         # ----------------------------------------
         # WebGUI optional definition
         # ----------------------------------------
-        if config.CONFIG['web']['enabled']:
+        if config.GLOBAL['web']['enabled']:
             @self._server.route('/', defaults={'path': ''})
             @self._server.route('/<string:path>')
             @self._server.route('/<path:path>')
@@ -75,14 +75,14 @@ class _WebServerThread(Thread):
                 # ie defer the handling to vue (@see `frontend` folder).
                 if '.' not in path:
                     path = 'index.html'
-                return send_file("../../frontend/dist/" + path)
+                return send_file(os.path.join(ROOT_DIR, '..', '..', 'frontend', 'dist', path))
 
     def run(self):
         self._socketio.run(
             self._server,
-            host=config.CONFIG['server']['host'],
-            port=config.CONFIG['server']['port'],
-            debug=True,
+            host=config.GLOBAL['server']['host'],
+            port=config.GLOBAL['server']['port'],
+            debug=config.GLOBAL['server']['debug'],
             use_reloader=False
         )
 
