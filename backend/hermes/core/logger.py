@@ -37,7 +37,7 @@ def debug(msg, *args, **kwargs):
 
 def info(msg, *args, **kwargs):
     """ Forwards DEBUG logs to logzero. """
-    print(msg, *args, **kwargs)
+    print(msg.format(*args, **kwargs))
     logzero.logger.info(msg, *args, **kwargs)
 
 

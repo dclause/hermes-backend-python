@@ -10,6 +10,7 @@ from typing import Any
 import ruamel.yaml
 from mergedeep import merge
 
+from hermes.core import logger
 from hermes.core.boards import AbstractBoard
 from hermes.core.boards.arduino import StringEnum
 from hermes.core.devices import AbstractDevice
@@ -35,7 +36,7 @@ class StorageType(StringEnum):
 
 def init():
     """ Init the YAML loader/dumper. """
-    print(' > Init storage')
+    logger.info(' > Init storage')
 
     # Register boards.
     for board_type in AbstractBoard.plugins:

@@ -184,7 +184,7 @@ def init():
         - extracted from plugins config YAMLs
         - extracted from core YAMLs
     """
-    print(' > Loading config')
+    logger.info(' > Loading config')
 
     default_config = _get_default_config()
     core_config = _get_core_config()

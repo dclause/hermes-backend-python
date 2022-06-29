@@ -28,7 +28,6 @@ class App:
     @classmethod
     def start(cls):
         """ Bootstraps the application. """
-        print('== Starting HERMES ==')
         logger.info('== Starting HERMES ==')
         server.start()
 
@@ -47,7 +46,6 @@ class App:
     @classmethod
     def close(cls):
         """ Closes the application. """
-        print('== Stopping HERMES ==')
         logger.info('== Stopping HERMES ==')
         server.close()
 
@@ -62,8 +60,6 @@ if __name__ == "__main__":
     try:
         hermes.start()
 
-        # @todo: logger.info should print on screen and avoid duplicate here.
-        print('== Running HERMES ==')
         logger.info('== Running HERMES ==')
 
         # CommandFactory()

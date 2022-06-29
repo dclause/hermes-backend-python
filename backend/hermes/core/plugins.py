@@ -22,6 +22,7 @@ import importlib
 import itertools
 import os
 
+from hermes.core import logger
 from hermes.core.helpers import ROOT_DIR
 
 
@@ -103,7 +104,7 @@ def init():
     Explores the directory structure and search for all .py files within directories corresponding to plugin types.
     The plugins should be in the core or the modules directories.
     """
-    print(" > Plugin discovery")
+    logger.info(" > Plugin discovery")
 
     plugin_types = ['protocol', 'board', 'device', 'command']
     # Find all python files within the ROOT_DIR.

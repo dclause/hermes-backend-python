@@ -46,7 +46,7 @@ class _WebServerThread(Thread):
 
         @self._socketio.on('mutation')
         def mutation(message: dict[str, Any]):
-            print('## received', message)
+            logger.debug('## received %s', message)
             emit('patch', message, broadcast=True)
             config.update(message)
             command_name = list(message.keys())[0]
@@ -57,11 +57,11 @@ class _WebServerThread(Thread):
 
         @self._socketio.on('connect')
         def connect(payload):
-            print('## client connected', payload)
+            logger.info('## client connected %s', payload)
 
         @self._socketio.on('disconnect')
         def disconnect(payload):
-            print('## client disconnect', payload)
+            logger.info('## client disconnect %s', payload)
 
         # ----------------------------------------
         # WebGUI optional definition
@@ -96,12 +96,12 @@ _WEBSERVER: _WebServerThread
 
 def init():
     """ Starts the webserver. """
-    print(' > Loading webserver')
+    logger.info(' > Loading webserver')
 
 
 def start():
     """ Starts the webserver. """
-    print(' > Start webserver')
+    logger.info(' > Start webserver')
     # pylint: disable-next=global-statement
     global _WEBSERVER
     _WEBSERVER = _WebServerThread()
@@ -110,7 +110,7 @@ def start():
 
 def close():
     """ Stops the webserver. """
-    print(' > Close webserver')
+    logger.info(' > Close webserver')
     if _WEBSERVER.is_alive():
         _WEBSERVER.close()
         _WEBSERVER.join()

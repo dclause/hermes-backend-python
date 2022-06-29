@@ -15,6 +15,7 @@ from abc import abstractmethod
 
 from func_timeout import func_set_timeout
 
+from hermes.core import logger
 from hermes.core.commands.blink import CommandCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
@@ -58,13 +59,8 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
             command_code (CommandCode)
         """
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}(" \
-               f"id={self.id}," \
-               f" name='{self.name}')"
-
     def __del__(self):
-        print(f' > Close board {self.id}')
+        logger.info(' > Close board %s', str(self.id))
         self.close()
 
 
