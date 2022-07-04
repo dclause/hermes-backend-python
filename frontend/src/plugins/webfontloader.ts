@@ -2,6 +2,8 @@
  * plugins/webfontloader.js
  *
  * webfontloader documentation: https://github.com/typekit/webfontloader
+ *
+ * @todo Remove this and get the fonts locally (robots do not run on internet usually)
  */
 
 export async function loadFonts() {

@@ -21,6 +21,7 @@ import glob
 import importlib
 import itertools
 import os
+from typing import Any
 
 from hermes.core import logger
 from hermes.core.helpers import ROOT_DIR
@@ -47,6 +48,38 @@ class AbstractPlugin:
     def __str__(self):
         return f'{self.__class__.__name__} {self.name}({self.id})'
 
+    def serialize(self) -> dict[str, Any]:
+        """
+        Convert the instance to a filter dict representation.
+        Private attributes are excluded and Plugin referenced are converted to their IDs.
+
+        Returns:
+            dict[str, Any]: a dictionary where the keys are the class public attributes.
+        """
+        obj = vars(self).copy()
+        for attr in vars(self):
+
+            # Remove the private attributes to prevent them being serialized.
+            if attr.startswith("_") and not attr.startswith("__"):
+                del obj[attr]
+                continue
+
+            # Convert plugins reference to IDs.
+            if isinstance(obj[attr], AbstractPlugin):
+                obj[attr] = obj[attr].id
+
+        return obj
+
+    def update(self, state):
+        """
+        Updates object with given state.
+
+        Args:
+            state (dict): the state to update the object to.
+        """
+        for (attr, value) in state:
+            setattr(self, attr, value)
+
     @classmethod
     def from_yaml(cls, constructor, node):
         """ Converts a representation node to a Python object. """
@@ -60,41 +93,21 @@ class AbstractPlugin:
 
         # Instantiates the plugin and update it.
         plugin = cls(**initial_state)
-        plugin.__dict__.update(state)
+        # plugin._update(state)
 
         return plugin
-
-    # @classmethod
-    # def from_yaml(cls, constructor, node):
-    #     """ Converts a representation node to a Python object. """
-    #     return constructor.construct_yaml_object(node, cls)
-    #     data = cls.__new__(cls)
-    #     yield data
-    #     if hasattr(data, '__setstate__'):
-    #         state = self.construct_mapping(node, deep=True)
-    #         data.__setstate__(state)
-    #     else:
-    #         state = self.construct_mapping(node)
-    #         data.__dict__.update(state)
 
     @classmethod
     def to_yaml(cls, representer, data):
         """ Converts a Python object to a representation node. """
 
-        state = data.__dict__.copy()
-        for attr in data.__dict__:
-
-            # Remove the private attributes to prevent them being serialized.
-            if attr.startswith("_") and not attr.startswith("__"):
-                del state[attr]
-                continue
-
-            # Convert plugins reference to IDs.
-            if isinstance(state[attr], AbstractPlugin):
-                state[attr] = state[attr].id
+        if isinstance(data, AbstractPlugin):
+            data = data.serialize()
+            if 'value' in data:
+                del(data['value'])
 
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
-        return representer.represent_mapping(tag, state)
+        return representer.represent_mapping(tag, data)
 
 
 def init():
@@ -111,7 +124,7 @@ def init():
     modules = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
     for filepath in modules:
         for plugin_type in plugin_types:
-            plugin_type = plugin_type + 's'
+            plugin_type = f'{plugin_type}s'
             # If the file is in one of plugin_types folders, it surely is a plugin, hence load it.
             if plugin_type in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
                 modulename = os.path.basename(filepath)[:-3]

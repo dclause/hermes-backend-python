@@ -15,6 +15,7 @@ coverage
 *.local
 
 # Unit and end-to-end tests
+.cache
 /cypress/videos/
 /cypress/screenshots/
 /cypress/report/

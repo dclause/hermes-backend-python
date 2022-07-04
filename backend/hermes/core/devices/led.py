@@ -14,4 +14,4 @@ class LedDevice(AbstractDevice):
         self.pin: int = pin
         self.board: AbstractBoard = board
         self.default: bool = default
-        self._value: bool = default
+        self.value: bool = default

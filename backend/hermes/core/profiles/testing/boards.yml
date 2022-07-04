@@ -1,5 +1,5 @@
 !ArduinoBoard
-name: 'Arduino board'
+name: 'Arduino board A'
 id: 1
-type: 'MEGA'
+model: 'MEGA'
 port: 'COM3'

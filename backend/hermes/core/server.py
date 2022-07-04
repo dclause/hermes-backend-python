@@ -44,6 +44,41 @@ class _WebServerThread(Thread):
         # ----------------------------------------
         self._socketio = SocketIO(self._server, cors_allowed_origins='*')
 
+        @self._socketio.on('connect')
+        def connect(payload):
+            logger.info(f'## socketIO client connected: {payload}')
+            handshake()
+
+        @self._socketio.on('disconnect')
+        def disconnect():
+            logger.info('## socketIO client disconnected')
+
+        @self._socketio.on('ping')
+        def ping():
+            """
+            Answer to a ping by a pong.
+            This can be used by the clients to check the latency of a ping/pong message exchange with this server.
+            """
+            emit('pong')
+
+        @self._socketio.on('handshake')
+        def handshake():
+            """
+            Pushes all current config to the client.
+            """
+            # self._socketio.emit('handshake', (
+            #     config.GLOBAL,
+            #     config.PROFILE,
+            #     storage.dump(config.BOARDS),
+            #     storage.dump(config.DEVICES)
+            # ))
+            emit('handshake', (
+                config.GLOBAL,
+                config.PROFILE,
+                {key: board.serialize() for key, board in config.BOARDS.items()},
+                {key: device.serialize() for key, device in config.DEVICES.items()}
+            ))
+
         @self._socketio.on('mutation')
         def mutation(message: dict[str, Any]):
             logger.debug('## received %s', message)
@@ -54,14 +89,6 @@ class _WebServerThread(Thread):
             if command is None:
                 logger.error('Command %s do not exists.', command_name)
             config.BOARDS[1].send_command(command.code, message[command_name])
-
-        @self._socketio.on('connect')
-        def connect(payload):
-            logger.info('## client connected %s', payload)
-
-        @self._socketio.on('disconnect')
-        def disconnect(payload):
-            logger.info('## client disconnect %s', payload)
 
         # ----------------------------------------
         # WebGUI optional definition

@@ -6,6 +6,7 @@ import pinia from "./plugins/pinia";
 import { socketIO } from "./plugins/socketIO";
 import { loadFonts } from "./plugins/webfontloader";
 
+// @todo remove ?
 loadFonts();
 
 createApp(App).use(router).use(vuetify).use(pinia).use(socketIO).mount("#app");

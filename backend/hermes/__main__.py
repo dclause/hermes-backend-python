@@ -51,52 +51,10 @@ class App:
 
 
 if __name__ == "__main__":
-
-    # leds =  [LedDevice('myled1', 13, False), LedDevice('myled2', 14, False), LedDevice('myled3', 15, False)]
-    # with open('output_file.txt', 'w') as file:
-    #     yaml.dump_all(leds, file, Dumper=DataDumper)
-
     hermes = App()
     try:
         hermes.start()
-
         logger.info('== Running HERMES ==')
-
-        # CommandFactory()
-
-        # board1 = ArduinoBoard('Board A', 'COM3')
-        # boards = [board1, ArduinoBoard('Board B', 'COM4')]
-        # devices = [
-        #     LedDevice('myled1', board1, 13, False),
-        #     LedDevice('myled2', board1, 14, False),
-        #     LedDevice('myled3', boards[1], 15, False)
-        # ]
-        #
-        # with open('output_file.yaml', 'w') as file:
-        #     storage.storage.dump_all(devices, file)
-        #
-        # with open('output_file.yaml', 'r') as file:
-        #     docs = storage.storage.load_all(file)
-        #     for doc in docs:
-        #         print(doc)
-        #         print('associated board', doc.board)
-
-        # obj: dict[str: str] = {
-        #     'server': {
-        #         'host': '0.0.0.0',
-        #         'port': 4000,
-        #         'debug': True
-        #     },
-        #     'socket': {
-        #         'host': '0.0.0.0',
-        #         'port': 9999,
-        #     },
-        #     'web': {
-        #         'host': '0.0.0.0',
-        #         'port': 4000,
-        #     }
-        # }
-        # storage.write(StorageType.GLOBAL, obj)
 
         while True:
             pass

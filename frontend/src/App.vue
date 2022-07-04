@@ -5,24 +5,22 @@ Main app component: defines a single layout for all pages.
 <template>
   <v-app id="hermes">
     <!-- Drawer: sidebar on the left-->
-    <v-navigation-drawer
-      :rail="drawer"
-      app
-      clipped
-      mini-variant
-      @click.capture="this.drawer = !this.drawer"
-    >
+    <v-navigation-drawer app clipped mini-variant permanent rail>
       <v-avatar
-        class="d-block text-center mx-auto mt-4"
-        color="grey darken-1"
-        size="36"
-      ></v-avatar>
+        class="d-block text-center mx-auto mt-4 pa-1"
+        color=""
+        size="45"
+      >
+        <svg-robot />
+      </v-avatar>
       <v-divider class="mx-3 my-5"></v-divider>
+
+      <main-menu-list />
     </v-navigation-drawer>
 
     <!-- AppBar: top bar-->
     <v-app-bar app color="primary" density="compact">
-      <v-app-bar-title>HERMES</v-app-bar-title>
+      <v-app-bar-title>HERMES - a Robot Management System</v-app-bar-title>
 
       <template v-slot:append>
         <LanControl />
@@ -32,7 +30,7 @@ Main app component: defines a single layout for all pages.
 
     <!-- Main: -->
     <v-main class="grey lighten-2">
-      <v-container fluid>
+      <v-container class="pa-8" fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -40,8 +38,6 @@ Main app component: defines a single layout for all pages.
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
-import LanControl from "@/components/LanControl.vue";
-
-const drawer = ref(true);
-</script>
+import LanControl from "@/components/connexion/LanControl.vue";
+import MainMenuList from "@/components/menus/MainMenuList.vue";
+import SvgRobot from "@/components/icons/SvgRobot.vue";</script>

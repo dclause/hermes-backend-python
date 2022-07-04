@@ -7,19 +7,18 @@
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/_variables.scss";
-
 // Vuetify
 import { createVuetify } from "vuetify";
 
 export default createVuetify({
   theme: {
-    options: { customProperties: true },
+    // options: { customProperties: true },
     defaultTheme: "light",
     themes: {
       // Light custom theme (based on vuetify 2 default color scheme).
       light: {
         colors: {
-          background: "#FFFFFF",
+          background: "#D7D7D7",
           surface: "#FFFFFF",
           primary: "#1976D2",
           secondary: "#424242",

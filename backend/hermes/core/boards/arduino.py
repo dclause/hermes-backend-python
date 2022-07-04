@@ -24,9 +24,10 @@ class ArduinoBoardType(StringEnum):
 class ArduinoBoard(AbstractBoard):
     """ ArduinoBoard implementation """
 
-    def __init__(self, name, port: str):
+    def __init__(self, name, port: str, model: ArduinoBoardType):
         super().__init__(name)
         self.port = port
+        self.model = model
 
         self._is_connected: bool = False
         self._connexion: AbstractProtocol = SerialProtocol(self.port)

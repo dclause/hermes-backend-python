@@ -1,13 +1,9 @@
-<!--
-Monitors the socketIO connection to the server.
--->
-
 <template>
   <v-tooltip location="bottom">
     <template v-slot:activator="{ props }">
       <v-btn :class="status.class" :icon="status.icon" v-bind="props" />
     </template>
-    <span>{{ status.status }}</span>
+    <span>Server: {{ status.status }}</span>
   </v-tooltip>
 </template>
 
@@ -16,16 +12,24 @@ import { useSocket } from "@/plugins/socketIO";
 import { useLedStore } from "@/stores/led";
 import { MutationType } from "pinia";
 import { reactive } from "vue";
+import { useConfigStore } from "@/stores/config";
+import { useProfileStore } from "@/stores/profile";
+import { useBoardStore } from "@/stores/boards";
+import { useDeviceStore } from "@/stores/devices";
 
 // Extract composables.
 const ledStore = useLedStore();
+const configStore = useConfigStore();
+const profileStore = useProfileStore();
+const boardStore = useBoardStore();
+const deviceStore = useDeviceStore();
 const socket = useSocket();
 
 // Init the status display.
 const status = reactive({
   icon: "mdi-lan-pending",
   class: "blink",
-  status: "connecting",
+  status: "connecting"
 });
 
 // Defines socket receivable messages.
@@ -40,6 +44,13 @@ socket
     status.icon = "mdi-lan-pending";
     status.class = "blink";
     status.status = "connecting";
+  })
+  .on("handshake", (global, profile, boards, devices) => {
+    console.log("Handshake received");
+    configStore.$state = global;
+    profileStore.$state = profile;
+    boardStore.boards = boards;
+    deviceStore.devices = devices;
   })
   .on("disconnect", () => {
     status.icon = "mdi-lan-disconnect";

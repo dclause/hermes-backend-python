@@ -1,0 +1,56 @@
+# Git normalization
+# @see https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
+
+# ===
+# Define text file attributes.
+# - Treat them as text.
+# - Ensure no CRLF line-endings, neither on checkout nor on checkin.
+# - Detect whitespace errors.
+#   - Exposed by default in `git diff --color` on the CLI.
+#   - Validate with `git diff --check`.
+#   - Deny applying with `git apply --whitespace=error-all`.
+#   - Fix automatically with `git apply --whitespace=fix`.
+# ===
+
+* text=auto eol=lf whitespace=blank-at-eol,-blank-at-eof,-space-before-tab,tab-in-indent
+
+# ===
+# Binary Files (don't diff, don't fix line endings)
+# ===
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.tiff binary
+
+# Fonts
+*.oft binary
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+
+# Videos
+*.mov binary
+*.mp4 binary
+*.webm binary
+*.ogg binary
+*.mpg binary
+*.3gp binary
+*.avi binary
+*.wmv binary
+*.flv binary
+*.asf binary
+
+# Audio
+*.mp3 binary
+*.wav binary
+*.flac binary
+
+# Compressed
+*.gz binary
+*.zip binary
+*.7z binary

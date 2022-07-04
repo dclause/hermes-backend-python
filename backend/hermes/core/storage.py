@@ -4,6 +4,7 @@ Defines the storage interface used to load/dump configs. It currently uses YAML 
 The purpose to separate it to its own module is to later be able to swap to a different dumper style if needed.
 """
 import glob
+import io
 import os.path
 from typing import Any
 
@@ -95,3 +96,16 @@ def write(config_type: StorageType, data: Any) -> None:
             _storage.dump(data, file)
         else:
             _storage.dump_all(data, file)
+
+
+def dump(data) -> Any:
+    """
+    Returns the given data dump.
+
+    Args:
+        data (Any):
+            The data to dump.
+    """
+    buffer = io.StringIO()
+    _storage.dump(data, buffer)
+    return buffer.getvalue()
