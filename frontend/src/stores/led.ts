@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 export const useLedStore = defineStore({
   id: "led",
   state: () => ({
-    led: false,
+    led: false
   }),
   getters: {},
   actions: {
@@ -12,6 +12,6 @@ export const useLedStore = defineStore({
     },
     turnOff() {
       this.led = false;
-    },
-  },
+    }
+  }
 });

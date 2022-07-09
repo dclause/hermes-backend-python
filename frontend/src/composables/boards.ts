@@ -10,7 +10,7 @@ interface BoardList {
  */
 export function useBoard(boardType: string): Component {
   const boards: BoardList = {
-    ArduinoBoard: ArduinoBoard,
+    ArduinoBoard: ArduinoBoard
   };
   return boards[boardType];
 }

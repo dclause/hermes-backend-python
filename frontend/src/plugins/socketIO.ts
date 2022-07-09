@@ -15,13 +15,13 @@ export const socketIO: Plugin = {
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      reconnectionAttempts: 99999,
+      reconnectionAttempts: 99999
     }) as Socket;
     // Globally accessible $socket (better)
     app.config.globalProperties.$socket = socket;
     // Globally provide/inject socket (@see useSocket()).
     app.provide("socket", socket);
-  },
+  }
 };
 
 export function useSocket(): Socket {

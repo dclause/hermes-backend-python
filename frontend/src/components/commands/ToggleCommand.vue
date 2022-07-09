@@ -6,11 +6,10 @@
     hide-details
     inline
     inset
-  ></v-switch>
+  />
 </template>
 
 <script lang="ts" setup>
-
 import { defineModel } from "@/composables/vmodel";
 
 const props = defineProps({

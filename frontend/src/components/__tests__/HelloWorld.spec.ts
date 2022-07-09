@@ -11,8 +11,8 @@ describe("HelloWorld", () => {
   it("renders properly", () => {
     const wrapper = mount(HelloWorld, {
       global: {
-        plugins: [vuetify],
-      },
+        plugins: [vuetify]
+      }
     });
     expect(wrapper.text()).toContain("Welcome to Vuetify 3 Beta Vite Preview");
   });

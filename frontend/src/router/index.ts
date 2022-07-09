@@ -9,24 +9,24 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomePage,
+      component: HomePage
     },
     {
       path: "/about",
       name: "about",
-      component: () => import("../pages/AboutPage.vue"),
+      component: () => import("../pages/AboutPage.vue")
     },
     {
       path: "/boards",
       name: "boards",
-      component: BoardListPage,
+      component: BoardListPage
     },
     {
       path: "/devices",
       name: "devices",
-      component: DeviceListPage,
-    },
-  ],
+      component: DeviceListPage
+    }
+  ]
 });
 
 export default router;

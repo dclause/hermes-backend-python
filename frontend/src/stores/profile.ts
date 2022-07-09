@@ -4,5 +4,5 @@ export const useProfileStore = defineStore({
   id: "config",
   state: () => ({}),
   getters: {},
-  actions: {},
+  actions: {}
 });

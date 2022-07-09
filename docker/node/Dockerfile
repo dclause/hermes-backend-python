@@ -4,8 +4,6 @@ FROM cypress/base:${NODE_VERSION}
 USER root
 
 ARG NODE_ENV
-ENV NPM_CONFIG_LOGLEVEL info
-ENV NODE_DEV ${NODE_ENV}
 
 # We select this directory because webstorm requires this path for remote debugging setup.
 WORKDIR /opt/project

@@ -11,11 +11,9 @@ import { computed, getCurrentInstance, ref } from "vue";
  * @note Currently, the propName has to be 'modelValue' exactly, hence the default value.
  * @see https://vuejs.org/guide/components/events.html#usage-with-v-model
  */
-export function defineModel<
-  Props extends object,
+export function defineModel<Props extends object,
   Prop extends Extract<keyof Props, string>,
-  Inner = Props[Prop]
->(props: Props, propName: Prop = "modelValue" as Prop) {
+  Inner = Props[Prop]>(props: Props, propName: Prop = "modelValue" as Prop) {
   const _vue = getCurrentInstance();
 
   const propIsDefined = computed(() => {
@@ -41,6 +39,6 @@ export function defineModel<
       }
       internal.value = newValue;
       _vue!.emit(`update:${propName}`, newValue);
-    },
+    }
   });
 }

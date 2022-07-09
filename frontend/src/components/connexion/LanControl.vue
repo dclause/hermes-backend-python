@@ -1,23 +1,27 @@
 <template>
   <v-tooltip location="bottom">
-    <template v-slot:activator="{ props }">
-      <v-btn :class="status.class" :icon="status.icon" v-bind="props" />
+    <template #activator="{ props }">
+      <v-btn
+        :class="{ blink: pending }"
+        :icon="icon"
+        v-bind="props"
+      />
     </template>
-    <span>Server: {{ status.status }}</span>
+    <span>Server: {{ status }}</span>
   </v-tooltip>
 </template>
 
 <script lang="ts" setup>
 import { useSocket } from "@/plugins/socketIO";
 import { useLedStore } from "@/stores/led";
-import { MutationType } from "pinia";
-import { reactive } from "vue";
+import { MutationType, storeToRefs } from "pinia";
+import { computed } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useProfileStore } from "@/stores/profile";
 import { useBoardStore } from "@/stores/boards";
 import { useDeviceStore } from "@/stores/devices";
 
-// Extract composables.
+// Extract composable.
 const ledStore = useLedStore();
 const configStore = useConfigStore();
 const profileStore = useProfileStore();
@@ -25,37 +29,45 @@ const boardStore = useBoardStore();
 const deviceStore = useDeviceStore();
 const socket = useSocket();
 
-// Init the status display.
-const status = reactive({
-  icon: "mdi-lan-pending",
-  class: "blink",
-  status: "connecting"
+const { connected } = storeToRefs(configStore);
+const pending = computed(() => connected.value === undefined);
+
+const icon = computed(() => {
+  if (pending.value) {
+    return "mdi-lan-pending";
+  } else if (connected.value) {
+    return "mdi-lan-check";
+  }
+  return "mdi-lan-disconnect";
+});
+
+const status = computed(() => {
+  if (pending.value) {
+    return "connecting...";
+  } else if (connected.value) {
+    return "connected";
+  }
+  return "disconnected";
 });
 
 // Defines socket receivable messages.
 socket
   .on("connect", () => {
-    status.icon = "mdi-lan-check";
-    status.class = "";
-    status.status = "connected";
+    configStore.$patch({ connected: true });
   })
   .on("reconnect_attempt", () => {
     console.log("attempt reconnect");
-    status.icon = "mdi-lan-pending";
-    status.class = "blink";
-    status.status = "connecting";
+    configStore.$patch({ connected: undefined });
   })
   .on("handshake", (global, profile, boards, devices) => {
     console.log("Handshake received");
     configStore.$state = global;
     profileStore.$state = profile;
-    boardStore.boards = boards;
-    deviceStore.devices = devices;
+    boardStore.$patch({ boards: boards });
+    deviceStore.$patch({ devices: devices });
   })
   .on("disconnect", () => {
-    status.icon = "mdi-lan-disconnect";
-    status.class = "";
-    status.status = "disconnected";
+    configStore.$patch({ connected: false });
   })
   .on("patch", (paylaod) => {
     console.log("patch event received:", paylaod);
@@ -64,6 +76,7 @@ socket
 
 // Subscribe to the ledStore: when anything within changes, notify the backend
 // to broadcast this.
+// @todo remove this
 ledStore.$subscribe((mutation, state) => {
   console.log("## led store has mutated ##", mutation.type, state);
   if (mutation.type == MutationType.direct) {

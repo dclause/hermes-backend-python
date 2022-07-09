@@ -13,7 +13,10 @@
           <v-card-title class="text-h5">
             Oops ... the connection was lost
           </v-card-title>
-          <v-card-subtitle>This is ground control to robot... please respond !</v-card-subtitle>
+          <v-card-subtitle>
+            This is ground control to robot... please respond
+            !
+          </v-card-subtitle>
         </div>
       </div>
     </v-card>

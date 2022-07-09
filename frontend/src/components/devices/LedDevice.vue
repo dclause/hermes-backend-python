@@ -7,28 +7,38 @@
     </v-card-title>
     <v-card-subtitle>{{ board.name }} (PIN: {{ device.pin }})</v-card-subtitle>
     <v-card-text>
-      <toggle-command v-model="device.value" :label="feedback" />
+      <toggle-command
+        v-model="device.value"
+        :label="feedback"
+      />
     </v-card-text>
   </v-card>
 </template>
 
 <script lang="ts" setup>
-import { defineModel } from "@/composables/vmodel";
 import ToggleCommand from "@/components/commands/ToggleCommand.vue";
 import { computed } from "vue";
 import SvgLed from "@/components/icons/SvgLed.vue";
 import { useBoardStore } from "@/stores/boards";
+import { DeviceConfigurationProperties, useDeviceStore } from "@/stores/devices";
 
 const props = defineProps({
-  modelValue: Object
+  deviceId: {
+    type: String,
+    required: true
+  }
 });
-const device = defineModel(props);
+
+// Get device.
+const deviceStore = useDeviceStore();
+const device: DeviceConfigurationProperties = deviceStore.getDevice(
+  props.deviceId
+);
 
 // Get board.
 const boardStore = useBoardStore();
-const board = computed(() => boardStore.getBoard(props.modelValue!.board));
+const board = computed(() => boardStore.getBoard(device.board));
 
 // Build toggle feedback label.
-const feedback = computed(() => `Led: ${props.modelValue!.value === true ? "On" : "Off"}`);
-
+const feedback = computed(() => `Led: ${device.value === true ? "On" : "Off"}`);
 </script>

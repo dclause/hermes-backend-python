@@ -12,13 +12,16 @@
 </template>
 
 <script lang="ts" setup>
-
-import { defineModel } from "@/composables/vmodel";
 import SvgArduino from "@/components/icons/SvgArduino.vue";
+import { useBoardStore } from "@/stores/boards";
 
 const props = defineProps({
-  modelValue: Object
+  boardId: {
+    type: Number,
+    required: true
+  }
 });
-const board = defineModel(props);
 
+const boardStore = useBoardStore();
+const board = boardStore.getBoard(props.boardId);
 </script>

@@ -1,7 +1,5 @@
 <template>
-  <LedDevice />
-  <LedDevice />
+  <div>Welcome on HERMES</div>
 </template>
 
-<script lang="ts" setup>
-import LedDevice from "@/components/devices/LedDevice.vue";</script>
+<script lang="ts" setup></script>

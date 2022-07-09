@@ -10,12 +10,14 @@ services:
       dockerfile: ./node/Dockerfile
       args:
         NODE_VERSION: ${NODE_VERSION}
+    user: root
     entrypoint: /bin/bash
     container_name: "${PROJECT_NAME}_node"
     working_dir: /opt/project
-    user: root
     environment:
       - NODE_ENV=${NODE_ENV}
+      - NPM_CONFIG_LOGLEVEL info
+      - CYPRESS_CACHE_FOLDER=.cypress-cache
     volumes:
       - ../frontend:/opt/project
     ports:
@@ -23,7 +25,7 @@ services:
       - "4010:4010"
       - "4173:4173"
     labels:
-      - traefik.enable=true
+      - "traefik.enable=true"
       - "traefik.docker.network=${PROJECT_NAME}"
       - "traefik.http.routers.${PROJECT_NAME}_node.rule=Host(`${PROJECT_BASE_URL}`)"
       - "traefik.http.services.${PROJECT_NAME}_node.loadbalancer.server.port=4000"
@@ -41,7 +43,7 @@ services:
     ports:
       - "5000:5000"
     labels:
-      - traefik.enable=true
+      - "traefik.enable=true"
       - "traefik.docker.network=${PROJECT_NAME}"
       - "traefik.http.routers.${PROJECT_NAME}_python.rule=Host(`${PROJECT_BASE_URL}`)"
       - "traefik.http.services.${PROJECT_NAME}_python.loadbalancer.server.port=5000"
