@@ -50,7 +50,7 @@ class SerialProtocolTest(unittest.TestCase):
         # pylint: disable-next=no-member
         serial.Serial.close.assert_called_once()  # noqa
 
-    def test_isopen(self):
+    def test_is_open(self):
         """ Tests serial protocol is_open. """
         # True
         serial.Serial.isOpen = MagicMock(name='serial.Serial.isOpen', return_value=True)
@@ -63,18 +63,19 @@ class SerialProtocolTest(unittest.TestCase):
         # pylint: disable-next=no-member
         serial.Serial.isOpen.assert_called_once()  # noqa
 
-    def test_read_command(self):
-        """ Tests serial protocol read_command. """
+    def test_read_byte(self):
+        """ Tests serial protocol read_byte. """
         serial.Serial.read = MagicMock(name='serial.Serial.read', return_value=b'#')
-        self.assertEqual(CommandCode.DEBUG, self._serial_protocol.read_command())
+        self.assertEqual(CommandCode.DEBUG, self._serial_protocol.read_byte())
 
-    def test_send_command(self):
+    def test_send(self):
         """ Tests serial protocol send_command. """
-        self._serial_protocol.send_command(CommandCode.DEBUG)
+        self._serial_protocol.send(bytearray(CommandCode.DEBUG))
         # pylint: disable-next=no-member
         serial.Serial.write.assert_called_once_with(b'#')  # noqa
 
     def test_read_line(self):
         """ Tests serial protocol read_line. """
-        serial.Serial.read = MagicMock(name='serial.Serial.read', side_effect=[b'T', b'E',  b'S', b'T', b'\x0D', b'\x0A', b'S'])
+        serial.Serial.read = MagicMock(name='serial.Serial.read',
+                                       side_effect=[b'T', b'E', b'S', b'T', b'\x0D', b'\x0A', b'S'])
         self.assertEqual("TEST", self._serial_protocol.read_line())

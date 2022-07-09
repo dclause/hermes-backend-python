@@ -17,6 +17,8 @@ from hermes.core.boards.arduino import StringEnum
 from hermes.core.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
 
+# @todo rename to _effectiveStorage
+# @todo document
 _storage = ruamel.yaml.YAML(typ='safe')
 
 

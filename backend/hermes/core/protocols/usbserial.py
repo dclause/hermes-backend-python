@@ -52,13 +52,10 @@ class SerialProtocol(AbstractProtocol):
                 writeTimeout=self._write_timeout
             )
         except SerialException as error:
-            logger.error(
-                'Serial connexion: Port %s could not be opened. Available ports are %s.',
-                self._serial_port,
-                self.get_serial_ports()
-            )
+            logger.error(f'Serial connexion: Port {self._serial_port} could not be opened.')
+            logger.info(f'Available ports are {self.get_serial_ports()}')
             raise ProtocolException(
-                f'Port {self._serial_port} could not be opened. Available ports are {self.get_serial_ports()}'
+                f'Port {self._serial_port} could not be opened'
             ) from error
 
     def close(self) -> None:
@@ -67,16 +64,15 @@ class SerialProtocol(AbstractProtocol):
     def is_open(self) -> bool:
         return self._serial.isOpen()
 
-    def read_command(self) -> CommandCode:
+    def read_byte(self) -> int:
         bytes_array = None
         while not bytes_array:
             bytes_array = bytearray(self._serial.read(1))
-        logger.debug('Serial protocol: Received command code %s', str(bytes_array[0]))
-        return CommandCode(bytes_array[0])
+        logger.debug(f'Serial protocol: Received command code {str(bytes_array[0])}')
+        return bytes_array[0]
 
-    def send_command(self, command_code: CommandCode, *args, **kwargs) -> None:
-        data = bytearray([command_code, *args])  # SERVO, device 1, position 180
-        logger.error('Serial protocol: Send command %s', data)
+    def send(self, data: bytearray) -> None:
+        logger.debug(f'Serial protocol: Send command {data}')
         self._serial.write(data)
 
     def read_line(self) -> str:
@@ -121,6 +117,7 @@ class SerialProtocol(AbstractProtocol):
         return results
 
 
+# @todo implement receiving from the protocol.
 # class SerialSenderThread(threading.Thread):
 #     """
 #     Thread that send orders to the arduino
@@ -198,7 +195,7 @@ class CommandListenerThread(threading.Thread):
 
         while not self.exit_event.is_set():
 
-            command_code = self._connexion.read_command()
+            command_code: CommandCode = CommandCode(self._connexion.read_byte())
             logger.debug(f'CommandListenerThread: receive command code {command_code}')
 
             with self.serial_lock:

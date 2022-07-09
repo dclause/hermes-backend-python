@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
 
-export declare interface DeviceConfigurationProperties extends Object {
+export type DeviceConfigurationProperties = {
   name: string;
-  id: string;
-  board: string;
+  id: number;
+  board: number;
+  state: unknown;
 
   [x: string]: unknown;
 }
@@ -11,12 +12,16 @@ export declare interface DeviceConfigurationProperties extends Object {
 export const useDeviceStore = defineStore({
   id: "devices",
   state: () => ({
-    devices: {} as Record<string, DeviceConfigurationProperties>
+    devices: {} as Record<number, DeviceConfigurationProperties>
   }),
   getters: {
     getDevice: (state) => {
-      return (id: string) => state.devices[id] as DeviceConfigurationProperties;
+      return (id: number) => state.devices[id] as DeviceConfigurationProperties;
     }
   },
-  actions: {}
+  actions: {
+    patch(device_id: number, partial: Record<string, unknown>) {
+      this.devices[device_id].name += "test";
+    }
+  }
 });

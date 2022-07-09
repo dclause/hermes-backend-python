@@ -17,7 +17,7 @@ import { useBoardStore } from "@/stores/boards";
 
 const props = defineProps({
   boardId: {
-    type: String,
+    type: Number,
     required: true
   }
 });

@@ -3,11 +3,8 @@
 
 """ HERMES application entry point. """
 
-from hermes.core import boards, logger, server, plugins, storage
 from hermes.core import config
-from hermes.core.boards.arduino import ArduinoBoard
-from hermes.core.devices.led import LedDevice
-from hermes.core.storage import StorageType
+from hermes.core import logger, server, plugins, storage
 
 
 class App:
@@ -31,11 +28,12 @@ class App:
         logger.info('== Starting HERMES ==')
         server.start()
 
+        # @todo remove once tests are finished.
         # while True:
         # command_name = input('Get a command?\n')
         # command = CommandFactory().get_by_name(command_name)
         # if command is None:
-        #     logger.error('Command %s do not exists.', command_name)
+        #     logger.error(f'Command {command_name} do not exists.', command_name)
         #     continue
         #
         # BOARDS[1].send_command(command.code, 1, 180)

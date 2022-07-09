@@ -1,23 +1,23 @@
-""" Core/Boards package
-
-Contains anything related to configurable boards.
-Currently, only arduino boards are supported.
-
-Boards can be created from configs file leaving in the config/boards directory. Each board YAML file must validate the
-schema provided within this package.
-Boards are detected when the package is imported for the first time and globally available by import.
-
-Examples:
-    `from hermes.core.boards import BOARDS`
-
 """
+Boards package.
+This package contains all implemented boards provided by default in HERMES.
+
+A board is a physical electronic circuit equipped with a programmable controller and capable to communicate with this
+server via a `protocol`. (ex: Arduino boards)
+
+Boards can be created from configs file leaving in the config/boards.yml file. Each board must validate the
+schema provided within this package.
+Boards are detected when the package is imported for the first time and globally available via the CONFIG under
+the `boards` key.
+
+@see `Protocol` in the protocol package.
+"""
+
 from abc import abstractmethod
 
-from func_timeout import func_set_timeout
-
 from hermes.core import logger
-from hermes.core.commands.blink import CommandCode
 from hermes.core.plugins import AbstractPlugin
+from hermes.core.protocols import AbstractProtocol
 from hermes.core.struct import MetaPluginType
 
 
@@ -27,6 +27,11 @@ class BoardException(Exception):
 
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     """ Handles the serial communication with an external board. """
+
+    def __init__(self, name):
+        super().__init__(name)
+        self.is_connected: bool = False
+        self._connexion: AbstractProtocol
 
     @abstractmethod
     def open(self) -> bool:
@@ -45,22 +50,23 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     def close(self) -> bool:
         """ Closes the connexion. """
 
-    @abstractmethod
-    @func_set_timeout(1)
-    def handshake(self) -> bool:
-        """ Performs handshake between the board and the application. """
+    # @todo how to handle handshake from a board ? => the board should probably request it.
+    # @abstractmethod
+    # @func_set_timeout(1)
+    # def handshake(self) -> bool:
+    #     """ Performs handshake between the board and the application. """
 
     @abstractmethod
-    def send_command(self, command_code: CommandCode, *args, **kwargs):
+    def send(self, data: bytearray):
         """
-        Sends the given command.
+        Sends the given data (via the internal protocol)
 
         Args:
-            command_code (CommandCode)
+            data (bytearray) An array of byte to transfer.
         """
 
     def __del__(self):
-        logger.info(' > Close board %s', str(self.id))
+        logger.info(f' > Close board {self.id}')
         self.close()
 
 

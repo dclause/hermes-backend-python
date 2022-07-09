@@ -1,8 +1,33 @@
-""" Commands package """
+"""
+Commands package.
+This package contains all implemented commands provided by default in HERMES.
+
+A command is an action requested from and/or to a device/board. It can come from:
+    - a device/board to be executed by the server (ex: DEBUG)
+    - the server for a client (ex: HANDSHAKE)
+    - the server to a board (ex: SERVO)
+or any combination of those.
+@see Device definition in devices package.
+
+A command is represented by a unique 8bit identifier. Those are defined via the CommandCode enum.
+
+Commands are detected when the package is imported for the first time and globally available via the commandFactory.
+"""
 from enum import IntEnum
 
+from hermes.core import logger, config
 from hermes.core.struct import MetaPluginType, MetaSingleton
 
+
+class CommandException(Exception):
+    """ Base class for command related exceptions. """
+
+
+# @todo export this enum to a single 'knowledge dictionary' file and create a code generator to make it.
+# The purpose would be to not repeat the enum thought all languages and parts of the project.
+# @see frontend/composables/commands.ts
+# @see backend/hermes/core/commands/__init__/py
+# @see arduino/Commands/CommandCode.h
 
 class CommandCode(IntEnum):
     """ Defines the command codes that can be sent/received.
@@ -66,13 +91,21 @@ class AbstractCommand(metaclass=MetaPluginType):
     def __str__(self):
         return f'Command {self.name}'
 
-    def send(self, connexion):
+    @classmethod
+    def encode(cls, value: any) -> bytearray:
+        """ Encodes the given value as an array of bytes. """
+        return bytearray([value])
+
+    def send(self, device_id: int, value: any):
         """ Sends the command. """
+        device = config.DEVICES[device_id]
+        header = bytearray([self.code, device.id])
+        data = self.encode(value)
+        config.BOARDS[device.board].send(header + data)
 
     def receive(self, connexion):
         """ Reads the additional parameters sent with the command. """
 
-    # @logthis
     def process(self):
         """ Processes the command """
 
@@ -87,18 +120,24 @@ class CommandFactory(metaclass=MetaSingleton):
         for command in AbstractCommand.plugins:
             self.__commands[command().code] = command()
 
-    def get_by_code(self, command_code: CommandCode) -> AbstractCommand | None:
+    def get_by_code(self, code: CommandCode) -> AbstractCommand | None:
         """ Instantiates a AbstractCommand based on a given CommandCode
 
         Args:
-            command_code (CommandCode): The CommandCode of the Command to instantiate.
+            code (CommandCode): The CommandCode of the Command to instantiate.
         Returns:
             AbstractCommand | None
+        Raises:
+            CommandException: the command code does not exist.
 
         See Also:
             :class:`CommandCode`
         """
-        return self.__commands.get(command_code)
+        command = self.__commands.get(code)
+        if command is None:
+            logger.error(f'Command {code} do not exists.')
+            raise CommandException(f'Command with code `{code}` do not exists.')
+        return command
 
     def get_by_name(self, name: str) -> AbstractCommand | None:
         """ Instantiates a AbstractCommand based on a given name
@@ -107,11 +146,17 @@ class CommandFactory(metaclass=MetaSingleton):
             name (str): The name of the Command to instantiate.
         Returns
             AbstractCommand or None
+        Raises:
+            CommandException: the command name does not exist.
 
         See Also:
             :class:`CommandCode`
         """
-        return next((command for command in self.__commands.values() if getattr(command, 'name') == name), None)
+        command = next((command for command in self.__commands.values() if getattr(command, 'name') == name), None)
+        if command is None:
+            logger.error(f'Command {name} do not exists.')
+            raise CommandException(f'Command with name `{name}` do not exists.')
+        return command
 
 
-__ALL__ = ["AbstractCommand", "CommandCode", "CommandFactory"]
+__ALL__ = ["AbstractCommand", "CommandCode", "CommandFactory", "CommandException"]

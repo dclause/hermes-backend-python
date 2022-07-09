@@ -5,7 +5,6 @@ This webserver is responsible for :
 """
 import os
 from threading import Thread
-from typing import Any
 
 from flask import Flask, jsonify, send_file
 from flask_cors import CORS
@@ -13,7 +12,7 @@ from flask_socketio import SocketIO, emit
 
 from hermes import __version__
 from hermes.core import config, logger
-from hermes.core.commands import CommandFactory
+from hermes.core.commands import CommandFactory, CommandCode
 from hermes.core.helpers import ROOT_DIR
 
 
@@ -79,16 +78,16 @@ class _WebServerThread(Thread):
                 {key: device.serialize() for key, device in config.DEVICES.items()}
             ))
 
-        @self._socketio.on('mutation')
-        def mutation(message: dict[str, Any]):
-            logger.debug('## received %s', message)
-            emit('patch', message, broadcast=True)
-            config.update(message)
-            command_name = list(message.keys())[0]
-            command = CommandFactory().get_by_name(command_name)
-            if command is None:
-                logger.error('Command %s do not exists.', command_name)
-            config.BOARDS[1].send_command(command.code, message[command_name])
+        @self._socketio.on('command')
+        def mutation(command_code: CommandCode, device_id: int, value: any):
+            logger.debug(f'## socketIO received "Mutation" with parameter: {command_code} {device_id} {value}')
+            try:
+                command = CommandFactory().get_by_code(command_code)
+                command.send(device_id, value)
+                config.DEVICES[device_id].state = value
+            except Exception as exception:
+                logger.error(f'Mutation error: command could not be sent because: "{exception}".')
+            emit('patch', (device_id, config.DEVICES[device_id].serialize()), broadcast=True)
 
         # ----------------------------------------
         # WebGUI optional definition

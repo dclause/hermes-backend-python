@@ -7,10 +7,12 @@ given "space".
  - Plugins living in the `plugins` space can each have a `config` package overriding the configuration.
  - Finally the upmost specific configuration is the one given as parameters of the commandline when starting the
   application.
+
+@todo should the global config be a singleton class ?
 """
 
 import argparse
-from typing import Any, MutableMapping
+from typing import Any, MutableMapping, TypedDict, Dict
 
 from mergedeep import merge, Strategy
 
@@ -20,9 +22,20 @@ from hermes.core.boards import AbstractBoard
 from hermes.core.devices import AbstractDevice
 from hermes.core.storage import StorageNamespace, StorageType
 
+
+# @todo expand this an typehint all
+class ConfigurationProperties(TypedDict):
+    config: Dict[str, Any]
+    profile: Dict[str, Any]
+    devices: Dict[str, AbstractDevice]
+    boards: Dict[str, AbstractBoard]
+
+
 # Use global objects to be filled during config reading (@see _get_module_config, _get_profile_config)
 # The reason is those cannot be merged (and are not mergeable) as a config can be.
 # Device list is more 'concatenated' than merged in the proper way.
+# @todo this is smelly: explore convert all of this to OOP.
+# @todo typehint
 _global = {}
 _profile = {}
 _devices = {}

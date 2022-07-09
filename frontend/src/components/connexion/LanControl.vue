@@ -13,8 +13,7 @@
 
 <script lang="ts" setup>
 import { useSocket } from "@/plugins/socketIO";
-import { useLedStore } from "@/stores/led";
-import { MutationType, storeToRefs } from "pinia";
+import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useProfileStore } from "@/stores/profile";
@@ -22,7 +21,6 @@ import { useBoardStore } from "@/stores/boards";
 import { useDeviceStore } from "@/stores/devices";
 
 // Extract composable.
-const ledStore = useLedStore();
 const configStore = useConfigStore();
 const profileStore = useProfileStore();
 const boardStore = useBoardStore();
@@ -69,21 +67,13 @@ socket
   .on("disconnect", () => {
     configStore.$patch({ connected: false });
   })
-  .on("patch", (paylaod) => {
-    console.log("patch event received:", paylaod);
-    ledStore.$state = paylaod;
+  .on("patch", (device_id, partial) => {
+    // @todo get this to work no matter if board / device.
+    console.log("Received patch order for", device_id, partial);
+    deviceStore.$patch({
+      devices: { [device_id]: partial }
+    });
   });
-
-// Subscribe to the ledStore: when anything within changes, notify the backend
-// to broadcast this.
-// @todo remove this
-ledStore.$subscribe((mutation, state) => {
-  console.log("## led store has mutated ##", mutation.type, state);
-  if (mutation.type == MutationType.direct) {
-    console.log("## emit mutation ##");
-    socket.emit("mutation", state);
-  }
-});
 </script>
 
 <style lang="css">

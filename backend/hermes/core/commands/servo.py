@@ -5,6 +5,7 @@ code: CommandCode::SERVO
 """
 
 from hermes.core.commands import AbstractCommand, CommandCode
+from hermes.core.devices import AbstractDevice
 
 
 class ServoCommand(AbstractCommand):
@@ -13,7 +14,7 @@ class ServoCommand(AbstractCommand):
     def __init__(self):
         super().__init__(CommandCode.SERVO, 'SERVO')
 
-    def send(self, connexion):
+    def send(self, device: AbstractDevice, value: any):
         """ Sends the command. """
 
     def receive(self, connexion):

@@ -1,10 +1,13 @@
 """
-Protocol communication definition.
+Protocol communication package.
+This package contains all implemented communication protocols provided by default in HERMES.
+
+A "communication protocol" defines a way for a board to communicate with this server, therefore a protocol is designed
+to be embedded in a board (see AbstractBoard) and must implement the AbstractProtocol interface. (ex: SerialProtocol)
 """
 
 from abc import abstractmethod
 
-from hermes.core.commands.blink import CommandCode
 from hermes.core.struct import MetaPluginType
 
 
@@ -36,20 +39,25 @@ class AbstractProtocol(metaclass=MetaPluginType):
         """ Checks if the connexion is active. """
 
     @abstractmethod
-    def read_command(self) -> CommandCode:
+    def read_byte(self) -> int:
         """
-        Reads a command.
+        Reads a single byte.
 
         Warnings:
             This method is blocking.
 
         Returns:
-            CommandCode: The 8bit command code.
+            int: The 8bit next byte in queue.
         """
 
     @abstractmethod
-    def send_command(self, command_code: CommandCode, *args, **kwargs) -> None:
-        """ Sends a command. """
+    def send(self, data: bytearray) -> None:
+        """
+        Sends data.
+
+        Args:
+            data (bytearray) An array of byte to send.
+        """
 
     @abstractmethod
     # @func_set_timeout(1)
@@ -65,4 +73,4 @@ class AbstractProtocol(metaclass=MetaPluginType):
         """
 
 
-__ALL__ = ["usbserial"]
+__ALL__ = ["AbstractProtocol", "ProtocolException"]

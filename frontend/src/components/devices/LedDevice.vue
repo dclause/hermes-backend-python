@@ -8,7 +8,7 @@
     <v-card-subtitle>{{ board.name }} (PIN: {{ device.pin }})</v-card-subtitle>
     <v-card-text>
       <toggle-command
-        v-model="device.value"
+        v-model="device"
         :label="feedback"
       />
     </v-card-text>
@@ -24,7 +24,7 @@ import { DeviceConfigurationProperties, useDeviceStore } from "@/stores/devices"
 
 const props = defineProps({
   deviceId: {
-    type: String,
+    type: Number,
     required: true
   }
 });
@@ -41,4 +41,5 @@ const board = computed(() => boardStore.getBoard(device.board));
 
 // Build toggle feedback label.
 const feedback = computed(() => `Led: ${device.value === true ? "On" : "Off"}`);
+
 </script>
