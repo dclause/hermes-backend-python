@@ -1,14 +1,13 @@
 import ArduinoBoard from "@/components/boards/ArduinoBoard.vue";
-import type { Component } from "vue";
 
 interface BoardList {
-  [key: string]: Component;
+  [key: string]: unknown;
 }
 
 /**
  * Returns a list of available boards.
  */
-export function useBoard(boardType: string): Component {
+export function useBoard(boardType: string): unknown {
   const boards: BoardList = {
     ArduinoBoard: ArduinoBoard
   };

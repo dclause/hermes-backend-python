@@ -14,7 +14,10 @@ import { defineModel } from "@/composables/vmodel";
 
 const props = defineProps({
   modelValue: Boolean,
-  label: String
+  label: {
+    type: String,
+    default: ""
+  }
 });
 
 const value = defineModel(props);

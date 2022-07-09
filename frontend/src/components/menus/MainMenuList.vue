@@ -1,7 +1,7 @@
 <template>
   <v-list nav>
     <v-tooltip>
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-list-item
           prepend-icon="mdi-chip"
           title="Boards"
@@ -13,7 +13,7 @@
     </v-tooltip>
 
     <v-tooltip>
-      <template v-slot:activator="{ props }">
+      <template #activator="{ props }">
         <v-list-item
           link
           prepend-icon="mdi-connection"

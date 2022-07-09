@@ -18,7 +18,7 @@ export function defineModel<Props extends object,
 
   const propIsDefined = computed(() => {
     return (
-      typeof props[propName] !== "undefined" && props.hasOwnProperty(propName)
+      typeof props[propName] !== "undefined" && Object.prototype.hasOwnProperty.call(props, propName)
     );
   });
 
@@ -26,9 +26,9 @@ export function defineModel<Props extends object,
   const internal = ref(props[propName]) as Ref<Inner>;
 
   // Returns a computed to be used as model.
-  return computed<Inner extends any[] ? Readonly<Inner> : Inner>({
-    get(): any {
-      if (propIsDefined.value) return props[propName];
+  return computed<Inner>({
+    get(): Inner {
+      if (propIsDefined.value) return props[propName] as unknown as Inner;
       else return internal.value;
     },
     set(newValue) {
@@ -38,7 +38,7 @@ export function defineModel<Props extends object,
         return;
       }
       internal.value = newValue;
-      _vue!.emit(`update:${propName}`, newValue);
+      _vue?.emit(`update:${propName}`, newValue);
     }
   });
 }

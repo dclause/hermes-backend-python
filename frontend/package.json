@@ -14,19 +14,16 @@
   "dependencies": {
     "@mdi/font": "^6.9.96",
     "pinia": "^2.0.14",
-    "roboto-fontface": "*",
     "socket.io-client": "^4.5.1",
-    "vue": "^3.2.36",
+    "vue": "^3.2.37",
     "vue-i18n": "^9.1.10",
     "vue-router": "^4.1.1",
-    "vuetify": "^3.0.0-beta.4",
-    "webfontloader": "^1.0.0"
+    "vuetify": "^3.0.0-beta.5"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.4.0",
     "@types/jsdom": "^16.2.14",
     "@types/node": "^18.0.3",
-    "@types/webfontloader": "^1.0.0",
     "@vitejs/plugin-vue": "^2.3.3",
     "@vue/eslint-config-prettier": "^7.0.0",
     "@vue/eslint-config-typescript": "^11.0.0",

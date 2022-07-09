@@ -1,14 +1,13 @@
 import LedDevice from "@/components/devices/LedDevice.vue";
-import type { Component } from "vue";
 
 interface DeviceList {
-  [key: string]: Component;
+  [key: string]: unknown;
 }
 
 /**
  * Returns a list of available devices.
  */
-export function useDevice(deviceType: string): Component {
+export function useDevice(deviceType: string): unknown {
   const devices: DeviceList = {
     LedDevice: LedDevice
   };

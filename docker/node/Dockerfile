@@ -11,7 +11,8 @@ WORKDIR /opt/project
 SHELL ["/bin/bash", "-c"]
 
 RUN npm install --quiet --global \
-      @vue/cli@next @vue/cli-init
+      @vue/cli@next @vue/cli-init \
+	  npm-check-updates
 
 # Should we COPY first to use this ?
 # RUN npm install
