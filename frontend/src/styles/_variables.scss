@@ -1,3 +1,6 @@
+// @todo reuse when documentation on vuetify states how to do.
+// @see https://www.npmjs.com/package/vite-plugin-vuetify
+
 @use 'vuetify/styles' with (
   $font-size-root: 18px,
 );
