@@ -14,9 +14,9 @@ It is composed of three main parts:
 
 # Try it!
 
-**Current develop happen on the `develop` branch**:
+**Current develops happen on the `main` branch**:
 ```
-git clone --branch develop https://github.com/dclause/hermes.git HERMES
+git clone --branch main https://github.com/dclause/hermes.git HERMES
 ```
 
 # Motivation
@@ -29,7 +29,7 @@ HERMES is an experimentation of my own to unify the control of some of my person
   Haas._
 - a full [InMoov robot](https://inmoov.fr) - _an open-source project by Gaël Langevin._
 
-Inspired by [MyRobotLab](http://myrobotlab.org/), it tries to be lighter (to be used on a raspberry), easier and 
+Inspired by [MyRobotLab](http://myrobotlab.org/), it <ins>tries</ins> to be lighter (to be used on a raspberry), easier and 
   more user-friendly.
 
 
