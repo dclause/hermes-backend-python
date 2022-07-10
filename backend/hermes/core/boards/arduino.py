@@ -2,14 +2,9 @@
 Represents a connexion to an electronic board (arduino-like) by embedding its pyserial connexion.
 """
 
-import threading
-
-from func_timeout import FunctionTimedOut
-
-from hermes.core import logger
-from hermes.core.boards import AbstractBoard, BoardException
-from hermes.core.protocols import AbstractProtocol, ProtocolException
-from hermes.core.protocols.usbserial import SerialProtocol, CommandListenerThread
+from hermes.core.boards import AbstractBoard
+from hermes.core.protocols import AbstractProtocol
+from hermes.core.protocols.usbserial import SerialProtocol
 from hermes.core.struct import StringEnum
 
 
@@ -24,70 +19,7 @@ class ArduinoBoard(AbstractBoard):
     """ ArduinoBoard implementation """
 
     def __init__(self, name, port: str, model: ArduinoBoardType):
-        super().__init__(name)
         self.port = port
         self.model = model
-
-        self._connexion: AbstractProtocol = SerialProtocol(self.port)
-        # Event to notify threads that they should terminate
-        self._exit_event = threading.Event()
-        # Number of messages we can send to the Arduino without receiving an acknowledgment
-        # @todo make this configurable
-        n_messages_allowed = 3
-        self._n_received_semaphore = threading.Semaphore(n_messages_allowed)
-        # Lock for accessing serial file (to avoid reading and writing at the same time)
-        serial_lock = threading.Lock()
-        # Threads for arduino communication
-        self._threads = [
-            CommandListenerThread(self._connexion, self._exit_event, self._n_received_semaphore, serial_lock)
-        ]
-
-    def open(self) -> bool:
-        # ###
-        # Open serial port (for communication with Arduino)
-        try:
-            self._connexion.open()
-        except ProtocolException:
-            logger.error(f'Board {self.name}: Connexion could not be opened.')
-            return self.close()
-
-        # ###
-        # Run the Handshake process.
-        try:
-            logger.debug(f'Board {self.name} - Try handshake', )
-            # if not self.handshake():
-            #     raise BoardException('Handshake sequence incorrect.')
-        except (FunctionTimedOut, BoardException) as error:
-            logger.error(f'Board {self.name} - Handshake error: {error}')
-            return self.close()
-
-        # ###
-        # Starts the send/receive threads.
-        for thread in self._threads:
-            thread.start()
-
-        logger.info(f' > Board {self.name} - CONNECTED', )
-        self.connected = True
-        return self.connected
-
-    def close(self) -> bool:
-        logger.info(f' > Board {self.name} - DISCONNECTED', )
-        self._connexion.close()
-        # Ends the multithreading.
-        self._exit_event.set()
-        self._n_received_semaphore.release()
-        for thread in self._threads:
-            if thread.is_alive():
-                thread.join()
-        self.connected = False
-        return self.connected
-
-    # @func_set_timeout(1)
-    # def handshake(self) -> bool:
-    #     self._connexion.send(bytearray(CommandCode.HANDSHAKE))
-    #     code = self._connexion.read_byte()
-    #     logger.info(f'Handshake received code: {code}')
-    #     return code == CommandCode.CONNECTED
-
-    def send(self, data: bytearray):
-        self._connexion.send(data)
+        connexion: AbstractProtocol = SerialProtocol(self.port)
+        super().__init__(name, connexion)

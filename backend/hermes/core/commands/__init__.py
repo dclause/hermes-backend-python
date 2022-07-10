@@ -58,7 +58,7 @@ class CommandCode(IntEnum):
     # Reserved
     VOID = 0  # Reserved @see attention point above
     DEBUG = 35  # Reserved @see debugger.h
-    RESERVED = 10  # Reserved @see attention point above
+    END_OF_LINE = 10  # Reserved @see attention point above
 
     ######
     # 33 to 40: generic purposes.
@@ -66,6 +66,7 @@ class CommandCode(IntEnum):
     CONNECTED = 34  # ascii: "
     # /!\ Skipped 35 for DEBUG.
     ACK = 36  # ascii: $
+    PATCH = 37  # ascii: %
 
     ######
     # 41 - 69: commands related to actuators.

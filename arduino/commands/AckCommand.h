@@ -19,6 +19,10 @@ class AckCommand : public AbstractCommand {
     public:
         String getName() const { return "ACK"; }
 
+        void send() {
+            IO::send_command(CommandCode::ACK);
+        }
+
         void process() {}
 };
 

@@ -21,7 +21,4 @@ class DebugCommand(AbstractCommand):
 
     def process(self):
         """ Processes the command """
-        logger.debug(f' > start command: {str(self)}', )
-        if self._data:
-            logger.info(f'## DEBUG command: Received data: {self._data} ##', )
-        logger.debug(f' > command done: {str(self)}')
+        logger.info(f'## DEBUG ROBOT: {self._data} ##', )

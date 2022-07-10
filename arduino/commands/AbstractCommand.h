@@ -31,13 +31,18 @@
 class AbstractCommand {
 
     protected:
-        uint8_t payload_size_;
+        int expected_payload_size_;
+        unsigned int effective_payload_size_;
         uint8_t *payload_;
 
     public:
-        AbstractCommand(const uint8_t payload_size = 0) : payload_(
-                static_cast<uint8_t *>(malloc(payload_size * sizeof(uint8_t)))),
-                                                          payload_size_(payload_size) {}
+        AbstractCommand(const int expected_payload_size = 0) :
+                expected_payload_size_(expected_payload_size),
+                effective_payload_size_(expected_payload_size ? expected_payload_size : 0) {
+            if (expected_payload_size > 0) {
+                this->payload_ = static_cast<uint8_t *>(malloc(expected_payload_size * sizeof(uint8_t)));
+            }
+        }
 
         virtual ~AbstractCommand() {
             free(this->payload_);
@@ -45,22 +50,38 @@ class AbstractCommand {
         };
 
         /**
-             * Returns a human readable name for the command.
-             *
-             * @return String
-             */
+         * Returns a human readable name for the command.
+         *
+         * @return String
+         */
         virtual String getName() const = 0;
 
+        /**
+         * Load the expected data in the internal payload.
+         * The amount of data loaded is defined by the expected_payload_size_ variable for the command, or the given data
+         * size as first byte sent after command code.
+         * ex: 33 26 1 2 3 .... 26 would solve to a HANDSHAKE (33) with 26 bytes or data (1...26)
+         *
+         * The maximum amount of data sent is 255 bytes.
+         */
         void receive() {
-            if (this->payload_size_) {
-                IO::wait_for_bytes(this->payload_size_, 100);
-                IO::read_bytes(payload_, this->payload_size_);
+            if (this->expected_payload_size_ > 0) {
+                IO::wait_for_bytes(this->expected_payload_size_);
+                IO::read_bytes(this->payload_, this->expected_payload_size_);
+            } else if (this->expected_payload_size_ < 0) {
+                String data = IO::read_until_endl();
+                this->effective_payload_size_ = data.length();
+                TRACE((String) F("Determine data size: ") + (String) this->effective_payload_size_);
+                this->payload_ = static_cast<uint8_t *>(malloc(this->effective_payload_size_ * sizeof(uint8_t)));
+                for (unsigned int i = 0; i < this->effective_payload_size_; i++) {
+                    this->payload_[i] = (uint8_t) data[i];
+                }
             }
         }
 
         /**
-             * Processes the command when received from the serial port.
-             */
+         * Processes the command when received from the serial port.
+         */
         virtual void process() = 0;
 
         /**

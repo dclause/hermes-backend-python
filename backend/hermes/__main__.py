@@ -47,9 +47,9 @@ class App:
     def close(cls):
         """ Closes the application. """
         logger.info('== Stopping HERMES ==')
-        server.close()
         for (_, board) in config.BOARDS.items():
             board.close()
+        server.close()
 
 
 if __name__ == "__main__":

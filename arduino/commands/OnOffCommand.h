@@ -23,11 +23,11 @@ class OnOffCommand : public AbstractCommand {
         String getName() const { return "OnOff"; }
 
         void process() {
-            TRACE((String) F("Start OnOff"));
+            TRACE((String) F("Process OnOff command."));
 
             uint8_t deviceId = this->payload_[0];
             uint8_t value = this->payload_[1];
-            TRACE((String) F("Requested device ") + (String) deviceId + F(" to be set to: ") + (String) value);
+            TRACE((String) F("  > Requested device ") + (String) deviceId + F(" to be set to: ") + (String) value);
 
             // @todo use the devices (when handshake is implemented)
             pinMode(13, OUTPUT);

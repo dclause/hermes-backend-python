@@ -19,9 +19,10 @@ class ServoCommand : public AbstractCommand {
         String getName() const { return "SERVO"; }
 
         void process() {
+            TRACE((String) F("Process Servo command."));
             // uint8_t deviceId = this->payload_[0];
             uint8_t position = this->payload_[1];
-            TRACE((String) F("Requested position: ") + (String) position);
+            TRACE((String) F("  > Requested position: ") + (String) position);
 
         }
 };

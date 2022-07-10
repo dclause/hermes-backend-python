@@ -5,7 +5,7 @@ Used by boards in serial mode (only supported mode as of today).
 --
 TLDR: To send a command, ClearableQueue it. That ClearableQueue is consumed by a dedicated thread of each board
 (CommandSenderThread) which actually sends the command. The number of commands sent is limited until ACK are received to
-prevent growing the serial buffer (CommandListenerThread).
+prevent growing the serial buffer (SerialListenerThread).
 --
 
 This package introduces multithreading to handle communication over the serial port.
@@ -24,12 +24,10 @@ continue its work on sending queued commands.
 
 import glob
 import sys
-import threading
 
 from serial import Serial, SerialException
 
 from hermes.core import logger
-from hermes.core.commands import CommandCode, CommandFactory
 from hermes.core.protocols import AbstractProtocol, ProtocolException
 
 
@@ -51,6 +49,7 @@ class SerialProtocol(AbstractProtocol):
                 timeout=self._timeout,
                 writeTimeout=self._write_timeout
             )
+            self._serial.flush()
         except SerialException as error:
             logger.error(f'Serial connexion: Port {self._serial_port} could not be opened.')
             logger.info(f'Available ports are {self.get_serial_ports()}')
@@ -115,96 +114,3 @@ class SerialProtocol(AbstractProtocol):
             except (OSError, SerialException):
                 pass
         return results
-
-
-# @todo implement receiving from the protocol.
-# class SerialSenderThread(threading.Thread):
-#     """
-#     Thread that send orders to the arduino
-#     it blocks if there is no more send_token left (here it is the n_received_semaphore).
-#     :param serial_file: (Serial object)
-#     :param command_queue: (Queue)
-#     :param exit_event: (Threading.Event object)
-#     :param n_received_semaphore: (threading.Semaphore)
-#     :param serial_lock: (threading.Lock)
-#     """
-#
-#     def __init__(self, serial_file, command_queue, exit_event, n_received_semaphore, serial_lock):
-#         threading.Thread.__init__(self)
-#         self.deamon = True
-#         self.serial_file = serial_file
-#         self.command_queue = command_queue
-#         self.exit_event = exit_event
-#         self.n_received_semaphore = n_received_semaphore
-#         self.serial_lock = serial_lock
-#
-#     def run(self):
-#         while not self.exit_event.is_set():
-#             self.n_received_semaphore.acquire()
-#             if self.exit_event.is_set():
-#                 break
-#             try:
-#                 order, param = self.command_queue.get_nowait()
-#             except ClearableQueue.Empty:
-#                 time.sleep(rate)
-#                 self.n_received_semaphore.release()
-#                 continue
-#
-#             with self.serial_lock:
-#                 write_order(self.serial_file, order)
-#                 # print("Sent {}".format(order))
-#                 if order == Order.MOTOR:
-#                     write_i8(self.serial_file, param)
-#                 elif order == Order.SERVO:
-#                     write_i16(self.serial_file, param)
-#             time.sleep(rate)
-#         print("Command Thread Exited")
-
-
-class CommandListenerThread(threading.Thread):
-    """
-    Thread that listens to communication protocol for commands and executes it.
-
-    The thread reads a commandCode from the communication protocol, turns it to an actual command and processes it.
-    If the commandCode is an ACK, the thread releases one lock to the n_received_semaphore semaphore to clear the way
-    for the CommandSenderThread.
-
-    Args:
-        connexion (AbstractProtocol)
-        exit_event (threading.Event object)
-        n_received_semaphore (threading.Semaphore)
-        serial_lock (threading.Lock)
-    """
-
-    def __init__(
-            self,
-            connexion: AbstractProtocol,
-            exit_event: threading.Event,
-            n_received_semaphore: threading.Semaphore,
-            serial_lock: threading.Lock
-    ):
-        threading.Thread.__init__(self)
-        self.deamon = True
-        self._connexion = connexion
-        self.exit_event = exit_event
-        self.n_received_semaphore = n_received_semaphore
-        self.serial_lock = serial_lock
-
-    def run(self):
-        logger.debug("CommandListenerThread: thread started.")
-
-        while not self.exit_event.is_set():
-
-            command_code: CommandCode = CommandCode(self._connexion.read_byte())
-            logger.debug(f'CommandListenerThread: receive command code {command_code}')
-
-            with self.serial_lock:
-                command = CommandFactory().get_by_code(command_code)
-                logger.debug(command)
-                command.receive(self._connexion)
-                command.process()
-
-                if command_code == CommandCode.ACK:
-                    self.n_received_semaphore.release()
-
-        logger.debug("CommandListenerThread: thread stops.")

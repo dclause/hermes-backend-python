@@ -50,7 +50,7 @@ class DeviceManager {
         }
 
         /**
-         * Gets a device on teh list by its ID.
+         * Gets a device on the list by its ID.
          * @param id
          * @return AbstractDevice
          */

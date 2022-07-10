@@ -19,7 +19,7 @@ class BlinkCommand : public AbstractCommand {
 
         // @todo blinks according to parameters.
         void process() {
-            TRACE((String) F("Start Blink"));
+            TRACE((String) F("~Process Blink command."));
             pinMode(13, OUTPUT);
 
             for (int i = 0; i < 3; i++) {

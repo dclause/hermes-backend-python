@@ -73,8 +73,7 @@ namespace IO {
      * @param num_bytes (uint8_t): The number of bytes to wait for.
      * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
      */
-    void wait_for_bytes(const uint8_t length, const uint32_t timeout) {
-        TRACE((String) F("Wait for ") + (uint8_t) length + F(" bytes"));
+    void wait_for_bytes(const uint8_t length, const uint32_t timeout = 100) {
         const uint32_t startTime = millis();
         while ((Serial.available() < length) && (millis() - startTime < timeout)) {}
     }
@@ -87,6 +86,7 @@ namespace IO {
     CommandCode read_command() {
         const CommandCode code = (CommandCode) Serial.read();
         TRACE((String) F("Command code received: ") + (uint8_t) code);
+
         return code;
     }
 
@@ -101,17 +101,25 @@ namespace IO {
      * @param length (uint8_t) The number of bytes to read.
      */
     void read_bytes(uint8_t *buffer, const uint8_t length) {
-        TRACE((String) F("Try to read: ") + (String) length + F(" characters"));
         uint8_t index = 0;
         uint8_t byte;
         while (index < length) {
             byte = Serial.read();
-            TRACE((String) F("Byte received: ") + (String) byte);
             if (byte < 0) break;
             *buffer++ = (uint8_t) byte;// equivalent to buffer[i] = (int8_t) byte;
             index++;
         }
         TRACE((String) F("Data received: ") + (char *) (buffer));
+    }
+
+    /**
+     * Waits for incoming given amount of bytes from the serial port, or exit if timeout.
+     *
+     * @param num_bytes (uint8_t): The number of bytes to wait for.
+     * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
+     */
+    String read_until_endl() {
+        return Serial.readStringUntil((char) CommandCode::END_OF_LINE);
     }
 
     /**

@@ -70,7 +70,7 @@ class SerialProtocolTest(unittest.TestCase):
 
     def test_send(self):
         """ Tests serial protocol send_command. """
-        self._serial_protocol.send(bytearray(CommandCode.DEBUG))
+        self._serial_protocol.send(bytearray([CommandCode.DEBUG]))
         # pylint: disable-next=no-member
         serial.Serial.write.assert_called_once_with(b'#')  # noqa
 

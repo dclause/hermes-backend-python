@@ -15,19 +15,48 @@ schema provided within this package.
 Devices are detected when the package is imported for the first time and globally available via the CONFIG under
 the `devices` key
 """
+from abc import abstractmethod
+from enum import IntEnum
 
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
 
+class DeviceCode(IntEnum):
+    """ Defines the device codes that are known by the application.
+
+    Each device code will be cast to a 8bits integer, therefore at most 255 commands can be interpreted.
+
+    Device codes cannot be edited later in time for compatibility purposes. Therefore, the list below may be unsorted as
+    time goes on and new device codes are added.
+    """
+
+    LED = 1
+    SERVO = 1
+
+
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type devices. """
 
-    def __init__(self, name: str, board: int, default: any):
+    def __init__(self, code: DeviceCode, name: str, board: int, default: any):
         super().__init__(name)
+        self.code: DeviceCode = code
         self.board: int = board
         self.default: any = default
         self.state: any = default
 
+    @abstractmethod
+    def to_bytes(self) -> bytearray:
+        """
+        Returns the bytearray representation of the device necessary to rebuild the device on the robot side.
 
-__ALL__ = ["AbstractDevice"]
+        The PATCH command (@see commands/patch.py) will create a unified header for a device (code, id), hence this
+        method should exclude those. (@see devices/led.py for a simple example).
+
+        Returns:
+            bytearray
+        """
+        pass
+
+
+__ALL__ = ["AbstractDevice", "DeviceCode"]
