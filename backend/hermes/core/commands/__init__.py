@@ -99,9 +99,12 @@ class AbstractCommand(metaclass=MetaPluginType):
     def send(self, device_id: int, value: any):
         """ Sends the command. """
         device = config.DEVICES[device_id]
+        board = config.BOARDS[device.board]
+        if not board.connected:
+            board.open()
         header = bytearray([self.code, device.id])
         data = self.encode(value)
-        config.BOARDS[device.board].send(header + data)
+        board.send(header + data)
 
     def receive(self, connexion):
         """ Reads the additional parameters sent with the command. """

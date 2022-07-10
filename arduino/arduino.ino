@@ -1,8 +1,8 @@
-#include <Arduino.h>
-#include "helper/ioserial.h"
-#include "debugger.h"
 #include "commands.h"
+#include "debugger.h"
 #include "devices.h"
+#include "helper/ioserial.h"
+#include <Arduino.h>
 
 void setup() {
     IO::begin();

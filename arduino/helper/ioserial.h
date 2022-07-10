@@ -12,9 +12,9 @@
  * (as here) or WIFI (to be implementation) or else.
  */
 
-#include <HardwareSerial.h>
 #include "../commands/CommandCode.h"
 #include "../debugger.h"
+#include <HardwareSerial.h>
 
 #define BAUDRATE 115200
 
@@ -100,7 +100,7 @@ namespace IO {
      * @param buffer (uint8_t*) A buffer array of uint8_t where the result will be stored.
      * @param length (uint8_t) The number of bytes to read.
      */
-    void read_bytes(const uint8_t *buffer, const uint8_t length) {
+    void read_bytes(uint8_t *buffer, const uint8_t length) {
         TRACE((String) F("Try to read: ") + (String) length + F(" characters"));
         uint8_t index = 0;
         uint8_t byte;
@@ -108,7 +108,7 @@ namespace IO {
             byte = Serial.read();
             TRACE((String) F("Byte received: ") + (String) byte);
             if (byte < 0) break;
-            *buffer++ = (uint8_t) byte;  // equivalent to buffer[i] = (int8_t) byte;
+            *buffer++ = (uint8_t) byte;// equivalent to buffer[i] = (int8_t) byte;
             index++;
         }
         TRACE((String) F("Data received: ") + (char *) (buffer));
@@ -133,6 +133,6 @@ namespace IO {
     void send_bytes(const uint8_t *buffer, const uint8_t length) {
         Serial.write(buffer, length);
     }
-}
+}// namespace IO
 
-#endif // ARDUINO_IO_H
+#endif// ARDUINO_IO_H

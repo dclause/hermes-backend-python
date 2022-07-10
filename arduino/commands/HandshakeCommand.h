@@ -16,14 +16,14 @@
  * @see CommandCode::HANDSHAKE
  */
 class HandshakeCommand : public AbstractCommand {
-    COMMAND_DECLARATION
-    public:
-        String getName() const { return "Handshake"; }
+COMMAND_DECLARATION
+public:
+    String getName() const { return "Handshake"; }
 
-        void process() {
-            TRACE((String) F("Start Handshake"));
-            IO::send_command(CommandCode::CONNECTED);
-        }
+    void process() {
+        TRACE((String) F("Start Handshake"));
+        IO::send_command(CommandCode::CONNECTED);
+    }
 };
 
 REGISTER_COMMAND(CommandCode::HANDSHAKE, HandshakeCommand)

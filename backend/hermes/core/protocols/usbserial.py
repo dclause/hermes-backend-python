@@ -191,7 +191,7 @@ class CommandListenerThread(threading.Thread):
         self.serial_lock = serial_lock
 
     def run(self):
-        logger.info("CommandListenerThread: thread started.")
+        logger.debug("CommandListenerThread: thread started.")
 
         while not self.exit_event.is_set():
 
@@ -207,4 +207,4 @@ class CommandListenerThread(threading.Thread):
                 if command_code == CommandCode.ACK:
                     self.n_received_semaphore.release()
 
-        logger.info("CommandListenerThread: thread stops.")
+        logger.debug("CommandListenerThread: thread stops.")

@@ -1,9 +1,9 @@
 #ifndef ARDUINO_COMMAND_H
 #define ARDUINO_COMMAND_H
 
-#include <Arduino.h>
 #include "../debugger.h"
 #include "../helper/ioserial.h"
+#include <Arduino.h>
 
 
 /**
@@ -35,10 +35,9 @@ class AbstractCommand {
         uint8_t *payload_;
 
     public:
-
-        AbstractCommand(const uint8_t payload_size = 0) :
-                payload_(static_cast<uint8_t *>(malloc(payload_size * sizeof(uint8_t)))),
-                payload_size_(payload_size) {}
+        AbstractCommand(const uint8_t payload_size = 0) : payload_(
+                static_cast<uint8_t *>(malloc(payload_size * sizeof(uint8_t)))),
+                                                          payload_size_(payload_size) {}
 
         virtual ~AbstractCommand() {
             free(this->payload_);
@@ -46,10 +45,10 @@ class AbstractCommand {
         };
 
         /**
-         * Returns a human readable name for the command.
-         *
-         * @return String
-         */
+             * Returns a human readable name for the command.
+             *
+             * @return String
+             */
         virtual String getName() const = 0;
 
         void receive() {
@@ -60,18 +59,18 @@ class AbstractCommand {
         }
 
         /**
-         * Processes the command when received from the serial port.
-         */
+             * Processes the command when received from the serial port.
+             */
         virtual void process() = 0;
 
         /**
-         * Stringifies the command for debug purpose.
-         *
-         * @return String
-         */
+             * Stringifies the command for debug purpose.
+             *
+             * @return String
+             */
         operator String() const {
             return (String) F("Command ") + this->getName();
         }
 };
 
-#endif // ARDUINO_COMMAND_H
+#endif// ARDUINO_COMMAND_H

@@ -5,6 +5,7 @@
 #include "commands/HandshakeCommand.h"
 #include "commands/AckCommand.h"
 #include "commands/BlinkCommand.h"
+#include "commands/OnOffCommand.h"
 #include "commands/VoidCommand.h"
 #include "commands/ServoCommand.h"
 

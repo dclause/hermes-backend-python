@@ -3,6 +3,14 @@
 
 #include <Arduino.h>
 
+
+/**
+ * @todo export this enum to a single 'knowledge dictionary' file and create a code generator to make it.
+ * @see frontend/composables/commands.ts
+ * @see backend/hermes/core/commands/__init__/py
+ * @see arduino/Commands/CommandCode.h
+ */
+
 /**
  * Defines the command codes that can be received/emitted.
  *
@@ -52,7 +60,8 @@ enum class CommandCode : uint8_t {
 
     // ######
     // 98 - 126: commands related to passive components (displays, LEDs, etc...)
-    BLINK = 98          // ascii: b
+    BLINK = 98,          // ascii: b
+    ON_OFF = 99          // ascii: c
 };
 
 typedef enum CommandCode CommandCode;

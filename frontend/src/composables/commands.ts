@@ -8,5 +8,6 @@
  * @see arduino/Commands/CommandCode.h
  */
 export enum useCommand {
-  ON_OFF = 98   // ascii: c
+  BLINK = 98,     // ascii: b
+  ON_OFF = 99     // ascii: c
 }

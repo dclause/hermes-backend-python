@@ -54,7 +54,7 @@ class ArduinoBoard(AbstractBoard):
         # ###
         # Run the Handshake process.
         try:
-            logger.info(f'Board {self.name} - Try handshake', )
+            logger.debug(f'Board {self.name} - Try handshake', )
             # if not self.handshake():
             #     raise BoardException('Handshake sequence incorrect.')
         except (FunctionTimedOut, BoardException) as error:
@@ -66,12 +66,12 @@ class ArduinoBoard(AbstractBoard):
         for thread in self._threads:
             thread.start()
 
-        logger.info(f'Board {self.name} - CONNECTED', )
-        self.is_connected = True
-        return self.is_connected
+        logger.info(f' > Board {self.name} - CONNECTED', )
+        self.connected = True
+        return self.connected
 
     def close(self) -> bool:
-        logger.info(f'Board {self.name} - Close connexion')
+        logger.info(f' > Board {self.name} - DISCONNECTED', )
         self._connexion.close()
         # Ends the multithreading.
         self._exit_event.set()
@@ -79,8 +79,8 @@ class ArduinoBoard(AbstractBoard):
         for thread in self._threads:
             if thread.is_alive():
                 thread.join()
-        self.is_connected = False
-        return self.is_connected
+        self.connected = False
+        return self.connected
 
     # @func_set_timeout(1)
     # def handshake(self) -> bool:

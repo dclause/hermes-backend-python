@@ -27,6 +27,8 @@ class App:
         """ Bootstraps the application. """
         logger.info('== Starting HERMES ==')
         server.start()
+        for (_, board) in config.BOARDS.items():
+            board.open()
 
         # @todo remove once tests are finished.
         # while True:
@@ -46,6 +48,8 @@ class App:
         """ Closes the application. """
         logger.info('== Stopping HERMES ==')
         server.close()
+        for (_, board) in config.BOARDS.items():
+            board.close()
 
 
 if __name__ == "__main__":

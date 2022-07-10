@@ -30,7 +30,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
     def __init__(self, name):
         super().__init__(name)
-        self.is_connected: bool = False
+        self.connected: bool = False
         self._connexion: AbstractProtocol
 
     @abstractmethod
