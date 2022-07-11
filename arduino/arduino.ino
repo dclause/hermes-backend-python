@@ -23,5 +23,7 @@ void loop() {
         // Execute the command
         command->receive();
         command->process();
+
+        IO::send_command(CommandCode::ACK);
     }
 }

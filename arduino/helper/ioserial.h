@@ -45,7 +45,7 @@ namespace IO {
      */
     void begin() {
         Serial.begin(BAUDRATE);
-        TRACE((String) F("Opening IO communication at baudrate ") + (String) BAUDRATE);
+        TRACE(String(F("Opening IO communication at baudrate ")) + (String) BAUDRATE);
     }
 
     /**

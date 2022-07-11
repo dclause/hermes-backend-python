@@ -18,9 +18,9 @@ using CommandInstance = AbstractCommand *(*)();
  */
 class CommandFactory {
     private:
-        KeyValueMap<CommandCode, CommandInstance> registeredCommands_;
-
         CommandFactory() = default;
+
+        KeyValueMap<CommandCode, CommandInstance> registeredCommands_;
 
     public:
         CommandFactory(const CommandFactory &) = delete;

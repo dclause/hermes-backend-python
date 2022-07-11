@@ -7,6 +7,8 @@
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
+#include "../devices/AbstractDevice.h"
+#include "../devices/DeviceManager.h"
 
 /**
  * ON_OFF Command: toggle a digital pin ON/OFF.
@@ -30,6 +32,7 @@ class OnOffCommand : public AbstractCommand {
             TRACE((String) F("  > Requested device ") + (String) deviceId + F(" to be set to: ") + (String) value);
 
             // @todo use the devices (when handshake is implemented)
+            AbstractDevice *device = DeviceManager::getInstance().getDevice(deviceId);
             pinMode(13, OUTPUT);
             digitalWrite(13, value);
         }

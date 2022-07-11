@@ -5,13 +5,17 @@
 #include "../helper/map.h"
 #include "AbstractDevice.h"
 
+// Callback for instantiating "on the fly" a device.
+using DeviceInstance = AbstractDevice *(*)();
+
 /**
  * Device manager: lists all know devices.
  */
 class DeviceManager {
     private:
-        DeviceManager() {};
-        KeyValueMap<uint8_t, AbstractDevice> devices_;
+        DeviceManager() = default;
+
+        KeyValueMap<uint8_t, AbstractDevice *> devices_;
 
     public:
         DeviceManager(const DeviceManager &) = delete;
@@ -35,39 +39,39 @@ class DeviceManager {
          *
          * @return KeyValueMap<uint8_t, AbstractDevice>
          */
-        KeyValueMap<uint8_t, AbstractDevice> getDevices() const {
+        KeyValueMap<uint8_t, AbstractDevice *> getDevices() const {
             return this->devices_;
         }
 
         /**
          * Add a device to the known list.
          *
-         * @param device AbstractDevice: a device.
+         * @param device DeviceInstance: a device.
          * @return bool: If the device as been stored properly.
          */
-        bool addDevice(const AbstractDevice &device) {
-            return this->devices_.add(device.getId(), device);
+        bool addDevice(AbstractDevice *instance) {
+            return this->devices_.add(instance->getId(), instance);
         }
 
         /**
          * Gets a device on the list by its ID.
          * @param id
-         * @return AbstractDevice
+         * @return DeviceInstance
          */
-        AbstractDevice getDevice(uint8_t id) {
+        AbstractDevice *getDevice(uint8_t id) {
             return this->devices_.getValue(id);
         }
 
         /**
-         * Stringifies the command for debug purpose.
+         * Stringifies the device for debug purpose.
          *
          * @return String
          */
         operator String() {
             String log = (String) F("AbstractDevice Manager:\n");
             for (uint8_t i = 0; i < this->devices_.count(); i++) {
-                AbstractDevice device = this->devices_.get(i)->value;
-                log += (String) F("# - ") + (String) device + F("\n");
+                AbstractDevice *device = this->devices_.get(i)->value;
+                log += (String) F("# - ") + (String) *device + F("\n");
             }
             return log;
         }

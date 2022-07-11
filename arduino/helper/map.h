@@ -65,7 +65,7 @@ class KeyValueMap {
          * @param value
          * @return bool If the element has been added to the list.
          */
-        bool add(Key const key, Value const value) {
+        bool add(const Key key, const Value value) {
             if (this->getPosition(key) != -1) {
                 return false;
             }

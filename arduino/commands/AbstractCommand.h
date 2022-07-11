@@ -40,7 +40,7 @@ class AbstractCommand {
                 expected_payload_size_(expected_payload_size),
                 effective_payload_size_(expected_payload_size ? expected_payload_size : 0) {
             if (expected_payload_size > 0) {
-                this->payload_ = static_cast<uint8_t *>(malloc(expected_payload_size * sizeof(uint8_t)));
+                this->payload_ = new uint8_t[expected_payload_size];
             }
         }
 
@@ -72,10 +72,8 @@ class AbstractCommand {
                 String data = IO::read_until_endl();
                 this->effective_payload_size_ = data.length();
                 TRACE((String) F("Determine data size: ") + (String) this->effective_payload_size_);
-                this->payload_ = static_cast<uint8_t *>(malloc(this->effective_payload_size_ * sizeof(uint8_t)));
-                for (unsigned int i = 0; i < this->effective_payload_size_; i++) {
-                    this->payload_[i] = (uint8_t) data[i];
-                }
+                this->payload_ = new uint8_t[this->effective_payload_size_];
+                data.getBytes(this->payload_, this->expected_payload_size_);
             }
         }
 

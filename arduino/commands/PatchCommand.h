@@ -7,6 +7,10 @@
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
+#include "../devices/AbstractDevice.h"
+#include "../devices/DeviceCode.h"
+#include "../devices/DeviceFactory.h"
+#include "../devices/DeviceManager.h"
 
 /**
  * PATCH Command: create/patch a device to device manager.
@@ -24,8 +28,15 @@ class PatchCommand : public AbstractCommand {
 
         void process() {
             TRACE((String) F("Process Patch command."));
-            TRACE((String) F("  > Received data: ") + String((char *) this->payload_));
-            uint8_t deviceCode = this->payload_[0];
+            // Build a device from its code using the factory.
+            const DeviceCode deviceCode = (DeviceCode) this->payload_[0];
+            AbstractDevice *device = DeviceFactory::getInstance().createDevice(deviceCode);
+            // Fills from the payload.
+            device->fromBytes(this->payload_);
+            // Store in the manager for later.
+            DeviceManager::getInstance().addDevice(device);
+
+            TRACE(DeviceManager::getInstance());
         }
 };
 
