@@ -43,7 +43,7 @@ class AbstractPlugin:
     def __init__(self, name):
         self.id = next(self._id_iter)
         self.name: str = name
-        self.type: str = self.__class__.__name__
+        self.controller: str = self.__class__.__name__
 
     def __str__(self):
         return f'{self.__class__.__name__} {self.name}({self.id})'
@@ -64,28 +64,22 @@ class AbstractPlugin:
                 del obj[attr]
                 continue
 
+            # Converts enum to their names rather than values.
+            if attr == "type":
+                obj[attr] = obj[attr].name
+
             # Convert plugins reference to IDs.
             if isinstance(obj[attr], AbstractPlugin):
                 obj[attr] = obj[attr].id
 
         return obj
 
-    def update(self, state):
-        """
-        Updates object with given state.
-
-        Args:
-            state (dict): the state to update the object to.
-        """
-        for (attr, value) in state:
-            setattr(self, attr, value)
-
     @classmethod
     def from_yaml(cls, constructor, node):
         """ Converts a representation node to a Python object. """
 
         # Builds a state object from the yaml data.
-        state = constructor.construct_mapping(node)
+        state = constructor.construct_mapping(node, deep=True)
 
         # Filters the state object with values necessary for the plugin constructor.
         arguments = cls.__init__.__code__.co_varnames[1:cls.__init__.__code__.co_argcount]
@@ -93,7 +87,11 @@ class AbstractPlugin:
 
         # Instantiates the plugin and update it.
         plugin = cls(**initial_state)
-        # plugin._update(state)
+
+        if hasattr(plugin, '__setstate__'):
+            plugin.__setstate__(state)
+        else:
+            plugin.__dict__.update(state)
 
         return plugin
 
@@ -104,7 +102,7 @@ class AbstractPlugin:
         if isinstance(data, AbstractPlugin):
             data = data.serialize()
             if 'value' in data:
-                del(data['value'])
+                del (data['value'])
 
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
         return representer.represent_mapping(tag, data)

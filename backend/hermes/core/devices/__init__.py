@@ -17,12 +17,13 @@ the `devices` key
 """
 from abc import abstractmethod
 from enum import IntEnum
+from typing import final
 
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
 
-class DeviceCode(IntEnum):
+class DeviceType(IntEnum):
     """ Defines the device codes that are known by the application.
 
     Each device code will be cast to a 8bits integer, therefore at most 255 commands can be interpreted.
@@ -32,21 +33,32 @@ class DeviceCode(IntEnum):
     """
 
     LED = 1
-    SERVO = 1
+    SERVO = 2
 
 
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type devices. """
 
-    def __init__(self, code: DeviceCode, name: str, board: int, default: any):
+    # pylint: disable-next=redefined-builtin
+    def __init__(self, board: int, name: str = "", commands=None, inputs=None):
         super().__init__(name)
-        self.code: DeviceCode = code
+        if inputs is None:
+            inputs = []
+        if commands is None:
+            commands = []
+        self.type = self.__type__
+        self.name = name
         self.board: int = board
-        self.default: any = default
-        self.state: any = default
+        self.commands = commands
+        self.inputs = inputs
+
+    @property
+    @abstractmethod
+    def __type__(self) -> DeviceType:
+        """ Defines the device type. """
 
     @abstractmethod
-    def to_bytes(self) -> bytearray:
+    def _to_bytes(cls) -> bytearray:
         """
         Returns the bytearray representation of the device necessary to rebuild the device on the robot side.
 
@@ -56,7 +68,20 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         Returns:
             bytearray
         """
-        pass
+
+    @final
+    def patch(self):
+        """
+        Exposed version of '_to_bytes()' method.
+        @see _to_bytes()
+
+        The purpose is to make sure every single bytearray representation of a device has the same format :
+            - empty of no internal data to expose.
+            - CommandCode.PATCH | type | id | <internal _to_bytes() representation | CommandCode.END_OF_LINE
+        """
+        internal_to_bytes: bytearray = self._to_bytes()
+        if (internal_to_bytes.count()):
+            return bytearray()
 
 
-__ALL__ = ["AbstractDevice", "DeviceCode"]
+__ALL__ = ["AbstractDevice", "DeviceType"]

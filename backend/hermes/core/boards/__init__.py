@@ -125,11 +125,13 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         self._connexion.send(bytearray([CommandCode.HANDSHAKE]))
         for (_, device) in config.DEVICES.items():
             if device.board is self.id:
-                data = bytearray([CommandCode.PATCH, device.code, device.id]) + \
-                       device.to_bytes() + \
-                       bytearray([CommandCode.END_OF_LINE])
-                logger.info(f"Handshake PATCH: {data}")
-                self._connexion.send(data)
+                device_data: bytearray = device.to_bytes()
+                # if device_data is None or not device_data.count():
+                #     data = bytearray([CommandCode.PATCH, DeviceType[device.type].value, device.id]) + \
+                #            device_data + \
+                #            bytearray([CommandCode.END_OF_LINE])
+                #     logger.info(f"Handshake PATCH: {data}")
+                #     self._connexion.send(data)
 
         # Blocking wait ACK.
         #  @todo move this to a standardized 'wait_for_ack()' on protocol.

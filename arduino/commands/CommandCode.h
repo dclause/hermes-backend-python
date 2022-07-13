@@ -46,23 +46,24 @@ enum class CommandCode : uint8_t {
 
     // ######
     // 33 to 40: generic purposes.
-    HANDSHAKE = 33,     // ascii: !
-    CONNECTED = 34,     // ascii: "
+    HANDSHAKE = 33,
+    CONNECTED = 34,
     // /!\ Skipped 35 for DEBUG.
-    ACK = 36,           // ascii: $
-    PATCH = 37,         // ascii: %
+    ACK = 36,
+    PATCH = 37,
 
     // ######
     // 41 - 69: commands related to actuators.
-    SERVO = 41,         // ascii: )
+    SERVO = 41,
+    DIGITAL_WRITE = 42,
 
     // ######
     // 70 - 97: commands related to sensors/inputs
 
     // ######
     // 98 - 126: commands related to passive components (displays, LEDs, etc...)
-    BLINK = 98,          // ascii: b
-    ON_OFF = 99          // ascii: c
+    BLINK = 98,
+    ON_OFF = 99
 };
 
 typedef enum CommandCode CommandCode;

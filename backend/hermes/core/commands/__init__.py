@@ -71,6 +71,7 @@ class CommandCode(IntEnum):
     ######
     # 41 - 69: commands related to actuators.
     SERVO = 41  # ascii: )
+    DIGITAL_WRITE = 42
 
     ######
     # 70 - 97: commands related to sensors/inputs

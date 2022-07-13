@@ -5,6 +5,7 @@
 #include "commands/HandshakeCommand.h"
 #include "commands/AckCommand.h"
 #include "commands/BlinkCommand.h"
+#include "commands/DigitalWriteCommand.h"
 #include "commands/OnOffCommand.h"
 #include "commands/PatchCommand.h"
 #include "commands/VoidCommand.h"

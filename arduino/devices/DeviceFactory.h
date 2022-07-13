@@ -45,6 +45,20 @@ class DeviceFactory {
         }
 
         /**
+         * Retrieves the class type associateed with a device code.
+         *
+         * @param code (DeviceCode)
+         * @return any: The device class.
+         */
+        AbstractDevice *getDeviceType(DeviceCode code) {
+            int index = this->registeredDevices_.getPosition(code);
+            if (index > -1) {
+                return this->registeredDevices_.getValue(code)();
+            }
+            return NULL;
+        }
+
+        /**
          * Instantiates an AbstractDevice of the proper type given a DeviceCode.
          *
          * @param code (DeviceCode)

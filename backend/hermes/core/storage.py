@@ -20,6 +20,7 @@ from hermes.core.helpers import ROOT_DIR
 # @todo rename to _effectiveStorage
 # @todo document
 _storage = ruamel.yaml.YAML(typ='safe')
+_storage.sort_base_mapping_type_on_output = False
 
 
 class StorageNamespace(StringEnum):

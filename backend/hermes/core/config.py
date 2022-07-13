@@ -23,7 +23,7 @@ from hermes.core.devices import AbstractDevice
 from hermes.core.storage import StorageNamespace, StorageType
 
 
-# @todo expand this an typehint all
+# @todo expand this to typehint all
 class ConfigurationProperties(TypedDict):
     config: Dict[str, Any]
     profile: Dict[str, Any]

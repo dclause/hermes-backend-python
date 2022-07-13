@@ -1,0 +1,42 @@
+#ifndef ARDUINO_DIGITAL_WRITE_COMMAND_H
+#define ARDUINO_DIGITAL_WRITE_COMMAND_H
+
+#include <Arduino.h>
+
+#include "../debugger.h"
+#include "AbstractCommand.h"
+#include "CommandCode.h"
+#include "CommandFactory.h"
+#include "../devices/AbstractDevice.h"
+#include "../devices/DeviceManager.h"
+
+/**
+ * DIGITAL_WRITE Command: toggle a digital pin write.
+ *
+ * @see CommandCode::DIGITAL_WRITE
+ */
+class DigitalWriteCommand : public AbstractCommand {
+    COMMAND_DECLARATION
+
+    public:
+
+        DigitalWriteCommand() : AbstractCommand(2) {}
+
+        String getName() const { return "DigitalWrite"; }
+
+        void process() {
+            TRACE((String) F("Process DigitalWrite command."));
+
+            uint8_t pin = this->payload_[0];
+            uint8_t value = this->payload_[1];
+
+            TRACE((String) F("  > Set pin ") + (String) pin + F(" to: ") + (String) value);
+
+            pinMode(pin, OUTPUT);
+            digitalWrite(pin, value);
+        }
+};
+
+REGISTER_COMMAND(CommandCode::DIGITAL_WRITE, DigitalWriteCommand)
+
+#endif  // ARDUINO_DIGITAL_WRITE_COMMAND_H
