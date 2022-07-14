@@ -1,3 +1,15 @@
+import BooleanCommand from "@/components/commands/BooleanCommand.vue";
+import UnknownCommand from "@/components/commands/UnknownCommand.vue";
+
+export type CommandConfigurationProperties = {
+  id: number,
+  name?: string,
+  type: string,
+  default: unknown
+  state: unknown
+  [x: string]: unknown;
+}
+
 /**
  * Returns a list of available commands.
  *
@@ -7,8 +19,17 @@
  * @see backend/hermes/core/commands/__init__/py
  * @see arduino/Commands/CommandCode.h
  */
-export enum useCommand {
+export enum CommandType {
   DIGITAL_WRITE = 42,
-  BLINK = 98,
-  ON_OFF = 99
 }
+
+/**
+ * Returns a list of available boards.
+ */
+export function useCommand(commandType: string): unknown {
+  const commands: Record<string, unknown> = {
+    BOOLEAN: BooleanCommand
+  };
+  return commands[commandType] ?? UnknownCommand;
+}
+

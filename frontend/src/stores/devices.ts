@@ -1,13 +1,5 @@
 import { defineStore } from "pinia";
-
-export type DeviceConfigurationProperties = {
-  name: string;
-  id: number;
-  board: number;
-  state: unknown;
-
-  [x: string]: unknown;
-}
+import { DeviceConfigurationProperties } from "@/composables/devices";
 
 export const useDeviceStore = defineStore({
   id: "devices",
@@ -21,7 +13,8 @@ export const useDeviceStore = defineStore({
   },
   actions: {
     patch(device_id: number, partial: Record<string, unknown>) {
-      this.devices[device_id].name += "test";
+      const partial_tmp = { name: this.devices[device_id].name + "test" };
+      this.devices[device_id] = { ...this.devices[device_id], ...partial_tmp };
     }
   }
 });

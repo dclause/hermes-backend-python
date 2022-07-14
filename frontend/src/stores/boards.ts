@@ -1,12 +1,5 @@
 import { defineStore } from "pinia";
-
-export declare interface BoardConfigurationProperties extends Object {
-  name: string;
-  id: number;
-  model: string;
-
-  [x: string]: unknown;
-}
+import { BoardConfigurationProperties } from "@/composables/boards";
 
 export const useBoardStore = defineStore({
   id: "boards",

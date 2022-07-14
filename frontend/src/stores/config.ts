@@ -1,14 +1,12 @@
-import type { PiniaCustomStateProperties } from "pinia";
 import { defineStore } from "pinia";
 
-export declare interface ConfigurationProperties
-  extends PiniaCustomStateProperties {
+export declare interface ConfigurationProperties {
   connected: boolean;
   server?: ServerConfigurationProperties;
   web?: ServerConfigurationProperties;
 }
 
-export declare interface ServerConfigurationProperties extends Object {
+export declare interface ServerConfigurationProperties {
   host?: string;
   port?: number;
   debug?: boolean;

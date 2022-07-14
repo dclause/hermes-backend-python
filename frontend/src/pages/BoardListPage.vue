@@ -1,7 +1,7 @@
 <template>
   <v-container v-if="connected">
     <component
-      :is="useBoard(board.type)"
+      :is="useBoard(board.controller)"
       v-for="board in boards"
       :key="board.id"
       :board-id="board.id"

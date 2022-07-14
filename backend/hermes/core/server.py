@@ -83,7 +83,7 @@ class _WebServerThread(Thread):
             logger.debug(f'## socketIO received "Mutation" with parameter: {command_code} {device_id} {value}')
             try:
                 command = CommandFactory().get_by_code(command_code)
-                command.send(device_id, value)
+                command.send(value)
                 config.DEVICES[device_id].state = value
             except Exception as exception:
                 logger.error(f'Mutation error: command could not be sent because: "{exception}".')

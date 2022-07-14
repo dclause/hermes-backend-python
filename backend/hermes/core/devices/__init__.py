@@ -19,6 +19,7 @@ from abc import abstractmethod
 from enum import IntEnum
 from typing import final
 
+from hermes.core.commands import CommandCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
@@ -58,7 +59,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         """ Defines the device type. """
 
     @abstractmethod
-    def _to_bytes(cls) -> bytearray:
+    def _to_bytes(self) -> bytearray:
         """
         Returns the bytearray representation of the device necessary to rebuild the device on the robot side.
 
@@ -68,9 +69,10 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         Returns:
             bytearray
         """
+        return bytearray()
 
     @final
-    def patch(self):
+    def to_bytes(self):
         """
         Exposed version of '_to_bytes()' method.
         @see _to_bytes()
@@ -80,8 +82,11 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
             - CommandCode.PATCH | type | id | <internal _to_bytes() representation | CommandCode.END_OF_LINE
         """
         internal_to_bytes: bytearray = self._to_bytes()
-        if (internal_to_bytes.count()):
-            return bytearray()
+        if len(internal_to_bytes):
+            return bytearray([CommandCode.PATCH, self.type.value, self.id]) + \
+                   internal_to_bytes + \
+                   bytearray([CommandCode.END_OF_LINE])
+        return bytearray()
 
 
 __ALL__ = ["AbstractDevice", "DeviceType"]

@@ -65,12 +65,12 @@ class AbstractPlugin:
                 continue
 
             # Converts enum to their names rather than values.
-            if attr == "type":
-                obj[attr] = obj[attr].name
+            # if attr == "type":
+            #     obj[attr] = obj[attr].name
 
             # Convert plugins reference to IDs.
-            if isinstance(obj[attr], AbstractPlugin):
-                obj[attr] = obj[attr].id
+            # if isinstance(obj[attr], AbstractPlugin):
+            #     obj[attr] = obj[attr].id
 
         return obj
 
@@ -102,7 +102,7 @@ class AbstractPlugin:
         if isinstance(data, AbstractPlugin):
             data = data.serialize()
             if 'value' in data:
-                del (data['value'])
+                del data['value']
 
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
         return representer.represent_mapping(tag, data)

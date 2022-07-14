@@ -1,9 +1,13 @@
 <template>
-  <v-container v-if="connected">
+  <v-container
+    v-if="connected"
+    class="d-flex align-content-start flex-wrap"
+  >
     <component
-      :is="useDevice(device.type)"
+      :is="useDevice(device.controller)"
       v-for="device in devices"
       :key="device.id"
+      class="ma-2"
       :device-id="device.id"
     />
   </v-container>
