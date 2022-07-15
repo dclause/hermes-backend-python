@@ -98,13 +98,17 @@ class AbstractCommand(metaclass=MetaPluginType):
         """ Encodes the given value as an array of bytes. """
         return bytearray([value])
 
-    def send(self, device_id: int, value: any):
+    def send(self, device_id, command_id: any, value: any):
         """ Sends the command. """
         device = config.DEVICES[device_id]
         board = config.BOARDS[device.board]
+        command = device.commands[command_id]
+
         if not board.connected:
             board.open()
-        header = bytearray([self.code, device.id])
+
+        # @todo rework this part here.
+        header = bytearray([self.code, command['pin']])
         data = self.encode(value)
         board.send(header + data)
 

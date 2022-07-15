@@ -15,6 +15,7 @@
         v-for="(command, key) in device.commands"
         :key="key"
         v-model="device.commands[key]"
+        :device="device"
         class="md-2"
         :device-id="device.id"
       />

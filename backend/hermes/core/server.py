@@ -79,12 +79,14 @@ class _WebServerThread(Thread):
             ))
 
         @self._socketio.on('command')
-        def mutation(command_code: CommandCode, device_id: int, value: any):
-            logger.debug(f'## socketIO received "Mutation" with parameter: {command_code} {device_id} {value}')
+        def mutation(device_id: int, command_id: int, value: any):
+            logger.debug(f'## socketIO received "Mutation" with parameter: {device_id} {command_id} {value}')
             try:
-                command = CommandFactory().get_by_code(command_code)
-                command.send(value)
-                config.DEVICES[device_id].state = value
+                command_configuration = config.DEVICES[device_id].commands[command_id]
+                # @todo: How can be still allow 'BOOLEAN' command but
+                command = CommandFactory().get_by_code(CommandCode.DIGITAL_WRITE)
+                command.send(device_id, command_id, value)
+                config.DEVICES[device_id].commands[command_id]['state'] = value
             except Exception as exception:
                 logger.error(f'Mutation error: command could not be sent because: "{exception}".')
             emit('patch', (device_id, config.DEVICES[device_id].serialize()), broadcast=True)

@@ -20,10 +20,16 @@
 import { computed, WritableComputedRef } from "vue";
 import { useSocket } from "@/plugins/socketIO";
 import { defineModel } from "@/composables/vmodel";
-import { CommandConfigurationProperties, CommandType } from "@/composables/commands";
+import { CommandConfigurationProperties } from "@/composables/commands";
+
+const socket = useSocket();
 
 const props = defineProps({
   modelValue: {
+    type: Object,
+    required: true
+  },
+  device: {
     type: Object,
     required: true
   },
@@ -33,8 +39,9 @@ const props = defineProps({
   }
 });
 
+// Defines for v-model
 const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
-const socket = useSocket();
+
 
 // Build feedback label.
 const labelComputed = computed(() => {
@@ -51,9 +58,10 @@ const labelComputed = computed(() => {
  * Forward the command via the backend socketIO connexion to the robot.
  * @see backend/hermes/core/server.py
  */
+// @todo run a store action to emit the command so others can subscribe to it.
 const onChange = () => {
-  console.debug("onChange led value function called with args:", command.value.state);
-  socket.emit("command", CommandType.DIGITAL_WRITE, 0, command.value.state);
+  console.debug("BooleanCommand: value is now ", command.value.state);
+  socket.emit("command", props.device.id, command.value.id, command.value.state);
 };
 
 </script>
