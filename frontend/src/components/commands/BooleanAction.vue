@@ -60,8 +60,8 @@ const labelComputed = computed(() => {
  */
 // @todo run a store action to emit the command so others can subscribe to it.
 const onChange = () => {
-  console.debug("BooleanCommand: value is now ", command.value.state);
-  socket.emit("command", props.device.id, command.value.id, command.value.state);
+  console.debug("BooleanAction: value is now ", command.value.state);
+  socket.emit("action", props.device.id, command.value.id, command.value.state);
 };
 
 </script>

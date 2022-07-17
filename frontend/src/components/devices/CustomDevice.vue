@@ -11,13 +11,12 @@
     <v-card-subtitle>{{ board.name }}</v-card-subtitle>
     <v-card-text>
       <component
-        :is="useCommand(command.type)"
-        v-for="(command, key) in device.commands"
+        :is="useCommand(command.code)"
+        v-for="(command, key) in device.actions"
         :key="key"
-        v-model="device.commands[key]"
+        v-model="device.actions[key]"
         :device="device"
         class="md-2"
-        :device-id="device.id"
       />
     </v-card-text>
   </v-card>

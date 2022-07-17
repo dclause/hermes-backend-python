@@ -12,7 +12,7 @@ from flask_socketio import SocketIO, emit
 
 from hermes import __version__
 from hermes.core import config, logger
-from hermes.core.commands import CommandFactory, CommandCode
+from hermes.core.commands import AbstractCommand
 from hermes.core.helpers import ROOT_DIR
 
 
@@ -74,22 +74,22 @@ class _WebServerThread(Thread):
             emit('handshake', (
                 config.GLOBAL,
                 config.PROFILE,
-                {key: board.serialize() for key, board in config.BOARDS.items()},
-                {key: device.serialize() for key, device in config.DEVICES.items()}
+                {key: board.serialize(recursive=True) for key, board in config.BOARDS.items()},
+                {key: device.serialize(recursive=True) for key, device in config.DEVICES.items()}
             ))
 
-        @self._socketio.on('command')
-        def mutation(device_id: int, command_id: int, value: any):
+        @self._socketio.on('action')
+        def mutation(device_id: int, command_id: int, value: int):
             logger.debug(f'## socketIO received "Mutation" with parameter: {device_id} {command_id} {value}')
             try:
-                command_configuration = config.DEVICES[device_id].commands[command_id]
+                command: AbstractCommand = config.DEVICES[device_id].actions[command_id]
                 # @todo: How can be still allow 'BOOLEAN' command but
-                command = CommandFactory().get_by_code(CommandCode.DIGITAL_WRITE)
+                # command = CommandFactory().get_by_code(command_configuration.type)
                 command.send(device_id, command_id, value)
-                config.DEVICES[device_id].commands[command_id]['state'] = value
+                config.DEVICES[device_id].actions[command_id].state = value
             except Exception as exception:
                 logger.error(f'Mutation error: command could not be sent because: "{exception}".')
-            emit('patch', (device_id, config.DEVICES[device_id].serialize()), broadcast=True)
+            emit('patch', (device_id, config.DEVICES[device_id].serialize(recursive=True)), broadcast=True)
 
         # ----------------------------------------
         # WebGUI optional definition

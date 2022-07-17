@@ -1,4 +1,4 @@
-import BooleanCommand from "@/components/commands/BooleanCommand.vue";
+import BooleanAction from "@/components/commands/BooleanAction.vue";
 import UnknownCommand from "@/components/commands/UnknownCommand.vue";
 
 export type CommandConfigurationProperties = {
@@ -11,24 +11,13 @@ export type CommandConfigurationProperties = {
 }
 
 /**
- * Returns a list of available commands.
- *
- * @todo export this enum to a single 'knowledge dictionary' file and create a code generator to make it.
- * The purpose would be to not repeat the enum thought all languages and parts of the project.
- * @see frontend/composables/commands.ts
- * @see backend/hermes/core/commands/__init__/py
- * @see arduino/Commands/CommandCode.h
- */
-export enum CommandType {
-  DIGITAL_WRITE = 42,
-}
-
-/**
  * Returns a list of available boards.
+ * @todo can we avoid this ?
  */
 export function useCommand(commandType: string): unknown {
   const commands: Record<string, unknown> = {
-    BOOLEAN: BooleanCommand
+    BOOLEAN_ACTION: BooleanAction,
+    ON_OFF: BooleanAction
   };
   return commands[commandType] ?? UnknownCommand;
 }

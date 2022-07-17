@@ -14,6 +14,7 @@ the `boards` key.
 """
 import threading
 import time
+from enum import Enum
 from queue import Empty
 
 from func_timeout import func_set_timeout, FunctionTimedOut
@@ -32,8 +33,13 @@ class BoardException(Exception):
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     """ Handles the serial communication with an external board. """
 
+    @property
+    def __type__(self) -> Enum:
+        return Enum(0)
+
     def __init__(self, name, connexion: AbstractProtocol):
-        super().__init__(name)
+        super().__init__()
+        self.name = name
         self.connected: bool = False
         self._connexion: AbstractProtocol = connexion
 

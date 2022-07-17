@@ -12,3 +12,6 @@ class LedDevice(AbstractDevice):
     @property
     def __type__(self) -> DeviceType:
         return DeviceType.LED
+
+    def _to_bytes(self) -> bytearray:
+        return bytearray()

@@ -21,10 +21,14 @@ import glob
 import importlib
 import itertools
 import os
-from typing import Any
+from abc import abstractmethod
+from enum import Enum
+from typing import Any, TypeVar
 
 from hermes.core import logger
 from hermes.core.helpers import ROOT_DIR
+
+TAbstractPlugin = TypeVar("TAbstractPlugin", bound="AbstractPlugin")
 
 
 class AbstractPlugin:
@@ -38,17 +42,32 @@ class AbstractPlugin:
         - named: it has a human-readable name
     """
 
+    # Custom IDs can be set using the YAML configuration file. But this lets IDs to be auto-generated for convenience
+    # by increment from the last existing ID in the system.
     _id_iter = itertools.count(1)
 
-    def __init__(self, name):
+    @property
+    @abstractmethod
+    def __type__(self) -> Enum:
+        # @todo remove if unneeded after POC:
+        # - device should not need as per using the controller directly.
+        # - command should rename that MessageCode.
+        """
+        Each plugin type (implementation of abstract plugin, ie device, command, board, etc...) can itself be
+        subdivided into types (type of device, type of board, type of command, etc...)
+        """
+
+    def __init__(self):
         self.id = next(self._id_iter)
-        self.name: str = name
+        self.name: str = self.__class__.__name__
         self.controller: str = self.__class__.__name__
+        self.type: int = self.__type__.value
 
     def __str__(self):
-        return f'{self.__class__.__name__} {self.name}({self.id})'
+        """ Stringify the plugin: Only used for debug purpose. """
+        return f'{self.controller} {self.name}({self.id})'
 
-    def serialize(self) -> dict[str, Any]:
+    def serialize(self, recursive=False) -> dict[str, Any]:
         """
         Convert the instance to a filter dict representation.
         Private attributes are excluded and Plugin referenced are converted to their IDs.
@@ -64,18 +83,19 @@ class AbstractPlugin:
                 del obj[attr]
                 continue
 
-            # Converts enum to their names rather than values.
-            # if attr == "type":
-            #     obj[attr] = obj[attr].name
+            # @todo find a more reliable way
+            if recursive and isinstance(obj[attr], list):
+                listing = [element.serialize() for element in obj[attr]]
+                obj[attr] = listing
 
-            # Convert plugins reference to IDs.
-            # if isinstance(obj[attr], AbstractPlugin):
-            #     obj[attr] = obj[attr].id
+            # Convert enum to their names.
+            if isinstance(obj[attr], Enum):
+                obj[attr] = obj[attr].name
 
         return obj
 
     @classmethod
-    def from_yaml(cls, constructor, node):
+    def from_yaml(cls, constructor, node) -> TAbstractPlugin:
         """ Converts a representation node to a Python object. """
 
         # Builds a state object from the yaml data.
@@ -96,12 +116,12 @@ class AbstractPlugin:
         return plugin
 
     @classmethod
-    def to_yaml(cls, representer, data):
+    def to_yaml(cls, representer, data) -> Any:
         """ Converts a Python object to a representation node. """
 
         if isinstance(data, AbstractPlugin):
             data = data.serialize()
-            if 'value' in data:
+            if any(key in dict for key in ['value', 'type', 'container']):
                 del data['value']
 
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)

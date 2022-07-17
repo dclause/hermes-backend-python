@@ -13,9 +13,11 @@ A command is represented by a unique 8bit identifier. Those are defined via the 
 
 Commands are detected when the package is imported for the first time and globally available via the commandFactory.
 """
-from enum import IntEnum
+from abc import abstractmethod
+from enum import IntEnum, Enum
 
 from hermes.core import logger, config
+from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType, MetaSingleton
 
 
@@ -71,7 +73,7 @@ class CommandCode(IntEnum):
     ######
     # 41 - 69: commands related to actuators.
     SERVO = 41  # ascii: )
-    DIGITAL_WRITE = 42
+    BOOLEAN_ACTION = 42
 
     ######
     # 70 - 97: commands related to sensors/inputs
@@ -82,10 +84,17 @@ class CommandCode(IntEnum):
     ON_OFF = 99  # ascii: c
 
 
-class AbstractCommand(metaclass=MetaPluginType):
+class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type commands. """
 
-    def __init__(self, code: CommandCode, name: str):
+    @property
+    @abstractmethod
+    def __type__(self) -> Enum:
+        # @todo here the type is a code: rethink this.
+        return CommandCode.VOID
+
+    def __init__(self, code: CommandCode = None, name: str = ""):
+        super().__init__()
         self.code: CommandCode = code
         self.name: str = name
         self._payload: bytearray
@@ -102,13 +111,13 @@ class AbstractCommand(metaclass=MetaPluginType):
         """ Sends the command. """
         device = config.DEVICES[device_id]
         board = config.BOARDS[device.board]
-        command = device.commands[command_id]
+        # command = device.actions[command_id]
 
         if not board.connected:
             board.open()
 
         # @todo rework this part here.
-        header = bytearray([self.code, command['pin']])
+        header = bytearray([self.type, self.pin])
         data = self.encode(value)
         board.send(header + data)
 

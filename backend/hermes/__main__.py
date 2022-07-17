@@ -52,7 +52,29 @@ class App:
         server.close()
 
 
+# def save():
+#     hermes = App()
+#     data = {
+#                'id': 1,
+#                'type': 'LED',
+#                'name': 'Demo LED',
+#                'board': 1,
+#                'controls': [
+#                    BooleanAction(),
+#                    OnOffCommand(),
+#                ],
+#            },
+#
+#     _storage = ruamel.yaml.YAML(typ='safe')
+#     _storage.sort_base_mapping_type_on_output = False
+#     with open('test.yml', 'w', encoding='utf-8') as file:
+#         _storage.dump_all(data, file)
+#
+#     sys.exit()
+
+
 if __name__ == "__main__":
+    # save()
     hermes = App()
     try:
         hermes.start()

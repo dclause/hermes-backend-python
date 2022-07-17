@@ -7,8 +7,9 @@
     </v-card-title>
     <v-card-subtitle>{{ board.name }}</v-card-subtitle>
     <v-card-text>
-      <boolean-command
-        v-model="command"
+      <boolean-action
+        v-model="device.actions[0]"
+        :device="device"
         :label="feedback"
       />
     </v-card-text>
@@ -21,7 +22,8 @@ import SvgLed from "@/components/icons/SvgLed.vue";
 import { useBoardStore } from "@/stores/boards";
 import { useDeviceStore } from "@/stores/devices";
 import { DeviceConfigurationProperties } from "@/composables/devices";
-import BooleanCommand from "@/components/commands/BooleanCommand.vue";
+import BooleanAction from "@/components/commands/BooleanAction.vue";
+import { CommandConfigurationProperties } from "@/composables/commands";
 
 const props = defineProps({
   deviceId: {
@@ -41,7 +43,7 @@ const boardStore = useBoardStore();
 const board = computed(() => boardStore.getBoard(device.board));
 
 // Get command.
-const command = device.commands[0];
+const command: CommandConfigurationProperties = device.actions[0];
 
 // Build toggle feedback label.
 const feedback = computed(() => `Led: ${command.state === true ? "On" : "Off"}`);

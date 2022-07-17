@@ -40,23 +40,17 @@ class DeviceType(IntEnum):
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type devices. """
 
-    # pylint: disable-next=redefined-builtin
-    def __init__(self, board: int, name: str = "", commands=None, inputs=None):
-        super().__init__(name)
+    # @todo Remove all entry parameters. Add a hydrate() method.
+    def __init__(self, board: int, name: str = "", actions=None, inputs=None):
+        super().__init__()
+        if actions is None:
+            actions = []
         if inputs is None:
             inputs = []
-        if commands is None:
-            commands = []
-        self.type = self.__type__
         self.name = name
         self.board: int = board
-        self.commands = commands
+        self.actions = actions
         self.inputs = inputs
-
-    @property
-    @abstractmethod
-    def __type__(self) -> DeviceType:
-        """ Defines the device type. """
 
     @abstractmethod
     def _to_bytes(self) -> bytearray:
@@ -72,7 +66,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         return bytearray()
 
     @final
-    def to_bytes(self):
+    def to_bytes(self) -> bytearray:
         """
         Exposed version of '_to_bytes()' method.
         @see _to_bytes()

@@ -1,6 +1,7 @@
 """
 Represents a connexion to an electronic board (arduino-like) by embedding its pyserial connexion.
 """
+from enum import Enum
 
 from hermes.core.boards import AbstractBoard
 from hermes.core.protocols import AbstractProtocol
@@ -17,6 +18,11 @@ class ArduinoBoardType(StringEnum):
 
 class ArduinoBoard(AbstractBoard):
     """ ArduinoBoard implementation """
+
+    @property
+    def __type__(self) -> Enum:
+        # @todo pointless for board: rethink this.
+        return ArduinoBoardType.NANO
 
     def __init__(self, name, port: str, model: ArduinoBoardType):
         self.port = port

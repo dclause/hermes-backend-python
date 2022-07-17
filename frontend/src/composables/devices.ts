@@ -6,7 +6,8 @@ export type DeviceConfigurationProperties = {
   id: number;
   name?: string;
   board: number;
-  commands: [CommandConfigurationProperties]
+  actions: [CommandConfigurationProperties]
+  inputs: [CommandConfigurationProperties]
   [x: string]: unknown;
 }
 

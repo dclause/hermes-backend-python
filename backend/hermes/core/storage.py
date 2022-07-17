@@ -14,6 +14,7 @@ from mergedeep import merge
 from hermes.core import logger
 from hermes.core.boards import AbstractBoard
 from hermes.core.boards.arduino import StringEnum
+from hermes.core.commands import AbstractCommand
 from hermes.core.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
 
@@ -49,6 +50,10 @@ def init():
     # Register devices.
     for device_type in AbstractDevice.plugins:
         _storage.register_class(device_type)
+
+    # Register commands.
+    for command_type in AbstractCommand.plugins:
+        _storage.register_class(command_type)
 
 
 def read(namespace: StorageNamespace, config_type: StorageType) -> dict:
