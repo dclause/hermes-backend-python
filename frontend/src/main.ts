@@ -5,4 +5,4 @@ import vuetify from "./plugins/vuetify";
 import pinia from "./plugins/pinia";
 import { socketIO } from "./plugins/socketIO";
 
-createApp(App).use(router).use(vuetify).use(pinia).use(socketIO).mount("#app");
+createApp(App).use(router).use(vuetify).use(socketIO).use(pinia).mount("#app");

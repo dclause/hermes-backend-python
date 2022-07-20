@@ -18,11 +18,9 @@
 
 <script lang="ts" setup>
 import { computed, WritableComputedRef } from "vue";
-import { useSocket } from "@/plugins/socketIO";
 import { defineModel } from "@/composables/vmodel";
 import { CommandConfigurationProperties } from "@/composables/commands";
-
-const socket = useSocket();
+import { useCommandStore } from "@/stores/commands";
 
 const props = defineProps({
   modelValue: {
@@ -41,7 +39,7 @@ const props = defineProps({
 
 // Defines for v-model
 const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
-
+const commandStore = useCommandStore();
 
 // Build feedback label.
 const labelComputed = computed(() => {
@@ -54,14 +52,9 @@ const labelComputed = computed(() => {
   return `PIN ${command.value.pin}: ${command.value.state === true ? "On" : "Off"}`;
 });
 
-/**
- * Forward the command via the backend socketIO connexion to the robot.
- * @see backend/hermes/core/server.py
- */
-// @todo run a store action to emit the command so others can subscribe to it.
+// Send the command when the toggle changes.
 const onChange = () => {
-  console.debug("BooleanAction: value is now ", command.value.state);
-  socket.emit("action", props.device.id, command.value.id, command.value.state);
+  commandStore.sendCommand(props.device.id, command.value.id, command.value.state);
 };
 
 </script>
