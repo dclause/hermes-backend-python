@@ -12,6 +12,7 @@ export type CommandConfigurationProperties = {
 
 /**
  * Returns a list of available commands.
+ * Defaults to UnknownCommand if not existing.
  */
 export function useCommand(commandType: string): unknown {
   const commands: Record<string, unknown> = {

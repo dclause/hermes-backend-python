@@ -7,7 +7,7 @@ code: CommandCode::ACK
 from hermes.core.commands import AbstractCommand, CommandCode
 
 
-class BlinkCommand(AbstractCommand):
+class AckCommand(AbstractCommand):
     """ ACK command. """
 
     @property

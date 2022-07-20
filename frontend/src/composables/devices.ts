@@ -14,6 +14,7 @@ export type DeviceConfigurationProperties = {
 
 /**
  * Returns a list of available devices.
+ * Defaults to CustomDevice if not existing.
  */
 export function useDevice(deviceType: string): unknown {
   const devices: Record<string, unknown> = {

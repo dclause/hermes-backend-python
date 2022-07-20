@@ -10,6 +10,7 @@ export declare interface BoardConfigurationProperties {
 
 /**
  * Returns a list of available boards.
+ * Defaults to UnknownBoard if not existing.
  */
 export function useBoard(boardType: string): unknown {
   const boards: Record<string, unknown> = {
