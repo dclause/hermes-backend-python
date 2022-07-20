@@ -70,6 +70,7 @@ def log(level, msg, *args, **kwargs):
 def logthis(*args):
     """
     Log decorator for a function.
+    Using this decorator, the call to this function will be logged and its performance measured.
 
     Examples
         Use a decorator on a function to log that function.

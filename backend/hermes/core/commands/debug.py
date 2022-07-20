@@ -3,7 +3,6 @@ DEBUG Command: Displays debug data send from slave board.
 
 code: CommandCode::DEBUG
 """
-from enum import Enum
 
 from hermes.core import logger
 from hermes.core.commands import AbstractCommand, CommandCode
@@ -14,12 +13,11 @@ class DebugCommand(AbstractCommand):
     """ Displays debug data send from slave board. """
 
     @property
-    def __type__(self) -> Enum:
-        # @todo here the type is a code: rethink this.
+    def code(self) -> CommandCode:
         return CommandCode.DEBUG
 
     def __init__(self):
-        super().__init__(CommandCode.DEBUG, 'DEBUG')
+        super().__init__()
         self._data = ""
 
     def receive(self, connexion: AbstractProtocol):

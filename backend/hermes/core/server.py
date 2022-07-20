@@ -65,12 +65,6 @@ class _WebServerThread(Thread):
             """
             Pushes all current config to the client.
             """
-            # self._socketio.emit('handshake', (
-            #     config.GLOBAL,
-            #     config.PROFILE,
-            #     storage.dump(config.BOARDS),
-            #     storage.dump(config.DEVICES)
-            # ))
             emit('handshake', (
                 config.GLOBAL,
                 config.PROFILE,
@@ -83,8 +77,6 @@ class _WebServerThread(Thread):
             logger.debug(f'## socketIO received "Mutation" with parameter: {device_id} {command_id} {value}')
             try:
                 command: AbstractCommand = config.DEVICES[device_id].actions[command_id]
-                # @todo: How can be still allow 'BOOLEAN' command but
-                # command = CommandFactory().get_by_code(command_configuration.type)
                 command.send(device_id, command_id, value)
                 config.DEVICES[device_id].actions[command_id].state = value
             except Exception as exception:

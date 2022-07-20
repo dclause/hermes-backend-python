@@ -21,7 +21,6 @@ import glob
 import importlib
 import itertools
 import os
-from abc import abstractmethod
 from enum import Enum
 from typing import Any, TypeVar
 
@@ -46,22 +45,10 @@ class AbstractPlugin:
     # by increment from the last existing ID in the system.
     _id_iter = itertools.count(1)
 
-    @property
-    @abstractmethod
-    def __type__(self) -> Enum:
-        # @todo remove if unneeded after POC:
-        # - device should not need as per using the controller directly.
-        # - command should rename that MessageCode.
-        """
-        Each plugin type (implementation of abstract plugin, ie device, command, board, etc...) can itself be
-        subdivided into types (type of device, type of board, type of command, etc...)
-        """
-
     def __init__(self):
         self.id = next(self._id_iter)
         self.name: str = self.__class__.__name__
         self.controller: str = self.__class__.__name__
-        self.type: int = self.__type__.value
 
     def __str__(self):
         """ Stringify the plugin: Only used for debug purpose. """

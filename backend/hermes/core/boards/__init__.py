@@ -85,7 +85,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
             self._connexion.open()
         except ProtocolException:
             logger.error(f'Board {self.name}: Connexion could not be opened.')
-            return self.close()
+            return not self.close()
 
         time.sleep(1)
 
@@ -96,7 +96,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
             self.handshake()
         except FunctionTimedOut as error:
             logger.error(f'Board {self.name} - Handshake error: {error}')
-            return self.close()
+            return not self.close()
 
         # ###
         # Starts the send/receive threads.

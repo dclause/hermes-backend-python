@@ -12,13 +12,19 @@ Main app component: defines a single layout for all pages.
       permanent
       rail
     >
-      <v-avatar
-        class="d-block text-center mx-auto mt-4 pa-1"
-        color=""
-        size="45"
-      >
-        <svg-robot />
-      </v-avatar>
+      <v-tooltip>
+        <template #activator="{ props }">
+          <v-avatar
+            class="d-block text-center mx-auto mt-4 pa-1"
+            color=""
+            size="45"
+            v-bind="props"
+          >
+            <svg-robot title="test" />
+          </v-avatar>
+        </template>
+        <span>{{ name }}</span>
+      </v-tooltip>
       <v-divider class="mx-3 my-5" />
 
       <main-menu-list />
@@ -53,4 +59,11 @@ Main app component: defines a single layout for all pages.
 <script lang="ts" setup>
 import LanControl from "@/components/connexion/LanControl.vue";
 import MainMenuList from "@/components/menus/MainMenuList.vue";
-import SvgRobot from "@/components/icons/SvgRobot.vue";</script>
+import SvgRobot from "@/components/icons/SvgRobot.vue";
+import { storeToRefs } from "pinia";
+import { useProfileStore } from "@/stores/profile";
+
+const profileStore = useProfileStore();
+const { name } = storeToRefs(profileStore);
+
+</script>

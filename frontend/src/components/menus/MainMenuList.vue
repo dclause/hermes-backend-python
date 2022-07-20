@@ -3,7 +3,7 @@
     <v-tooltip>
       <template #activator="{ props }">
         <v-list-item
-          prepend-icon="mdi-chip"
+          prepend-icon="mdi-robot"
           title="Boards"
           to="boards"
           v-bind="props"
@@ -16,7 +16,7 @@
       <template #activator="{ props }">
         <v-list-item
           link
-          prepend-icon="mdi-connection"
+          prepend-icon="mdi-robot-industrial"
           title="Devices"
           to="devices"
           v-bind="props"

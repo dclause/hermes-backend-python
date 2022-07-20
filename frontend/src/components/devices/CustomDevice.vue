@@ -11,7 +11,7 @@
     <v-card-subtitle>{{ board.name }}</v-card-subtitle>
     <v-card-text>
       <component
-        :is="useCommand(command.code)"
+        :is="useCommand(command.controller)"
         v-for="(command, key) in device.actions"
         :key="key"
         v-model="device.actions[key]"

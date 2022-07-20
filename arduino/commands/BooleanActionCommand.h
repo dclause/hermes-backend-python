@@ -15,12 +15,12 @@
  *
  * @see CommandCode::DIGITAL_WRITE
  */
-class DigitalWriteCommand : public AbstractCommand {
+class BooleanActionCommand : public AbstractCommand {
     COMMAND_DECLARATION
 
     public:
 
-        DigitalWriteCommand() : AbstractCommand(2) {}
+        BooleanActionCommand() : AbstractCommand(2) {}
 
         String getName() const { return "DigitalWrite"; }
 
@@ -37,6 +37,6 @@ class DigitalWriteCommand : public AbstractCommand {
         }
 };
 
-REGISTER_COMMAND(CommandCode::DIGITAL_WRITE, DigitalWriteCommand)
+REGISTER_COMMAND(CommandCode::BOOLEAN_ACTION, BooleanActionCommand)
 
 #endif  // ARDUINO_DIGITAL_WRITE_COMMAND_H

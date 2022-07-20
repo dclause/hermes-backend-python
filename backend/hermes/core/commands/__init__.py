@@ -14,7 +14,8 @@ A command is represented by a unique 8bit identifier. Those are defined via the 
 Commands are detected when the package is imported for the first time and globally available via the commandFactory.
 """
 from abc import abstractmethod
-from enum import IntEnum, Enum
+from enum import IntEnum
+from typing import Any
 
 from hermes.core import logger, config
 from hermes.core.plugins import AbstractPlugin
@@ -38,50 +39,53 @@ class CommandCode(IntEnum):
     Commands are (tried to) grouped by logical packages and assign arbitrarily a number.
 
     Warnings:
-        Every number from 0 to 255 can be used in theory at runtime for exchanges.
-
-        However, for debugging purposes, it is much more convenience to use printable characters to be used in the
-        monitor, hence values from 33 to 126.
-        To get the ascii equivalents, run code at https://docs.arduino.cc/built-in-examples/communication/ASCIITable
+        Every number from 0 to 255 can be used for exchanges.
 
         A few numbers can be generated as "noise" in the serial pipe and should be thus avoided.
-        These noises mainly happens when debugging the arduino code from the monitor. Using those would therefore
-         generate noise when debugging via the monitor console.
-          - 0 is ASCII [NULL] char: it is sent by Arduino IDE monitor when baudrate is changed.
+        These noises mainly happens when debugging the arduino code from the monitor. That is the reason they are
+        for specific purposes:
+          - 0 is ASCII [NULL] char: it is sent by Arduino IDE monitor when baudrate is changed
           - 10 is ASCII [EndOfLine] char: it is sent by Arduino IDE monitor on each data sent.
+          - 35 is ASCII # char: is used to send debug data that should be ignored.
 
-    Command code are maps to actual commands via the CommandFactory class.
+        The values in this file must match with the values in the MessageCode.h file in the arduino project. A script is
+        provided in order to help to main the files in sync.
+        (@see messagecode.py in the scripts folder on the root mono-repo)
+
+    Notes:
+        Command code are maps to actual commands via the CommandFactory class.
 
     See Also:
-         :class:`CommandFactory`
+        :file: scripts/messagecode.py
+        :class:`CommandFactory`
     """
 
     ######
     # Reserved
     VOID = 0  # Reserved @see attention point above
-    DEBUG = 35  # Reserved @see debugger.h
     END_OF_LINE = 10  # Reserved @see attention point above
+    DEBUG = 35  # Reserved @see arduino folder ioserial.h
 
     ######
-    # 33 to 40: generic purposes.
-    HANDSHAKE = 33  # ascii: !
-    CONNECTED = 34  # ascii: "
+    # 0 to 40: generic purposes.
+    # /!\ Skipped 0 for VOID.
+    # /!\ Skipped 10 for END_OF_LINE.
+    ACK = 11
+    HANDSHAKE = 12
+    CONNECTED = 13
+    PATCH = 14
     # /!\ Skipped 35 for DEBUG.
-    ACK = 36  # ascii: $
-    PATCH = 37  # ascii: %
 
     ######
-    # 41 - 69: commands related to actuators.
-    SERVO = 41  # ascii: )
-    BOOLEAN_ACTION = 42
+    # 41 - 140: codes related to commands (for actuators).
+    BOOLEAN_ACTION = 41
+    SERVO = 42
+    BLINK = 43
+    ON_OFF = 44
 
     ######
-    # 70 - 97: commands related to sensors/inputs
-
-    ######
-    # 98 - 126: commands related to passive components (displays, leds, etc...)
-    BLINK = 98  # ascii: b
-    ON_OFF = 99  # ascii: c
+    # 141 - 140: codes related to inputs (for sensors).
+    BOOLEAN_INPUT = 141
 
 
 class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
@@ -89,15 +93,13 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
 
     @property
     @abstractmethod
-    def __type__(self) -> Enum:
-        # @todo here the type is a code: rethink this.
-        return CommandCode.VOID
+    def code(self) -> CommandCode:
+        """ Each command type must have a 8bit code from the CommandCode dictionary. """
 
-    def __init__(self, code: CommandCode = None, name: str = ""):
+    def __init__(self):
         super().__init__()
-        self.code: CommandCode = code
-        self.name: str = name
-        self._payload: bytearray
+        self.default: Any = None
+        self.value: Any = None
 
     def __str__(self):
         return f'Command {self.name}'
@@ -111,13 +113,13 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
         """ Sends the command. """
         device = config.DEVICES[device_id]
         board = config.BOARDS[device.board]
-        # command = device.actions[command_id]
 
         if not board.connected:
-            board.open()
+            if not board.open():
+                raise CommandException(f'Board {board.id} ({board.name}) is not connected.')
 
         # @todo rework this part here.
-        header = bytearray([self.type, self.pin])
+        header = bytearray([self.code, self.pin])
         data = self.encode(value)
         board.send(header + data)
 
