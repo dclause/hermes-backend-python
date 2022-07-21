@@ -11,8 +11,6 @@
  */
 class ServoDevice : public AbstractDevice {
         String name_ = "SERVO";
-    public:
-        ServoDevice(uint8_t id, const String &name) : AbstractDevice(id, name) {}
 };
 
 #endif // ARDUINO_SERVO_DEVICE_H

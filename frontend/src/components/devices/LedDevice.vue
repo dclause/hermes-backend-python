@@ -1,5 +1,5 @@
 <template>
-  <v-card width="400">
+  <v-card width="calc(33.33% - 16px)">
     <v-card-title>
       {{ device.name }}
       <v-spacer />

@@ -31,5 +31,6 @@ feedback                  Provide feedback
 help                      Print help for each target
 lint                      Lint the code
 run                       Run the code
+debug                     Debug the code
 test                      Test the code
 ```

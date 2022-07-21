@@ -8,6 +8,7 @@ to be embedded in a board (see AbstractBoard) and must implement the AbstractPro
 
 from abc import abstractmethod
 
+from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
 
@@ -15,7 +16,7 @@ class ProtocolException(Exception):
     """ Base class for protocol related exceptions. """
 
 
-class AbstractProtocol(metaclass=MetaPluginType):
+class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
     """ Abstract class representing a Connexion protocol connexion of some kind."""
 
     @abstractmethod

@@ -17,9 +17,10 @@ from hermes.core.boards.arduino import StringEnum
 from hermes.core.commands import AbstractCommand
 from hermes.core.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
-
 # @todo rename to _effectiveStorage
 # @todo document
+from hermes.core.protocols import AbstractProtocol
+
 _storage = ruamel.yaml.YAML(typ='safe')
 _storage.sort_base_mapping_type_on_output = False
 
@@ -54,6 +55,10 @@ def init():
     # Register commands.
     for command_type in AbstractCommand.plugins:
         _storage.register_class(command_type)
+
+    # Register protocols.
+    for protocol_type in AbstractProtocol.plugins:
+        _storage.register_class(protocol_type)
 
 
 def read(namespace: StorageNamespace, config_type: StorageType) -> dict:

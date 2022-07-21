@@ -16,6 +16,9 @@ help: ## Print help for each target
 run: ## Run the code
 	@$(PYTHON) -m $(MODULE) -w
 
+debug: ## Debug the code
+	@$(PYTHON) -m $(MODULE) -w --debug
+
 test: ## Test the code
 	@type pytest >/dev/null 2>&1 || (echo "Run '$(PIP) install pytest' first." >&2 ; exit 1)
 	@pytest --cov-report term-missing:skip-covered; rm -rf .coverage

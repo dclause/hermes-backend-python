@@ -3,7 +3,7 @@ Represents a connexion to an electronic board (arduino-like) by embedding its py
 """
 
 from hermes.core.boards import AbstractBoard
-from hermes.core.protocols.usbserial import SerialProtocol
+from hermes.core.protocols import AbstractProtocol
 from hermes.core.struct import StringEnum
 
 
@@ -17,7 +17,6 @@ class ArduinoBoardType(StringEnum):
 class ArduinoBoard(AbstractBoard):
     """ ArduinoBoard implementation """
 
-    def __init__(self, port: str):
-        self.port = port
-        self.model: ArduinoBoardType = ArduinoBoardType.MEGA
-        super().__init__(SerialProtocol(self.port))
+    def __init__(self, protocol: AbstractProtocol, model: ArduinoBoardType):
+        self.model: ArduinoBoardType = model
+        super().__init__(protocol)

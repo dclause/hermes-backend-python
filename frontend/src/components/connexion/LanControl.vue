@@ -67,11 +67,10 @@ socket
   .on("disconnect", () => {
     configStore.$patch({ connected: false });
   })
-  .on("patch", (device_id, partial) => {
-    // @todo get this to work no matter if board / device.
-    console.warn("Received patch order for", device_id, partial);
-    deviceStore.$patch({
-      devices: { [device_id]: partial }
+  .on("patch", (board_id, partial) => {
+    console.warn("Received patch order for", board_id, partial);
+    boardStore.$patch({
+      boards: { [board_id]: partial }
     });
   });
 </script>

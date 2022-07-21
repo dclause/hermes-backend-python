@@ -109,17 +109,15 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
         """ Encodes the given value as an array of bytes. """
         return bytearray([value])
 
-    def send(self, device_id, command_id: any, value: any):
+    def send(self, board_id, value: any):
         """ Sends the command. """
-        device = config.DEVICES[device_id]
-        board = config.BOARDS[device.board]
+        board = config.BOARDS[board_id]
 
         if not board.connected:
             if not board.open():
                 raise CommandException(f'Board {board.id} ({board.name}) is not connected.')
 
-        # @todo rework this part here.
-        header = bytearray([self.code, self.pin])
+        header = bytearray([self.code])
         data = self.encode(value)
         board.send(header + data)
 

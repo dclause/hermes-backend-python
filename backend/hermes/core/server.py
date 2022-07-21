@@ -73,15 +73,15 @@ class _WebServerThread(Thread):
             ))
 
         @self._socketio.on('action')
-        def mutation(device_id: int, command_id: int, value: int):
-            logger.debug(f'## socketIO received "Mutation" with parameter: {device_id} {command_id} {value}')
+        def mutation(board_id: int, command_id: int, value: int):
+            logger.debug(f'## socketIO received "Mutation" with parameter: {board_id} {command_id} {value}')
             try:
-                command: AbstractCommand = config.DEVICES[device_id].actions[command_id]
-                command.send(device_id, command_id, value)
-                config.DEVICES[device_id].actions[command_id].state = value
+                command: AbstractCommand = config.BOARDS[board_id].actions[command_id]
+                command.send(board_id, value)
+                config.BOARDS[board_id].actions[command_id].state = value
             except Exception as exception:
                 logger.error(f'Mutation error: command could not be sent because: "{exception}".')
-            emit('patch', (device_id, config.DEVICES[device_id].serialize(recursive=True)), broadcast=True)
+            emit('patch', (board_id, config.BOARDS[board_id].serialize(recursive=True)), broadcast=True)
 
         # ----------------------------------------
         # WebGUI optional definition

@@ -1,11 +1,14 @@
 <template>
-  <div class="command command-boolean">
+  <div
+    class="command command-boolean"
+    :title="infoComputed"
+  >
     <v-label class="text-body-2 font-weight-bold">
-      Command "{{ command.name }}" :
+      {{ labelComputed }}
     </v-label>
     <v-switch
       v-model="command.state"
-      :label="labelComputed"
+      :label="feedbackComputed"
       color="primary"
       hide-details
       inline
@@ -18,22 +21,30 @@
 
 <script lang="ts" setup>
 import { computed, WritableComputedRef } from "vue";
-import { defineModel } from "@/composables/vmodel";
-import { CommandConfigurationProperties } from "@/composables/commands";
 import { useCommandStore } from "@/stores/commands";
+import { CommandConfigurationProperties } from "@/composables/commands";
+import { defineModel } from "@/composables/vmodel";
 
 const props = defineProps({
   modelValue: {
     type: Object,
     required: true
   },
-  device: {
+  board: {
     type: Object,
     required: true
   },
   label: {
     type: String,
-    default: ""
+    default: undefined
+  },
+  info: {
+    type: String,
+    default: undefined
+  },
+  feedback: {
+    type: String,
+    default: undefined
   }
 });
 
@@ -41,20 +52,33 @@ const props = defineProps({
 const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
 const commandStore = useCommandStore();
 
-// Build feedback label.
+// Build label.
 const labelComputed = computed(() => {
-  if (props.label) {
+  if (props.label !== undefined) {
     return props.label;
   }
-  if (command.value.name) {
-    return `${command.value.name} on PIN ${command.value.pin}: ${command.value.state === true ? "On" : "Off"}`;
+  return `Command "${command.value.name}" :`;
+});
+
+// Build info.
+const infoComputed = computed(() => {
+  if (props.info !== undefined) {
+    return props.info;
+  }
+  return `Board "${props.board.name}" (PIN ${command.value.pin}): ${command.value.state === true ? "On" : "Off"}`;
+});
+
+// Build feedback label.
+const feedbackComputed = computed(() => {
+  if (props.feedback !== undefined) {
+    return props.feedback;
   }
   return `PIN ${command.value.pin}: ${command.value.state === true ? "On" : "Off"}`;
 });
 
 // Send the command when the toggle changes.
 const onChange = () => {
-  commandStore.sendCommand(props.device.id, command.value.id, command.value.state);
+  commandStore.sendCommand(props.board.id, command.value.id, command.value.state);
 };
 
 </script>

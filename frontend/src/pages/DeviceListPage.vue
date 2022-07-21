@@ -2,6 +2,7 @@
   <v-container
     v-if="connected"
     class="d-flex align-content-start flex-wrap"
+    fluid
   >
     <component
       :is="useDevice(device.controller)"

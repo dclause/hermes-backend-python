@@ -34,8 +34,9 @@ from hermes.core.protocols import AbstractProtocol, ProtocolException
 class SerialProtocol(AbstractProtocol):
     """ Implements an :class:AbstractProtocol class using the serial port. """
 
-    def __init__(self, serial_port, baudrate=115200, timeout=0):
-        self._serial_port: bool = serial_port
+    def __init__(self, port, baudrate=115200, timeout=0):
+        super().__init__()
+        self._serial_port: bool = port
         self._baudrate: int = baudrate
         self._timeout: int = timeout
         self._serial: Serial = Serial()

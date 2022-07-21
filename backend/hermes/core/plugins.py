@@ -71,9 +71,12 @@ class AbstractPlugin:
                 continue
 
             # @todo find a more reliable way
-            if recursive and isinstance(obj[attr], list):
-                listing = [element.serialize() for element in obj[attr]]
+            if recursive and isinstance(obj[attr], dict):
+                listing = {element.id: element.serialize() for (key, element) in obj[attr].items()}
                 obj[attr] = listing
+
+            if recursive and isinstance(obj[attr], AbstractPlugin):
+                obj[attr] = obj[attr].serialize()
 
             # Convert enum to their names.
             if isinstance(obj[attr], Enum):
@@ -90,7 +93,10 @@ class AbstractPlugin:
 
         # Filters the state object with values necessary for the plugin constructor.
         arguments = cls.__init__.__code__.co_varnames[1:cls.__init__.__code__.co_argcount]
-        initial_state = {key: state[key] for key in arguments}
+        initial_state = {}
+        for key in arguments:
+            if key in state:
+                initial_state[key] = state[key]
 
         # Instantiates the plugin and update it.
         plugin = cls(**initial_state)

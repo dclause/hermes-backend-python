@@ -6,7 +6,7 @@ import time
 
 import logzero
 # pylint: disable-next=unused-import
-from logzero import DEBUG, INFO, WARNING, ERROR  # noqa: F401
+from logzero import loglevel, DEBUG, INFO, WARNING, ERROR  # noqa: F401
 
 
 def init(logpath: str = './logs/backend.log'):
@@ -17,7 +17,6 @@ def init(logpath: str = './logs/backend.log'):
         logpath (str): The path the logfile. Defaults to ./logs/backend.log
     """
     print(" > Init logger")
-    logzero.loglevel(logzero.INFO)
 
     # Create rotated logfile.
     pathlib.Path(logpath).parent.mkdir(parents=True, exist_ok=True)
@@ -28,6 +27,7 @@ def init(logpath: str = './logs/backend.log'):
         fmt='%(color)s[%(levelname)s - %(asctime)-15s - %(module)s:%(lineno)d]%(end_color)s %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S %p')
     logzero.formatter(formatter)
+    logzero.loglevel(logzero.INFO)
 
 
 def debug(msg, *args, **kwargs):

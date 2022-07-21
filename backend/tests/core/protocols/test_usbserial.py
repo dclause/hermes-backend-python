@@ -11,7 +11,7 @@ from serial import SerialException
 
 from hermes.core.commands import CommandCode
 from hermes.core.protocols import ProtocolException
-from hermes.core.protocols.usbserial import SerialProtocol
+from hermes.core.protocols.serial import SerialProtocol
 
 
 class SerialProtocolTest(unittest.TestCase):

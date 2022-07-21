@@ -57,6 +57,9 @@ def _get_cmd_config() -> MutableMapping:
     # Optional WEBGUI boolean argument (eg. -w)
     parser.add_argument('-w', '--webGUI', action='store_true', dest='webGUI', help='Starts serving the GUI')
 
+    # Specify output of "--debug"
+    parser.add_argument('--debug', action='store_true', dest='debug')
+
     # Specify output of "--version"
     parser.add_argument('--version', action='version', version=f'RMS version {__version__}')
 
@@ -71,6 +74,9 @@ def _get_cmd_config() -> MutableMapping:
             }
         }
     })
+
+    if cmdline_args['debug']:
+        logger.loglevel(logger.DEBUG)
 
     logger.debug('> Read configuration from cmdline:')
     logger.debug(configuration)
