@@ -10,19 +10,10 @@
  * @tparam Value    the value element type (ex. Command, AbstractDevice, etc...)
  */
 template<typename Key, typename Value>
-class Pair {
-    public:
-        const Key key;
-        const Value value;
-        Pair<Key, Value> *next;
-
-        Pair() {}
-
-        Pair(Key key, Value value) : key(key), value(value), next(NULL) {}
-
-        operator String() {
-            return (String) this->key + F(" - ") + (String) this->value;
-        }
+struct KeyValuePair {
+    Key key;
+    Value value;
+    KeyValuePair<Key, Value> *next;
 };
 
 /**
@@ -33,11 +24,18 @@ class Pair {
  */
 template<typename Key, typename Value>
 class KeyValueMap {
+    private:
+        uint8_t size_ = 0;
+        KeyValuePair<Key, Value> *head_ = NULL;
+
     public:
-        KeyValueMap() : head_(NULL), size_((uint8_t) 0) {}
+        KeyValueMap() : head_(NULL), size_(0) {}
 
         ~KeyValueMap() { this->clear(); }
 
+        /**
+         * Returns the number of elements in the map.
+         */
         uint8_t count() {
             return this->size_;
         }
@@ -46,11 +44,11 @@ class KeyValueMap {
          * Deletes all elements in the list.
          */
         void clear() {
-            Pair<Key, Value> *node = this->head_;
+            KeyValuePair<Key, Value> *nodeToDelete = this->head_;
             while (this->head_) {
+                nodeToDelete = this->head_;
                 this->head_ = this->head_->next;
-                delete node;
-                node = this->head_;
+                delete nodeToDelete;
             }
             this->size_ = 0;
         }
@@ -69,9 +67,11 @@ class KeyValueMap {
             if (this->getPosition(key) != -1) {
                 return false;
             }
-            Pair<Key, Value> *node = new Pair<Key, Value>(key, value);
-            node->next = this->head_;
-            this->head_ = node;
+            KeyValuePair<Key, Value> *newNode = new KeyValuePair<Key, Value>;
+            newNode->key = key;
+            newNode->value = value;
+            newNode->next = this->head_;
+            this->head_ = newNode;
             this->size_ += 1;
             return true;
         }
@@ -83,7 +83,7 @@ class KeyValueMap {
          * @return bool If the element has been removed from the list.
          */
         bool remove(Key key) {
-            Pair<Key, Value> *current = this->head_;
+            KeyValuePair<Key, Value> *current = this->head_;
             while (current) {
                 if (current->next->key == key) {
                     break;
@@ -91,7 +91,7 @@ class KeyValueMap {
                 current = current->next;
             }
             if (current) {
-                Pair<Key, Value> *toBeDeleted = current->next;
+                KeyValuePair<Key, Value> *toBeDeleted = current->next;
                 current->next = toBeDeleted->next;
                 this->size_ -= 1;
                 delete toBeDeleted;
@@ -110,8 +110,8 @@ class KeyValueMap {
          * @param key
          * @return The element or NULL.
          */
-        Pair<Key, Value> *operator[](Key key) {
-            Pair<Key, Value> *current = this->head_;
+        KeyValuePair<Key, Value> *operator[](Key key) {
+            KeyValuePair<Key, Value> *current = this->head_;
             while (current) {
                 if (current->key == key) {
                     return current;
@@ -144,11 +144,11 @@ class KeyValueMap {
          * @param key
          * @return The pair or NULL.
          */
-        Pair<Key, Value> *get(uint8_t position) {
+        KeyValuePair<Key, Value> *get(uint8_t position) {
             if (position < 0 || position >= this->size_) {
                 return NULL;
             }
-            Pair<Key, Value> *current = this->head_;
+            KeyValuePair<Key, Value> *current = this->head_;
             for (uint8_t i = 0; i < position; i++) {
                 current = current->next;
             }
@@ -162,7 +162,7 @@ class KeyValueMap {
          * @return the position, or `-1` if not found.
          */
         int getPosition(Key const key) {
-            Pair<Key, Value> *current = this->head_;
+            KeyValuePair<Key, Value> *current = this->head_;
             for (uint8_t i = 0; i < this->size_; i++) {
                 if (current->key == key) {
                     return i;
@@ -178,18 +178,18 @@ class KeyValueMap {
          * @return String
          */
         operator String() {
-            String output = (String) F("Debug map (") + this->count() + (String) F(" elements):\n");
-            Pair<Key, Value> *current = this->head_;
+            String
+                    output = (String)
+            F("Debug map (") + this->count() + (String)
+            F(" elements):\n");
+            KeyValuePair<Key, Value> *current = this->head_;
             for (uint8_t i = 0; i < this->size_; i++) {
-                output += (String) F("  > ") + (String) (*current) + '\n';
+                output += (String)
+                F("  > ") + (String)(*current) + '\n';
                 current = current->next;
             }
             return output;
         }
-
-    private:
-        Pair<Key, Value> *head_ = NULL;
-        uint8_t size_ = 0;
 };
 
 #endif // ARDUINO_MAP_H
