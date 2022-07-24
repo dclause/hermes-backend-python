@@ -26,13 +26,6 @@ class RunnableManager {
         }
 
         /**
-         * Deletes all known runnable commands.
-         */
-        void clearCommands() {
-            return this->runnables_.clear();
-        }
-
-        /**
          * Returns all known runnable commands.
          *
          * @return KeyValueMap<uint8_t, AbstractCommand>

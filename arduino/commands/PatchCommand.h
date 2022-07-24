@@ -7,12 +7,8 @@
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
-#include "CommandManager.h"
+#include "RunnableManager.h"
 
-template<typename Base, typename T>
-inline bool instanceof(const T *ptr) {
-    return dynamic_cast<const Base *>(ptr) != NULL;
-}
 
 /**
  * PATCH Command: create/patch a command and store it to command manager if it is a runnable.

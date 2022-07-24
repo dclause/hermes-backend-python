@@ -12,9 +12,9 @@
  * (as here) or WIFI (to be implementation) or else.
  */
 
-#include "../commands/CommandCode.h"
-#include "debugger.h"
 #include <HardwareSerial.h>
+#include "debugger.h"
+#include "../commands/CommandCode.h"
 
 #define BAUDRATE 115200
 
@@ -140,6 +140,7 @@ namespace IO {
     void send_bytes(const uint8_t *buffer, const uint8_t length) {
         Serial.write(buffer, length);
     }
+
 }// namespace IO
 
 #endif// ARDUINO_IO_H

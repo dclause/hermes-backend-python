@@ -70,7 +70,6 @@ class AbstractPlugin:
                 del obj[attr]
                 continue
 
-            # @todo find a more reliable way
             if recursive and isinstance(obj[attr], dict):
                 listing = {element.id: element.serialize() for (key, element) in obj[attr].items()}
                 obj[attr] = listing

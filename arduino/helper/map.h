@@ -42,6 +42,13 @@ class KeyValueMap {
         }
 
         /**
+         * Returns the map head.
+         */
+        KeyValuePair<Key, Value> *getHead() {
+            return this->head_;
+        }
+
+        /**
          * Deletes all elements in the list.
          */
         void clear() {

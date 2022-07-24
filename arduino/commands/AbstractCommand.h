@@ -82,7 +82,7 @@ class AbstractCommand {
         virtual bool isRunnable() const { return false; }
 
         /**
-         * Update the internal data of a command from a bytes payload.
+         * Update the internal settings of a command from a bytes payload.
          *
          * @note This situation occurs when a handshake is made and the actions/inputs are declared by the backend to
          * the board (@see HandshakeCommand) or when an action/input is updated (for instance the servo speed is changed).
@@ -98,6 +98,11 @@ class AbstractCommand {
                 this->id_ = payload[0];
             }
         }
+
+        /**
+         * Update the command internal state depending on time of the nextTick.
+         */
+        void nextTick() {};
 
         /**
          * Processes the command when received from the serial port. That means receive the payload and execute it.
