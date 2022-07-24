@@ -2,7 +2,7 @@
 #define ARDUINO_MAP_H
 
 #include <Arduino.h>
-#include "../debugger.h"
+#include "debugger.h"
 
 /**
  * Defines an associative key/value element to be used in KeyValueMap.

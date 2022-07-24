@@ -22,8 +22,8 @@ class ServoCommand : public AbstractCommand {
 
         bool isRunnable() const { return true; }
 
-        void fromBytes(const uint8_t *payload) {
-            AbstractCommand::fromBytes(payload);
+        void updateFromPayload(const uint8_t *payload) {
+            AbstractCommand::updateFromPayload(payload);
             this->pin_ = payload[1];
             this->default_ = payload[2];
         };
@@ -31,6 +31,8 @@ class ServoCommand : public AbstractCommand {
         void executePayload(uint8_t *payload) {
             TRACE("-----------");
             TRACE("Process SERVO command:");
+
+            // @todo implement.
 
             uint8_t position = payload[1];
             TRACE("  > Requested position: " + String(position));

@@ -1,9 +1,16 @@
 #ifndef ARDUINO_COMMAND_FACTORY_H
 #define ARDUINO_COMMAND_FACTORY_H
 
+#include "../helper/debugger.h"
 #include "../helper/map.h"
 #include "CommandCode.h"
 #include "AbstractCommand.h"
+
+#define COMMAND_DECLARATION protected: \
+    static AbstractCommand* getInstance(); \
+    static bool isRegistered;
+#define GET_COMMAND_INSTANCE(T) AbstractCommand* T::getInstance() { return new T(); }
+#define REGISTER_COMMAND(N, T) bool T::isRegistered = CommandFactory::getInstance().registerCommand(N, &T::getInstance);GET_COMMAND_INSTANCE(T);
 
 // Callback for instantiating "on the fly" a command.
 using CommandInstance = AbstractCommand *(*)();
@@ -75,11 +82,5 @@ class CommandFactory {
             return log;
         }
 };
-
-#define COMMAND_DECLARATION protected: \
-    static AbstractCommand* getInstance(); \
-    static bool isRegistered;
-#define GET_COMMAND_INSTANCE(T) AbstractCommand* T::getInstance() { return new T(); }
-#define REGISTER_COMMAND(N, T) bool T::isRegistered = CommandFactory::getInstance().registerCommand(N, &T::getInstance);GET_COMMAND_INSTANCE(T);
 
 #endif // ARDUINO_COMMAND_FACTORY_H

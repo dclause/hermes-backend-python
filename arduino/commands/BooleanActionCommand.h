@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include "../debugger.h"
+#include "../helper/debugger.h"
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"

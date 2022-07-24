@@ -2,7 +2,7 @@
 #define ARDUINO_HANDSHAKE_COMMAND_H
 
 #include <Arduino.h>
-#include "../debugger.h"
+#include "../helper/debugger.h"
 #include "CommandCode.h"
 #include "AbstractCommand.h"
 #include "CommandFactory.h"

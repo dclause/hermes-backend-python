@@ -1,7 +1,7 @@
 #ifndef ARDUINO_COMMAND_H
 #define ARDUINO_COMMAND_H
 
-#include "../debugger.h"
+#include "../helper/debugger.h"
 #include "../helper/ioserial.h"
 #include <Arduino.h>
 
@@ -9,18 +9,24 @@
 /**
  * Class AbstractCommand: all commands must implement this class.
  *
- * A command is (generally) an action that is required by the master to be done on the slave board. Can be for
- * instance to turn a motor, orient a servomotor, light a led...
+ * A command ca be:
+ *  - An action that is required by the master to be done on the slave board.
+ *      Ex.: turn a motor, orientate a servomotor, light a led...
+ *  - An input that is required to be read and sent back to the master.
+ *      Ex.: value of a push button, a PIR sensor, a distance sensor...
+ *  - A generic purpose command, generally for the protocol itself.
+ *      Ex.: a heartbeat, a handshake, an ACK, etc...
  *
- * A command can either be received or send.
+ * A command can either be received (from the backend) or sent (to the backend).
+ *
+ * A command can be called "Runnable" if its execution is time dependent and should not be blocking.
+ *      Ex.: Turning a servo takes time and we do want the whole robot to hold-on until done. Therefore the servo command
+ *      is called "Runnable" and implements an update() mechanism that is a function time-dependent.
  *
  * A command is a suite of 8bits word:
- *  > starting with an uint8_t (one of the CommandCode dictionary) that will be mapped to the appropriate class by
+ *  - starting with an uint8_t (one of the CommandCode dictionary) that will be mapped to the appropriate class by
  *  the CommandFactory.
- *  > followed by an arbitrary number of bytes for arguments.
- *
- * @example
- * @todo add a simple yet not trivial example here, such as `LIGHT_ON pin` when done.
+ *  - followed by a payload which is an arbitrary number of bytes for arguments that are read by the receivePayload_().
  *
  * @note
  * Command codes are mapped to actual commands via the CommandFactory by registering the command class to the factory
@@ -30,7 +36,7 @@
  */
 class AbstractCommand {
     protected:
-        uint8_t id_;
+        uint8_t id_ = 0;
         int expected_payload_size_;
         unsigned int effective_payload_size_;
         uint8_t *payload_;
@@ -57,13 +63,21 @@ class AbstractCommand {
          */
         virtual String getName() const = 0;
 
-        // @todo describe
+        /**
+         * Returns the ID of this command.
+         * We use a getter to the protected id_ attribute to make sure no-one changes this from the outside.
+         * The only way to change the ID is via the updateFromPayload() method which ensures the ID can't be changed
+         * afterward.
+         *
+         * @return String
+         */
         uint8_t getId() const { return this->id_; };
 
-        void setId(const uint8_t id) { this->id_ = id; };
-
         /**
-         * @todo describe
+         * Defines if the command is "Runnable".
+         * (@see AbstractCommand description)
+         *
+         * @return boolean
          */
         virtual bool isRunnable() const { return false; }
 
@@ -73,15 +87,43 @@ class AbstractCommand {
          * @note This situation occurs when a handshake is made and the actions/inputs are declared by the backend to
          * the board (@see HandshakeCommand) or when an action/input is updated (for instance the servo speed is changed).
          *
-         * @note The implementation below is pretty low. But as an AbstractCommand, we only know that payload[0] is the
+         * @note The implementation below is pretty light. But as an AbstractCommand, we only know that payload[0] is the
          * the command id. Every implementation is responsible to override this method and know what the payload contains
          * for itself.
          *
          * @param payload
          */
-        virtual void fromBytes(const uint8_t *payload) {
-            this->id_ = payload[0];
+        virtual void updateFromPayload(const uint8_t *payload) {
+            if (this->id_ == 0) {
+                this->id_ = payload[0];
+            }
         }
+
+        /**
+         * Processes the command when received from the serial port. That means receive the payload and execute it.
+         */
+        void process() {
+            this->receivePayload_();
+            this->executePayload(this->payload_);
+        };
+
+        /**
+         * Executes the command using the given payload.
+         *
+         * @param payload (uint8_t*)
+         */
+        virtual void executePayload(uint8_t *payload) = 0;
+
+        /**
+         * Stringifies the command for debug purpose.
+         *
+         * @return String
+         */
+        operator String() const {
+            return "Command (" + String(this->getId()) + ") " + this->getName() + " ";
+        }
+
+    private:
 
         /**
          * Load the expected data in the internal payload.
@@ -91,7 +133,7 @@ class AbstractCommand {
          *
          * The maximum amount of data sent is 255 bytes.
          */
-        void receive() {
+        void receivePayload_() {
             if (this->expected_payload_size_ > 0) {
                 IO::wait_for_bytes(this->expected_payload_size_);
                 IO::read_bytes(this->payload_, this->expected_payload_size_);
@@ -104,28 +146,6 @@ class AbstractCommand {
                 TRACE("Determine data size: " + String(this->effective_payload_size_));
                 TRACE("Data received: " + data);
             }
-        }
-
-        /**
-         * Processes the command when received from the serial port.
-         */
-        void process() {
-            this->receive();
-            this->executePayload(this->payload_);
-        };
-
-        /**
-         * Executes the given payload.
-         */
-        virtual void executePayload(uint8_t *payload) = 0;
-
-        /**
-         * Stringifies the command for debug purpose.
-         *
-         * @return String
-         */
-        operator String() const {
-            return "Command (" + String(this->getId()) + ") " + this->getName() + " ";
         }
 };
 

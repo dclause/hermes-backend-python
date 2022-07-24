@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#include "../debugger.h"
+#include "../helper/debugger.h"
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
@@ -57,7 +57,7 @@ class PatchCommand : public AbstractCommand {
                     TRACE("  > Updated " + String(*existingRunnable));
                 } else {
                     TRACE("  > Runnable needs create.");
-                    commandToPatch->fromBytes(data);
+                    commandToPatch->updateFromPayload(data);
                     RunnableManager::getInstance().addCommand(commandToPatch);
                     TRACE("  > Created " + String(*commandToPatch));
                 }

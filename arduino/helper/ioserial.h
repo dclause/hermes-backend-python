@@ -13,7 +13,7 @@
  */
 
 #include "../commands/CommandCode.h"
-#include "../debugger.h"
+#include "debugger.h"
 #include <HardwareSerial.h>
 
 #define BAUDRATE 115200
