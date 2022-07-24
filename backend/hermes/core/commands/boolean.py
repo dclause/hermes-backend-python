@@ -14,6 +14,10 @@ class BooleanAction(AbstractCommand):
     def code(self) -> CommandCode:
         return CommandCode.BOOLEAN_ACTION
 
+    @property
+    def _is_runnable(self) -> bool:
+        return False
+
     def __init__(self):
         super().__init__()
         self.pin: int = 0
@@ -24,6 +28,10 @@ class BooleanAction(AbstractCommand):
 
 class BooleanInput(AbstractCommand):
     """ BooleanAction command: turns a pin full on / off. """
+
+    @property
+    def _is_runnable(self) -> bool:
+        return True
 
     @property
     def code(self) -> CommandCode:

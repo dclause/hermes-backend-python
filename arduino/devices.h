@@ -2,7 +2,6 @@
 #define ARDUINO_DEVICES_H
 
 // /!\ All devices includes must be listed here.
-#include "devices/LedDevice.h"
 
 #include "devices/DeviceManager.h"
 

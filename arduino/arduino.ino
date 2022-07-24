@@ -1,7 +1,7 @@
+#include "helper/ioserial.h"
 #include "commands.h"
 #include "debugger.h"
 #include "devices.h"
-#include "helper/ioserial.h"
 #include <Arduino.h>
 
 void setup() {
@@ -18,10 +18,13 @@ void loop() {
 
         // Make a command out of it.
         AbstractCommand *command = CommandFactory::getInstance().createCommand(code);
+        if (command == NULL) {
+            return;
+        }
+
         TRACE(*command);
 
         // Execute the command
-        command->receive();
         command->process();
 
         IO::send_command(CommandCode::ACK);

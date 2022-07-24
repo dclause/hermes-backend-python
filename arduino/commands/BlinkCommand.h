@@ -18,7 +18,7 @@ class BlinkCommand : public AbstractCommand {
         String getName() const { return "Blink"; }
 
         // @todo blinks according to parameters.
-        void process() {
+        void executePayload(uint8_t *payload) {
             TRACE((String) F("~Process Blink command."));
             pinMode(13, OUTPUT);
 

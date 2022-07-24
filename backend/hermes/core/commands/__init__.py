@@ -96,6 +96,11 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     def code(self) -> CommandCode:
         """ Each command type must have a 8bit code from the CommandCode dictionary. """
 
+    @property
+    def _is_runnable(self) -> bool:
+        """ Defines if the command is runnable. """
+        return False
+
     def __init__(self):
         super().__init__()
         self.default: Any = None
@@ -104,8 +109,21 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     def __str__(self):
         return f'Command {self.name}'
 
-    @classmethod
-    def encode(cls, value: any) -> bytearray:
+    def to_bytes(self) -> bytearray:
+        """
+        Returns the representation of the command as a bytearray.
+        This is made to describe the command to the physical board during the handshake process.
+        The message format can be of two types:
+            - case of runnable: CODE | ID | settings as bytearray
+            - simple command : CODE | default value as bytearray (via encode() method)
+        """
+        if not self._is_runnable:
+            header = bytearray([self.code])
+            data = self.encode(self.default)
+            return header + data
+        return bytearray([self.code, self.id])
+
+    def encode(self, value: any) -> bytearray:
         """ Encodes the given value as an array of bytes. """
         return bytearray([value])
 
@@ -122,7 +140,7 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
         board.send(header + data)
 
     def receive(self, connexion):
-        """ Reads the additional parameters sent with the command. """
+        """ Reads the additional data sent with the command. """
 
     def process(self):
         """ Processes the command """

@@ -21,7 +21,7 @@ class HandshakeCommand : public AbstractCommand {
 
         String getName() const { return "Handshake"; }
 
-        void process() {
+        void executePayload(uint8_t *payload) {
             TRACE((String) F("Process Handshake command"));
 
             while (IO::available() > 0) {
@@ -30,8 +30,6 @@ class HandshakeCommand : public AbstractCommand {
                     return;
                 }
                 AbstractCommand *command = CommandFactory::getInstance().createCommand(code);
-                TRACE(*command);
-                command->receive();
                 command->process();
             }
             IO::send_command(CommandCode::ACK);

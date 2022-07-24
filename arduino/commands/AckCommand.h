@@ -23,7 +23,7 @@ class AckCommand : public AbstractCommand {
             IO::send_command(CommandCode::ACK);
         }
 
-        void process() {}
+        void executePayload(uint8_t *payload) {}
 };
 
 REGISTER_COMMAND(CommandCode::ACK, AckCommand)

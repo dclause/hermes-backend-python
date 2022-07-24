@@ -17,12 +17,12 @@
         <v-list-item
           link
           prepend-icon="mdi-robot-industrial"
-          title="Devices and Groups"
+          title="Groups"
           to="devices"
           v-bind="props"
         />
       </template>
-      <span>Devices and Groups</span>
+      <span>Groups</span>
     </v-tooltip>
   </v-list>
 </template>

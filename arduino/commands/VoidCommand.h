@@ -18,7 +18,7 @@ class VoidCommand : public AbstractCommand {
     public:
         String getName() const { return "VOID"; }
 
-        void process() {}
+        void executePayload(uint8_t *payload) {}
 };
 
 REGISTER_COMMAND(CommandCode::VOID, VoidCommand)

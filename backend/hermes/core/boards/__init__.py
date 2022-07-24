@@ -18,7 +18,7 @@ from queue import Empty
 
 from func_timeout import func_set_timeout, FunctionTimedOut
 
-from hermes.core import logger, config
+from hermes.core import logger
 from hermes.core.commands import CommandCode, CommandFactory
 from hermes.core.plugins import AbstractPlugin, TAbstractPlugin
 from hermes.core.protocols import AbstractProtocol, ProtocolException
@@ -136,15 +136,16 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         # NOTE: We cannot use the standard way to send command via the command send() method here.
         # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
         self.protocol.send(bytearray([CommandCode.HANDSHAKE]))
-        for (_, device) in config.DEVICES.items():
-            if device.board is self.id:
-                device_data: bytearray = device.to_bytes()
-                # if device_data is None or not device_data.count():
-                #     data = bytearray([CommandCode.PATCH, DeviceType[device.type].value, device.id]) + \
-                #            device_data + \
-                #            bytearray([CommandCode.END_OF_LINE])
-                #     logger.info(f"Handshake PATCH: {data}")
-                #     self.protocol.send(data)
+        # Actions and Inputs are both actions and needs to be transmitted to the board,
+        # so it learns about its possibilities.
+        all_commands = self.actions.copy()
+        all_commands.update(self.inputs)
+        for (_, command) in all_commands.items():
+            command_data: bytearray = command.to_bytes()
+            data = bytearray([CommandCode.PATCH]) + command_data + bytearray([CommandCode.END_OF_LINE])
+            logger.debug(f"Handshake PATCH: {data}")
+            self.protocol.send(data)
+            self.protocol.send(data)
 
         # Blocking wait ACK.
         #  @todo move this to a standardized 'wait_for_ack()' on protocol.

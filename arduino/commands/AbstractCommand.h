@@ -29,13 +29,14 @@
  * @see CommandFactory.h
  */
 class AbstractCommand {
-
     protected:
+        uint8_t id_;
         int expected_payload_size_;
         unsigned int effective_payload_size_;
         uint8_t *payload_;
 
     public:
+
         AbstractCommand(const int expected_payload_size = 0) :
                 expected_payload_size_(expected_payload_size),
                 effective_payload_size_(expected_payload_size ? expected_payload_size : 0) {
@@ -56,6 +57,32 @@ class AbstractCommand {
          */
         virtual String getName() const = 0;
 
+        // @todo describe
+        uint8_t getId() const { return this->id_; };
+
+        void setId(const uint8_t id) { this->id_ = id; };
+
+        /**
+         * @todo describe
+         */
+        virtual bool isRunnable() const { return false; }
+
+        /**
+         * Update the internal data of a command from a bytes payload.
+         *
+         * @note This situation occurs when a handshake is made and the actions/inputs are declared by the backend to
+         * the board (@see HandshakeCommand) or when an action/input is updated (for instance the servo speed is changed).
+         *
+         * @note The implementation below is pretty low. But as an AbstractCommand, we only know that payload[0] is the
+         * the command id. Every implementation is responsible to override this method and know what the payload contains
+         * for itself.
+         *
+         * @param payload
+         */
+        virtual void fromBytes(const uint8_t *payload) {
+            this->id_ = payload[0];
+        }
+
         /**
          * Load the expected data in the internal payload.
          * The amount of data loaded is defined by the expected_payload_size_ variable for the command, or the given data
@@ -71,24 +98,34 @@ class AbstractCommand {
             } else if (this->expected_payload_size_ < 0) {
                 String data = IO::read_until_endl();
                 this->effective_payload_size_ = data.length();
-                TRACE((String) F("Determine data size: ") + (String) this->effective_payload_size_);
                 this->payload_ = new uint8_t[this->effective_payload_size_];
                 data.getBytes(this->payload_, this->expected_payload_size_);
+
+                TRACE((String) F("Determine data size: ") + (String) this->effective_payload_size_);
+                TRACE((String) F("Data received: ") + data);
             }
         }
 
         /**
          * Processes the command when received from the serial port.
          */
-        virtual void process() = 0;
+        void process() {
+            this->receive();
+            this->executePayload(this->payload_);
+        };
 
         /**
-             * Stringifies the command for debug purpose.
-             *
-             * @return String
-             */
+         * Executes the given payload.
+         */
+        virtual void executePayload(uint8_t *payload) = 0;
+
+        /**
+         * Stringifies the command for debug purpose.
+         *
+         * @return String
+         */
         operator String() const {
-            return (String) F("Command ") + this->getName();
+            return "Command (" + String(this->getId()) + ") " + this->getName();
         }
 };
 

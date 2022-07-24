@@ -56,11 +56,9 @@ class CommandFactory {
          * @return AbstractCommand: The instantiated command class.
          */
         AbstractCommand *createCommand(CommandCode code) {
-            int index = this->registeredCommands_.getPosition(code);
-            if (index > -1) {
-                return this->registeredCommands_.getValue(code)();
-            }
-            return this->registeredCommands_.getValue(CommandCode::VOID)();
+            CommandInstance command = this->registeredCommands_.getValue(code);
+            if (command == NULL) { return NULL; }
+            return command();
         }
 
         /**

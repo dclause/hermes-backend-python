@@ -84,9 +84,8 @@ namespace IO {
      * @return CommandCode
      */
     CommandCode read_command() {
-        const CommandCode code = (CommandCode) Serial.read();
+        const CommandCode code = static_cast<CommandCode>(Serial.read());
         TRACE((String) F("Command code received: ") + (uint8_t) code);
-
         return code;
     }
 

@@ -2,7 +2,7 @@
 #define ARDUINO_DEVICE_FACTORY_H
 
 #include "../helper/map.h"
-#include "DeviceCode.h"
+#include "CommandCode.h"
 #include "AbstractDevice.h"
 
 // Callback for instantiating "on the fly" a device.
@@ -20,7 +20,7 @@ class DeviceFactory {
     private:
         DeviceFactory() = default;
 
-        KeyValueMap<DeviceCode, DeviceInstance> registeredDevices_;
+        KeyValueMap<CommandCode, DeviceInstance> registeredDevices_;
 
     public:
         DeviceFactory(const DeviceFactory &) = delete;
@@ -33,24 +33,24 @@ class DeviceFactory {
         }
 
         /**
-         * Let a DeviceCode be associated to an instantiable callback.
+         * Let a CommandCode be associated to an instantiable callback.
          * Stores this association in the internal map.
          *
-         * @param code (DeviceCode)
+         * @param code (CommandCode)
          * @param callback (DeviceInstance) @see `using` statement at the start of file.
          * @return bool: If the device is properly registered.
          */
-        bool registerDevice(DeviceCode code, DeviceInstance callback) {
+        bool registerDevice(CommandCode code, DeviceInstance callback) {
             return this->registeredDevices_.add(code, callback);
         }
 
         /**
          * Retrieves the class type associateed with a device code.
          *
-         * @param code (DeviceCode)
+         * @param code (CommandCode)
          * @return any: The device class.
          */
-        AbstractDevice *getDeviceType(DeviceCode code) {
+        AbstractDevice *getDeviceType(CommandCode code) {
             int index = this->registeredDevices_.getPosition(code);
             if (index > -1) {
                 return this->registeredDevices_.getValue(code)();
@@ -59,12 +59,12 @@ class DeviceFactory {
         }
 
         /**
-         * Instantiates an AbstractDevice of the proper type given a DeviceCode.
+         * Instantiates an AbstractDevice of the proper type given a CommandCode.
          *
-         * @param code (DeviceCode)
+         * @param code (CommandCode)
          * @return AbstractDevice: The instantiated device class.
          */
-        AbstractDevice *createDevice(DeviceCode code) {
+        AbstractDevice *createDevice(CommandCode code) {
             int index = this->registeredDevices_.getPosition(code);
             if (index > -1) {
                 return this->registeredDevices_.getValue(code)();

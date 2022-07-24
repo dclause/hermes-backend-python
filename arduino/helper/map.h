@@ -2,6 +2,7 @@
 #define ARDUINO_MAP_H
 
 #include <Arduino.h>
+#include "../debugger.h"
 
 /**
  * Defines an associative key/value element to be used in KeyValueMap.
@@ -135,7 +136,10 @@ class KeyValueMap {
          * @return The element or NULL.
          */
         Value getValue(Key const key) {
-            return (*this)[key]->value;
+            KeyValuePair<Key, Value> *node = (*this)[key];
+            if (node != NULL)
+                return node->value;
+            return NULL;
         }
 
         /**
@@ -180,12 +184,12 @@ class KeyValueMap {
         operator String() {
             String
                     output = (String)
-            F("Debug map (") + this->count() + (String)
-            F(" elements):\n");
+                                     F("Debug map (") + this->count() + (String)
+                                     F(" elements):\n");
             KeyValuePair<Key, Value> *current = this->head_;
             for (uint8_t i = 0; i < this->size_; i++) {
                 output += (String)
-                F("  > ") + (String)(*current) + '\n';
+                                  F("  > ") + (String) (*current) + '\n';
                 current = current->next;
             }
             return output;

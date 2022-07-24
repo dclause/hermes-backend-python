@@ -14,14 +14,20 @@ class ServoCommand : public AbstractCommand {
     COMMAND_DECLARATION
     public:
 
-        ServoCommand() : AbstractCommand(2) {}
-
         String getName() const { return "SERVO"; }
 
-        void process() {
+        bool isRunnable() const { return true; }
+
+        void fromBytes(const uint8_t *payload) {
+            AbstractCommand::fromBytes(payload);
+        };
+
+        void executePayload(uint8_t *payload) {
             TRACE((String) F("Process Servo command."));
+
             // uint8_t deviceId = this->payload_[0];
-            uint8_t position = this->payload_[1];
+            uint8_t position = payload_[1];
+
             TRACE((String) F("  > Requested position: ") + (String) position);
 
         }
