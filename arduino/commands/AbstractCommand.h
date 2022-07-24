@@ -125,7 +125,7 @@ class AbstractCommand {
          * @return String
          */
         operator String() const {
-            return "Command (" + String(this->getId()) + ") " + this->getName();
+            return "Command (" + String(this->getId()) + ") " + this->getName() + " ";
         }
 };
 

@@ -1,7 +1,6 @@
 #include "helper/ioserial.h"
 #include "commands.h"
 #include "debugger.h"
-#include "devices.h"
 #include <Arduino.h>
 
 void setup() {

@@ -8,7 +8,7 @@
  * Defines an associative key/value element to be used in KeyValueMap.
  *
  * @tparam Key      the key element type (ex. int, string, etc...)
- * @tparam Value    the value element type (ex. Command, AbstractDevice, etc...)
+ * @tparam Value    the value element type (ex. AbstractCommand, etc...)
  */
 template<typename Key, typename Value>
 struct KeyValuePair {
@@ -21,7 +21,7 @@ struct KeyValuePair {
  * Defines a FIFO-type chained list of associative key/value pairs.
  *
  * @tparam Key      the key element type (ex. int, string, etc...)
- * @tparam Value    the value element type (ex. Command, AbstractDevice, etc...)
+ * @tparam Value    the value element type (ex. AbstractCommand, etc...)
  */
 template<typename Key, typename Value>
 class KeyValueMap {

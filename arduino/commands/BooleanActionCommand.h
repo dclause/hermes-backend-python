@@ -7,8 +7,6 @@
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
-#include "../devices/AbstractDevice.h"
-#include "../devices/DeviceManager.h"
 
 /**
  * DIGITAL_WRITE Command: toggle a digital pin write.
