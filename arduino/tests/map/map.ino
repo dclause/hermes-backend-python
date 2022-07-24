@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "helper/map.h"
+
 #define BAUDRATE 9600
 
 void setup() {
@@ -21,14 +22,14 @@ void setup() {
 
     Serial.println("-----------------------------");
     int result3 = map.getPosition("foo2") + 1;      // Positions start at 0 !
-    Serial.println("foo3 key is the 2nd element: " + (String) result3);
+    Serial.println("foo3 key is the 2nd element: " + String(result3));
 
     Serial.println("-----------------------------");
     Serial.println("Let's remove foo2");
     map.remove("foo2");
     Serial.println(map);
 
-    Serial.println("Remaining map size should be 2 : " + (String) map.count());
+    Serial.println("Remaining map size should be 2 : " + String(map.count()));
 }
 
 void loop() {}

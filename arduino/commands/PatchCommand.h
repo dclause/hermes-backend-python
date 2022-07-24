@@ -29,19 +29,20 @@ class PatchCommand : public AbstractCommand {
         String getName() const { return "Patch"; }
 
         void executePayload(uint8_t *payload) {
-            TRACE((String) F("PATCH command process:"));
+            TRACE("-----------");
+            TRACE("Process PATCH command:");
 
             // The payload received for a PATCH commandToPatch always starts by the CommandCode of the commandToPatch to patch.
             const CommandCode commandCode = static_cast<CommandCode>(payload[0]);
-            TRACE((String) F("  > Received commandCode: ") + (uint8_t) commandCode);
+            TRACE("  > Received commandCode: " + String((uint8_t) commandCode));
             AbstractCommand *commandToPatch = CommandFactory::getInstance().createCommand(commandCode);
             if (commandToPatch == NULL) {
                 TRACE("  => PATCH abort: command not found.");
             }
-            TRACE((String) F("  > Command to PATCH: ") + *commandToPatch);
+            TRACE("  > Command to PATCH: " + String(*commandToPatch));
 
             if (commandToPatch->isRunnable()) {
-                TRACE((String) F("  > CommandToPatch is runnable."));
+                TRACE("  > CommandToPatch is runnable.");
 
                 // In the case of a runnable, we either create or patch the runnable in the RunnableManager.
                 // The data to use is the PATCH payload minus the two first bytes (CommandCode + ID)
@@ -52,10 +53,10 @@ class PatchCommand : public AbstractCommand {
                 TRACE("  > Search for existing runnable with ID: " + String(payload[1]));
                 AbstractCommand *existingRunnable = RunnableManager::getInstance().getCommand(payload[1]);
                 if (existingRunnable != NULL) {
-                    TRACE((String) F("  > Runnable needs update."));
+                    TRACE("  > Runnable needs update.");
                     TRACE("  > Updated " + String(*existingRunnable));
                 } else {
-                    TRACE((String) F("  > Runnable needs create."));
+                    TRACE("  > Runnable needs create.");
                     commandToPatch->fromBytes(data);
                     RunnableManager::getInstance().addCommand(commandToPatch);
                     TRACE("  > Created " + String(*commandToPatch));

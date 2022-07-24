@@ -50,7 +50,7 @@ class AbstractDevice {
          * @return String
          */
         virtual operator String() {
-            return String(F("Device (")) + (String) this->id_ + String(F(") ")) + this->getName();
+            return "Device (" + String(this->id_) + ") " + this->getName();
         }
 };
 

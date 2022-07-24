@@ -101,8 +101,8 @@ class AbstractCommand {
                 this->payload_ = new uint8_t[this->effective_payload_size_];
                 data.getBytes(this->payload_, this->expected_payload_size_);
 
-                TRACE((String) F("Determine data size: ") + (String) this->effective_payload_size_);
-                TRACE((String) F("Data received: ") + data);
+                TRACE("Determine data size: " + String(this->effective_payload_size_));
+                TRACE("Data received: " + data);
             }
         }
 

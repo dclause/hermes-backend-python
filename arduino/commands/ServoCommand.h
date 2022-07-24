@@ -23,13 +23,13 @@ class ServoCommand : public AbstractCommand {
         };
 
         void executePayload(uint8_t *payload) {
-            TRACE((String) F("Process Servo command."));
+            TRACE("-----------");
+            TRACE("Process SERVO command:");
 
             // uint8_t deviceId = this->payload_[0];
             uint8_t position = payload_[1];
 
-            TRACE((String) F("  > Requested position: ") + (String) position);
-
+            TRACE("  > Requested position: " + String(position));
         }
 };
 

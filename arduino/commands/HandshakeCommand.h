@@ -22,7 +22,8 @@ class HandshakeCommand : public AbstractCommand {
         String getName() const { return "Handshake"; }
 
         void executePayload(uint8_t *payload) {
-            TRACE((String) F("Process Handshake command"));
+            TRACE("-----------");
+            TRACE("Process HANDSHAKE command:");
 
             while (IO::available() > 0) {
                 CommandCode code = IO::read_command();

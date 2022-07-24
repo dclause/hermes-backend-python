@@ -19,7 +19,8 @@ class BlinkCommand : public AbstractCommand {
 
         // @todo blinks according to parameters.
         void executePayload(uint8_t *payload) {
-            TRACE((String) F("~Process Blink command."));
+            TRACE("-----------");
+            TRACE("Process BLINK command:");
             pinMode(13, OUTPUT);
 
             for (int i = 0; i < 3; i++) {
@@ -28,6 +29,7 @@ class BlinkCommand : public AbstractCommand {
                 digitalWrite(13, LOW);
                 delay(200);
             }
+            TRACE("-----------");
         }
 };
 

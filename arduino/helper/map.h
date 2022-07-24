@@ -45,7 +45,7 @@ class KeyValueMap {
          * Deletes all elements in the list.
          */
         void clear() {
-            KeyValuePair<Key, Value> *nodeToDelete = this->head_;
+            KeyValuePair<Key, Value> *nodeToDelete;
             while (this->head_) {
                 nodeToDelete = this->head_;
                 this->head_ = this->head_->next;
@@ -182,14 +182,10 @@ class KeyValueMap {
          * @return String
          */
         operator String() {
-            String
-                    output = (String)
-                                     F("Debug map (") + this->count() + (String)
-                                     F(" elements):\n");
+            String output = "Debug map (" + this->count() + " elements):\n";
             KeyValuePair<Key, Value> *current = this->head_;
             for (uint8_t i = 0; i < this->size_; i++) {
-                output += (String)
-                                  F("  > ") + (String) (*current) + '\n';
+                output += "  > " + String(*current) + '\n';
                 current = current->next;
             }
             return output;

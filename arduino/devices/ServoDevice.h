@@ -30,8 +30,8 @@ class ServoDevice : public AbstractDevice {
 
         operator String() {
             return AbstractDevice::operator String() +
-                   String(F(" pin:")) + (String) this->pin_ +
-                   String(F(" default:")) + (String) this->default_;
+                   " pin:" + String(this->pin_) +
+                   " default:" + String(this->default_);
         }
 };
 

@@ -25,15 +25,17 @@ class BooleanActionCommand : public AbstractCommand {
         String getName() const { return "DigitalWrite"; }
 
         void executePayload(uint8_t *payload) {
-            TRACE((String) F("Process DigitalWrite command."));
+            TRACE("-----------");
+            TRACE("Process BOOLEAN_ACTION command:");
 
             uint8_t pin = payload[0];
             uint8_t value = payload[1];
 
-            TRACE((String) F("  > Set pin ") + (String) pin + F(" to: ") + (String) value);
+            TRACE("  > Set pin " + String(pin) + " to: " + String(value));
 
             pinMode(pin, OUTPUT);
             digitalWrite(pin, value);
+            TRACE("-----------");
         }
 };
 

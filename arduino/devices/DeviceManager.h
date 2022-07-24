@@ -68,10 +68,10 @@ class DeviceManager {
          * @return String
          */
         operator String() {
-            String log = (String) F("AbstractDevice Manager:\n");
+            String log = "AbstractDevice Manager:\n";
             for (uint8_t i = 0; i < this->devices_.count(); i++) {
                 AbstractDevice *device = this->devices_.get(i)->value;
-                log += (String) F("# - ") + (String) *device + F("\n");
+                log += "# - " + String(*device) + "\n";
             }
             return log;
         }

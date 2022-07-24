@@ -66,10 +66,10 @@ class RunnableManager {
          * @return String
          */
         operator String() {
-            String log = (String) F("AbstractCommand Manager:\n");
+            String log = "AbstractCommand Manager:\n";
             for (uint8_t i = 0; i < this->runnables_.count(); i++) {
                 AbstractCommand *runnable = this->runnables_.get(i)->value;
-                log += (String) F("# - ") + (String) *runnable + F("\n");
+                log += "# - " + String(*runnable) + "\n";
             }
             return log;
         }

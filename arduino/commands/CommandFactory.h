@@ -67,11 +67,10 @@ class CommandFactory {
          * @return String
          */
         operator String() {
-            String log =
-                    (String) F("Command Factory ") + (String) this->registeredCommands_.count() + (String) F(":\n");
+            String log = "Command Factory " + String(this->registeredCommands_.count()) + ":\n";
             for (uint8_t i = 0; i < this->registeredCommands_.count(); i++) {
                 AbstractCommand *command = this->registeredCommands_.get(i)->value();
-                log += (String) F("# - ") + (String) *command + F("\n");
+                log += "# - " + String(*command) + "\n";
             }
             return log;
         }

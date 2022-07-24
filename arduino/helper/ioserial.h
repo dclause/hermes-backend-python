@@ -45,7 +45,7 @@ namespace IO {
      */
     void begin() {
         Serial.begin(BAUDRATE);
-        TRACE(String(F("Opening IO communication at baudrate ")) + (String) BAUDRATE);
+        TRACE("Opening IO communication at baudrate " + String(BAUDRATE));
     }
 
     /**
@@ -85,7 +85,7 @@ namespace IO {
      */
     CommandCode read_command() {
         const CommandCode code = static_cast<CommandCode>(Serial.read());
-        TRACE((String) F("Command code received: ") + (uint8_t) code);
+        TRACE("Command code received: " + String((uint8_t) code));
         return code;
     }
 
@@ -108,7 +108,7 @@ namespace IO {
             *buffer++ = (uint8_t) byte;// equivalent to buffer[i] = (int8_t) byte;
             index++;
         }
-        TRACE((String) F("Data received: ") + (char *) (buffer));
+        TRACE("Data received: " + String((char *) (buffer)));
     }
 
     /**
@@ -127,7 +127,7 @@ namespace IO {
      * @param command (CommandCode)
      */
     void send_command(const CommandCode command) {
-        TRACE((String) F("Send command: ") + (uint8_t) command);
+        TRACE("Send command: " + String((uint8_t) command));
         Serial.write(static_cast<uint8_t>(command));
     }
 

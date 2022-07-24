@@ -78,11 +78,10 @@ class DeviceFactory {
          * @return String
          */
         operator String() {
-            String log =
-                    (String) F("Device Factory ") + (String) this->registeredDevices_.count() + (String) F(":\n");
+            String log = "Device Factory " + String(this->registeredDevices_.count()) + ":\n";
             for (uint8_t i = 0; i < this->registeredDevices_.count(); i++) {
                 AbstractDevice *device = this->registeredDevices_.get(i)->value();
-                log += (String) F("# - ") + (String) *device + F("\n");
+                log += "# - " + String(*device) + "\n";
             }
             return log;
         }
