@@ -9,4 +9,5 @@
 *.sw?
 
 # CMake
+cmake
 cmake-build-debug

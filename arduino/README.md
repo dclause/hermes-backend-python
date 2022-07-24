@@ -25,11 +25,17 @@ third-party system is not tested and supported.
 
 ## Developers
 
-The project is handled via CLion IDE but any IDE of your own convenience is good. Code style and formatting is
-handled by the .clang-tidy and .clang-format added. Feel free to submit PR for more enforcements.
+The project is handled via CLion IDE but any IDE of your own convenience is good.
+
+- Code style and formatting is
+  handled by the .clang-tidy and .clang-format added.
+- Compilation and debug via IDE needs cmake
+  from [https://github.com/queezythegreat/arduino-cmake](https://github.com/queezythegreat/arduino-cmake)
+- Feel free to [submit PR](https://github.com/dclause/hermes) if needed.
 
 ### /!\ Information about code structure
 
 The code is written within .h files, which is uncommon for C++ code. The reason is the Arduino IDE is not
 capable to handle inclusion of cpp outside the main folder and/or residing in specific lib structure. I wanted to
-keep compatibility with the Arduino IDE to handle code compiling and upload made easy.
+keep compatibility with the Arduino IDE to handle code compiling and upload made easy - but also wanted to organize my
+code in folders - hence the decision.
