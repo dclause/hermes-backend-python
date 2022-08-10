@@ -143,8 +143,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         for (_, command) in all_commands.items():
             command_data: bytearray = command.to_bytes()
             data = bytearray([CommandCode.PATCH]) + command_data + bytearray([CommandCode.END_OF_LINE])
-            logger.debug(f"Handshake PATCH: {data}")
-            self.protocol.send(data)
+            logger.debug(f"Handshake PATCH: {data} - {list(data)}")
             self.protocol.send(data)
 
         # Blocking wait ACK.

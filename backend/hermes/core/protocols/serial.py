@@ -71,7 +71,7 @@ class SerialProtocol(AbstractProtocol):
         return bytes_array[0]
 
     def send(self, data: bytearray) -> None:
-        logger.debug(f'Serial protocol: Send command {data}')
+        logger.debug(f'Serial protocol: Send command {data} - {list(data)}')
         self._serial.write(data)
 
     def read_line(self) -> str:
