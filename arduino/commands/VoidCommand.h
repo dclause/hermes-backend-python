@@ -14,11 +14,11 @@
  * @see CommandCode::VOID
  */
 class VoidCommand : public AbstractCommand {
-    COMMAND_DECLARATION
-    public:
-        String getName() const { return "VOID"; }
+COMMAND_DECLARATION
+public:
+    String getName() const { return "VOID"; }
 
-        void executePayload(uint8_t *payload) {}
+    void executePayload(uint8_t *payload) {}
 };
 
 REGISTER_COMMAND(CommandCode::VOID, VoidCommand)

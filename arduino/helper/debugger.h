@@ -4,13 +4,13 @@
 #include <Arduino.h>
 
 // Active debug: use 1, otherwise 0.
-#define ACTIVATE_DEBUG 1
+#define ACTIVATE_DEBUG 0
 
 // Defines the TRACE command.
 #if ACTIVATE_DEBUG
 #define TRACE(X) IO::debug(X)
 #else
-#define TRACE(X) ;
+#define TRACE(X)
 #endif
 
 #endif // ARDUINO_DEBUGGER_H

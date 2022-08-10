@@ -24,63 +24,63 @@ using CommandInstance = AbstractCommand *(*)();
  * and `REGISTER_COMMAND(N, T)`.
  */
 class CommandFactory {
-    private:
-        CommandFactory() = default;
+private:
+    CommandFactory() = default;
 
-        KeyValueMap<CommandCode, CommandInstance> registeredCommands_;
+    KeyValueMap<CommandCode, CommandInstance> registeredCommands_;
 
-    public:
-        CommandFactory(const CommandFactory &) = delete;
+public:
+    CommandFactory(const CommandFactory &) = delete;
 
-        CommandFactory &operator=(const CommandFactory &) = delete;
+    CommandFactory &operator=(const CommandFactory &) = delete;
 
-        static CommandFactory &getInstance() {
-            static CommandFactory instance;
-            return instance;
+    static CommandFactory &getInstance() {
+        static CommandFactory instance;
+        return instance;
+    }
+
+    /**
+     * Let a CommandCode be associated to an instantiable callback.
+     * Stores this association in the internal map.
+     *
+     * @param code (CommandCode)
+     * @param callback (CommandInstance) @see `using` statement at the start of file.
+     * @return bool: If the command is properly registered.
+     */
+    bool registerCommand(CommandCode code, CommandInstance callback) {
+        return this->registeredCommands_.add(code, callback);
+    }
+
+    /**
+     * Instantiates an AbstractCommand of the proper type given a CommandCode.
+     *
+     * @note
+     * A proper command is always instantiated. If the CommandCode is unknown or if something goes wrong, the
+     * VOID command is returned.
+     * @see VoidCommand
+     *
+     * @param code (CommandCode)
+     * @return AbstractCommand: The instantiated command class.
+     */
+    AbstractCommand *createCommand(CommandCode code) {
+        CommandInstance command = this->registeredCommands_.getValue(code);
+        if (command == NULL) { return NULL; }
+        return command();
+    }
+
+    /**
+     * Stringifies the data for debug purpose.
+     *
+     * @return String
+     */
+    operator String() {
+        String log = "Command Factory " + String(this->registeredCommands_.count()) + ":\n";
+        for (uint8_t i = 0; i < this->registeredCommands_.count(); i++) {
+            AbstractCommand *command = this->registeredCommands_.get(i)->value();
+            log += "# - " + String(*command) + "\n";
         }
-
-        /**
-         * Let a CommandCode be associated to an instantiable callback.
-         * Stores this association in the internal map.
-         *
-         * @param code (CommandCode)
-         * @param callback (CommandInstance) @see `using` statement at the start of file.
-         * @return bool: If the command is properly registered.
-         */
-        bool registerCommand(CommandCode code, CommandInstance callback) {
-            return this->registeredCommands_.add(code, callback);
-        }
-
-        /**
-         * Instantiates an AbstractCommand of the proper type given a CommandCode.
-         *
-         * @note
-         * A proper command is always instantiated. If the CommandCode is unknown or if something goes wrong, the
-         * VOID command is returned.
-         * @see VoidCommand
-         *
-         * @param code (CommandCode)
-         * @return AbstractCommand: The instantiated command class.
-         */
-        AbstractCommand *createCommand(CommandCode code) {
-            CommandInstance command = this->registeredCommands_.getValue(code);
-            if (command == NULL) { return NULL; }
-            return command();
-        }
-
-        /**
-         * Stringifies the data for debug purpose.
-         *
-         * @return String
-         */
-        operator String() {
-            String log = "Command Factory " + String(this->registeredCommands_.count()) + ":\n";
-            for (uint8_t i = 0; i < this->registeredCommands_.count(); i++) {
-                AbstractCommand *command = this->registeredCommands_.get(i)->value();
-                log += "# - " + String(*command) + "\n";
-            }
-            return log;
-        }
+        return log;
+    }
 };
 
 #endif // ARDUINO_COMMAND_FACTORY_H

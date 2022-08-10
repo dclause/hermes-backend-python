@@ -8,7 +8,7 @@
 #include "../commands/CommandFactory.h"
 #include "../commands/RunnableManager.h"
 
-// /!\ All command includes must be listed here.
+// ! All command includes must be listed here.
 #include "../commands/BooleanActionCommand.h"
 #include "../commands/HandshakeCommand.h"
 #include "../commands/PatchCommand.h"
@@ -45,7 +45,7 @@ namespace Commands {
      * Loop over Runnable commands and update them.
      */
     void update_all_runnables() {
-        KeyValuePair<uint8_t, AbstractCommand *> *node = RunnableManager::getInstance().getCommands().getHead();
+        KeyValuePair<uint8_t, AbstractCommand *> *node = RunnableManager::getInstance().getHead();
         while (node) {
             node->value->nextTick();
             node = node->next;
