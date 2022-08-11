@@ -15,7 +15,6 @@
     <v-tooltip>
       <template #activator="{ props }">
         <v-list-item
-          link
           prepend-icon="mdi-robot-industrial"
           title="Groups"
           to="devices"

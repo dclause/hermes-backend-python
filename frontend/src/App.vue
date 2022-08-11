@@ -17,7 +17,7 @@ Main app component: defines a single layout for all pages.
           <v-avatar
             class="d-block text-center mx-auto mt-4 pa-1"
             color=""
-            size="45"
+            size="60"
             v-bind="props"
           >
             <svg-robot title="test" />

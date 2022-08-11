@@ -28,8 +28,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "vite.config.*",
-    "cypress.config.*"
+    "vite.config.*"
   ],
   "exclude": [
     "node_modules",
