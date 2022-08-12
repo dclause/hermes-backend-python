@@ -75,7 +75,7 @@ socket
   });
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 @keyframes blink {
   50% {
     opacity: 0.5;

@@ -22,7 +22,11 @@
 <script lang="ts" setup>
 import { computed, WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
-import { CommandConfigurationProperties } from "@/composables/commands";
+import {
+  CommandConfigurationProperties,
+  useCommandFeedbackComputed,
+  useCommandInfoComputed
+} from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 
 const props = defineProps({
@@ -60,21 +64,11 @@ const labelComputed = computed(() => {
   return `Command "${command.value.name}" :`;
 });
 
-// Build info.
-const infoComputed = computed(() => {
-  if (props.info !== undefined) {
-    return props.info;
-  }
-  return `Board "${props.board.name}" (PIN ${command.value.pin}): ${command.value.state === true ? "On" : "Off"}`;
-});
+// Build info (used when hover command).
+const infoComputed = useCommandInfoComputed(command.value, props);
 
 // Build feedback label.
-const feedbackComputed = computed(() => {
-  if (props.feedback !== undefined) {
-    return props.feedback;
-  }
-  return `PIN ${command.value.pin}: ${command.value.state === true ? "On" : "Off"}`;
-});
+const feedbackComputed = useCommandFeedbackComputed(command.value, props);
 
 // Send the command when the toggle changes.
 const onChange = () => {
@@ -83,7 +77,7 @@ const onChange = () => {
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .command {
   .v-label {
     font-size: 0.9rem;

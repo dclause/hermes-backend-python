@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-card-title>
+    <v-card-title class="d-flex">
       {{ board.name }}
       <v-spacer />
       <v-icon
@@ -77,7 +77,7 @@ const board = boardStore.getBoard(props.boardId);
 </script>
 
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .v-card-subtitle {
   display: block;
 }

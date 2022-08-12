@@ -1,11 +1,11 @@
 import CustomBoard from "@/components/boards/CustomBoard.vue";
 
 export declare interface BoardConfigurationProperties {
-  id: number;
-  name?: string;
-  model: string;
+  id: number,
+  name?: string,
+  model: string,
 
-  [x: string]: unknown;
+  [x: string]: unknown,
 }
 
 /**

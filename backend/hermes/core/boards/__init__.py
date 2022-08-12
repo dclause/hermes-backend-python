@@ -92,7 +92,10 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
             logger.error(f'Board {self.name}: Connexion could not be opened.')
             return not self.close()
 
-        time.sleep(1)
+        # Wait to give time for the arduino to receive the message and open connection properly.
+        # The 2sec here is obtained by trial and error using various cards. As expected, the NANO
+        # is the one requiring the more wait time, hence those arbitrary 2 seconds.
+        time.sleep(2)
 
         # ###
         # Run the Handshake process.
@@ -127,7 +130,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         logger.info(f' > Board {self.name} - DISCONNECTED', )
         return not self.connected
 
-    @func_set_timeout(20)
+    @func_set_timeout(5)
     def handshake(self) -> None:
         """ Performs handshake between the board and the application. """
 
@@ -136,6 +139,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         # NOTE: We cannot use the standard way to send command via the command send() method here.
         # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
         self.protocol.send(bytearray([CommandCode.HANDSHAKE]))
+
         # Actions and Inputs are both actions and needs to be transmitted to the board,
         # so it learns about its possibilities.
         all_commands = self.actions.copy()

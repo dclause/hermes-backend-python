@@ -100,6 +100,8 @@ class AbstractPlugin:
         # Instantiates the plugin and update it.
         plugin = cls(**initial_state)
 
+        if 'default' in state:
+            state['state'] = state['default']
         if hasattr(plugin, '__setstate__'):
             plugin.__setstate__(state)
         else:
