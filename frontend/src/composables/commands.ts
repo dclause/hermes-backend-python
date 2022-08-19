@@ -25,6 +25,11 @@ export function useCommand(commandType: string): unknown {
   return commands[commandType] ?? UnknownCommand;
 }
 
+/**
+ * Builds the tooltip info for a command.
+ * @param command
+ * @param props
+ */
 export function useCommandInfoComputed(command: CommandConfigurationProperties, props: Record<string, unknown>): unknown {
   return computed(() => {
     if (props.info !== undefined) {
@@ -35,6 +40,11 @@ export function useCommandInfoComputed(command: CommandConfigurationProperties, 
   });
 }
 
+/**
+ * Builds the label for a command.
+ * @param command
+ * @param props
+ */
 export function useCommandLabelComputed(command: CommandConfigurationProperties, props: Record<string, unknown>): unknown {
   return computed(() => {
     if (props.label !== undefined) {
@@ -44,6 +54,11 @@ export function useCommandLabelComputed(command: CommandConfigurationProperties,
   });
 }
 
+/**
+ * Builds the feedback info for a command.
+ * @param command
+ * @param props
+ */
 export function useCommandFeedbackComputed(command: CommandConfigurationProperties, props: Record<string, unknown>): unknown {
   return computed(() => {
     if (props.feedback !== undefined) {
@@ -53,6 +68,9 @@ export function useCommandFeedbackComputed(command: CommandConfigurationProperti
   });
 }
 
+/**
+ * Default common props for a command.
+ */
 export function useCommandProps() {
   return defineProps({
     modelValue: {

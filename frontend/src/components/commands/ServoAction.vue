@@ -96,15 +96,12 @@ const props = defineProps({
 const command: WritableComputedRef<ServoCommandConfigurationProperties> = defineModel(props);
 const commandStore = useCommandStore();
 
-// Build label.
 const labelComputed = useCommandLabelComputed(command.value, props);
-
-// Build info (used when hover command).
 const infoComputed = useCommandInfoComputed(command.value, props);
-
-// Build feedback label.
 const feedbackComputed = useCommandFeedbackComputed(command.value, props);
 
+// Position is used as a v-model for the input number field and will then be merged back to the command model
+// of the slider.
 let position = command.value.state;
 
 // Send the command when the toggle changes.
@@ -116,6 +113,7 @@ const onSliderEnd = (event: MouseEvent) => {
   }
 };
 
+// Set the position to the slider (used when the input number text is updated.
 const setPosition = (event: InputEvent) => {
   const target = event.target as HTMLInputElement;
   position = Math.min(command.value.max, Math.max(command.value.min, parseInt(target?.value)));

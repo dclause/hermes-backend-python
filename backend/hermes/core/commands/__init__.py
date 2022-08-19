@@ -116,12 +116,11 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
         The message format can be of two types:
             - case of runnable: CODE | ID | settings as bytearray
             - simple command : CODE | default value as bytearray (via encode() method)
+        @todo Build the settings
         """
-        if not self._is_runnable:
-            header = bytearray([self.code])
-            data = self.encode(self.default)
-            return header + data
-        return bytearray([self.code, self.id])
+        header = bytearray([self.code, self.id])
+        data = self.encode(self.default)
+        return header + data
 
     def encode(self, value: any) -> bytearray:
         """ Encodes the given value as an array of bytes. """

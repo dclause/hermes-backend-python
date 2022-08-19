@@ -73,9 +73,14 @@ namespace IO {
      * @param num_bytes (uint8_t): The number of bytes to wait for.
      * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
      */
-    void wait_for_bytes(const uint8_t length, const uint32_t timeout = 100) {
+    bool wait_for_bytes(const uint32_t length, const uint32_t timeout = 100) {
         const uint32_t startTime = millis();
-        while ((Serial.available() < length) && (millis() - startTime < timeout)) {}
+        while (Serial.available() < length) {
+            if ((millis() - startTime) >= timeout) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -105,10 +110,9 @@ namespace IO {
         while (index < length) {
             byte = Serial.read();
             if (byte < 0) break;
-            *buffer++ = (uint8_t) byte;// equivalent to buffer[i] = (int8_t) byte;
+            buffer[index] = (int8_t) byte;
             index++;
         }
-        TRACE("Data received: " + String((char *) (buffer)));
     }
 
     /**
@@ -117,8 +121,17 @@ namespace IO {
      * @param num_bytes (uint8_t): The number of bytes to wait for.
      * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
      */
-    String read_until_endl() {
-        return Serial.readStringUntil((char) CommandCode::END_OF_LINE);
+    uint32_t read_until_endl(uint8_t *buffer) {
+        uint32_t index = 0;
+        uint8_t byte;
+        while (wait_for_bytes(1)) {
+            byte = Serial.read();
+            if (byte < 0 || byte == ((uint8_t) CommandCode::END_OF_LINE)) break;
+            buffer[index] = (int8_t) byte;
+            index++;
+            TRACE("read_until_endl:" + String(byte));
+        }
+        return index;
     }
 
     /**

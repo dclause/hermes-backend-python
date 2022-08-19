@@ -12,7 +12,7 @@ project(${PROJECT_NAME})
 # set(${PROJECT_NAME}_HDRS)
 
 ### Additional static libraries to include in the target.
-# set(${PROJECT_NAME}_LIBS)
+set(${PROJECT_NAME}_LIBS)
 
 ### Main sketch file
 set(${PROJECT_NAME}_SKETCH arduino.ino)
