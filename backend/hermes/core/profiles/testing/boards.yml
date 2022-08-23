@@ -1,5 +1,22 @@
 !ArduinoBoard
-name: 'Arduino board A'
+name: 'Arduino MEGA testing board'
 id: 1
 model: 'MEGA'
-port: 'COM3'
+protocol: !SerialProtocol
+  port: 'COM3'
+actions:
+  - !BooleanAction
+    id: 2
+    name: LED Orange
+    default: false
+    pin: 13
+  - !ServoAction
+    id: 3
+    name: "Mini servo"
+    default: 90
+    pin: 9
+    min: 0
+    max: 180
+    start: 0
+    end: 180
+inputs: [ ]

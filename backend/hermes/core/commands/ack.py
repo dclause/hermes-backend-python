@@ -13,3 +13,9 @@ class AckCommand(AbstractCommand):
     @property
     def code(self) -> CommandCode:
         return CommandCode.ACK
+
+    def _get_settings(self) -> bytearray:
+        return bytearray()
+
+    def _get_mutation(self, value: any) -> bytearray:
+        return bytearray()

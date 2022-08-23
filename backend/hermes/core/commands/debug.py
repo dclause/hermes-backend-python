@@ -12,13 +12,19 @@ from hermes.core.protocols import AbstractProtocol
 class DebugCommand(AbstractCommand):
     """ Displays debug data send from slave board. """
 
+    def __init__(self):
+        super().__init__()
+        self._data = ""
+
     @property
     def code(self) -> CommandCode:
         return CommandCode.DEBUG
 
-    def __init__(self):
-        super().__init__()
-        self._data = ""
+    def _get_settings(self) -> bytearray:
+        return bytearray()
+
+    def _get_mutation(self, value: any) -> bytearray:
+        return bytearray()
 
     def receive(self, connexion: AbstractProtocol):
         self._data = connexion.read_line()

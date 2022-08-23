@@ -55,14 +55,13 @@ enum class CommandCode : uint8_t {
     HANDSHAKE = 12,
     CONNECTED = 13,
     PATCH = 14,
+    MUTATION = 15,
     // /!\ Skipped 35 for DEBUG.
 
     // //////////
     // 41 - 140: codes related to commands (for actuators).
     BOOLEAN_ACTION = 41,
     SERVO = 42,
-    BLINK = 43,
-    ON_OFF = 44,
 
     // //////////
     // 141 - 140: codes related to inputs (for sensors).

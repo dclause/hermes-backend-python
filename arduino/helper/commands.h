@@ -12,6 +12,7 @@
 #include "../commands/BooleanActionCommand.h"
 #include "../commands/HandshakeCommand.h"
 #include "../commands/PatchCommand.h"
+#include "../commands/MutationCommand.h"
 #include "../commands/ServoCommand.h"
 #include "../commands/VoidCommand.h"
 

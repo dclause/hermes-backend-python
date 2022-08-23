@@ -25,7 +25,7 @@ class ServoCommand : public AbstractCommand {
         Servo servo_;
 
         uint16_t min_ = 0;
-        uint16_t max_ = 300; // @todo configurable
+        uint16_t max_ = 180; // @todo configurable
 
     public:
 
@@ -43,7 +43,7 @@ class ServoCommand : public AbstractCommand {
             this->requested_position_ = this->default_position_;
             // @todo why ?
             this->current_position_ = 65535;
-            IO::debug(*this);
+            TRACE(*this);
         };
 
         void executePayload(uint8_t *payload) {
@@ -54,11 +54,13 @@ class ServoCommand : public AbstractCommand {
             // @todo this should be min/max indeed, not tmin, tmax to be introduced.
             this->requested_position_ = max(this->min_, this->requested_position_);
             this->requested_position_ = min(this->max_, this->requested_position_);
-            IO::debug("  > Requested position: " + String(this->requested_position_));
 
             // Attach the servo as we are now going to use it.
             this->servo_.attach(this->pin_);
-            IO::debug("  > Attach servo on pin: " + String(this->pin_));
+            TRACE("  > Servo on PIN " +
+                  String(this->pin_) +
+                  " requests position: " +
+                  String(this->requested_position_));
         }
 
         void update() {
@@ -76,7 +78,11 @@ class ServoCommand : public AbstractCommand {
         void nextTick() {
             if (this->current_position_ != this->requested_position_) {
                 // @todo this should be tmin, tmax to be introduced.
-                uint32_t servoPos = map(this->requested_position_, this->min_, this->max_, 544, 2400);
+                uint32_t servoPos = map(this->requested_position_,
+                                        this->min_,
+                                        this->max_,
+                                        MIN_PULSE_WIDTH,
+                                        MAX_PULSE_WIDTH);
                 this->servo_.writeMicroseconds(servoPos);
             }
         };

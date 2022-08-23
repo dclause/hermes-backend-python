@@ -87,6 +87,7 @@ class _WebServerThread(Thread):
         # WebGUI optional definition
         # ----------------------------------------
         if config.GLOBAL['web']['enabled']:
+
             @self._server.route('/', defaults={'path': ''})
             @self._server.route('/<string:path>')
             @self._server.route('/<path:path>')

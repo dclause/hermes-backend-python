@@ -1,6 +1,0 @@
-!LedDevice
-id: 1
-name: 'Demo LED'
-board: 1
-pin: 13
-default: false

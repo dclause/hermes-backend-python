@@ -19,7 +19,7 @@ from queue import Empty
 from func_timeout import func_set_timeout, FunctionTimedOut
 
 from hermes.core import logger
-from hermes.core.commands import CommandCode, CommandFactory
+from hermes.core.commands import CommandCode, CommandFactory, AbstractCommand
 from hermes.core.plugins import AbstractPlugin, TAbstractPlugin
 from hermes.core.protocols import AbstractProtocol, ProtocolException
 from hermes.core.struct import MetaPluginType, ClearableQueue
@@ -34,8 +34,8 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
     def __init__(self, protocol: AbstractProtocol):
         super().__init__()
-        self.actions = {}
-        self.inputs = {}
+        self.actions: dict[int, AbstractCommand] = {}
+        self.inputs: dict[int, AbstractCommand] = {}
 
         self.connected: bool = False
         self.protocol: AbstractProtocol = protocol
@@ -136,17 +136,19 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
         # Handshake: send all devices to board via PATCH.
         logger.debug(f'Handshake for board `{self.name}`.')
-        # NOTE: We cannot use the standard way to send command via the command send() method here.
-        # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
-        self.protocol.send(bytearray([CommandCode.HANDSHAKE]))
 
         # Actions and Inputs are both actions and needs to be transmitted to the board,
         # so it learns about its possibilities.
-        all_commands = self.actions.copy()
+        all_commands: dict[int, AbstractCommand] = self.actions.copy()
         all_commands.update(self.inputs)
+
+        # NOTE: We cannot use the standard way to send command via the command send() method here.
+        # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
+        self.protocol.send(bytearray([CommandCode.HANDSHAKE, len(all_commands)]))
+
         for (_, command) in all_commands.items():
-            command_data: bytearray = command.to_bytes()
-            data = bytearray([CommandCode.PATCH]) + command_data + bytearray([CommandCode.END_OF_LINE])
+            command_data: bytearray = command.to_patch_payload()
+            data = bytearray([CommandCode.PATCH]) + command_data
             logger.debug(f"Handshake PATCH: {data} - {list(data)}")
             self.protocol.send(data)
 

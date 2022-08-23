@@ -35,21 +35,20 @@ class PatchCommand : public AbstractCommand {
             AbstractCommand *commandToPatch = CommandFactory::getInstance().createCommand(commandCode);
             if (commandToPatch == NULL) {
                 TRACE("  => PATCH abort: command not found.");
+                return;
             }
             TRACE("  > Command to PATCH: " + String(*commandToPatch));
-
 
             if (commandToPatch->isRunnable()) {
                 TRACE("  > CommandToPatch is runnable.");
 
-                // In the case of a runnable, we either create or patch the runnable in the RunnableManager.
-                // The data to use is the PATCH payload minus the first byte (CommandCode)
+                // The data to use is the PATCH payload minus the first bytes (CommandCode)
                 uint8_t *data = payload + 1;
 
                 // First check if the runnable is already declared.
-                // NOTE: The payload for a runnable necessarily starts with ID at offset 1, hence data at offset 0.
-                TRACE("  > Search for existing runnable with ID: " + String(data[0]));
-                AbstractCommand *existingRunnable = RunnableManager::getInstance().getCommand(data[0]);
+                // NOTE: The payload for a runnable necessarily starts with ID at offset 1.
+                TRACE("  > Search for existing runnable with ID: " + String(payload[1]));
+                AbstractCommand *existingRunnable = RunnableManager::getInstance().getCommand(payload[1]);
                 if (existingRunnable != NULL) {
                     TRACE("  > Runnable needs update.");
                     TRACE(

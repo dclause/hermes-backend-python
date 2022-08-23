@@ -74,6 +74,7 @@ class CommandCode(IntEnum):
     HANDSHAKE = 12
     CONNECTED = 13
     PATCH = 14
+    MUTATION = 15
     # /!\ Skipped 35 for DEBUG.
 
     ######
@@ -91,40 +92,42 @@ class CommandCode(IntEnum):
 class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type commands. """
 
+    def __init__(self):
+        super().__init__()
+        self.default: Any = None
+        self.value: Any = None
+
     @property
     @abstractmethod
     def code(self) -> CommandCode:
         """ Each command type must have a 8bit code from the CommandCode dictionary. """
+
+    @abstractmethod
+    def _get_settings(self) -> bytearray:
+        """ Encodes the settings of the command as a byte array. """
+        return bytearray()
+
+    @abstractmethod
+    def _get_mutation(self, value: any) -> bytearray:
+        """ Encodes the given value as an array of bytes. """
+        return bytearray([value])
 
     @property
     def _is_runnable(self) -> bool:
         """ Defines if the command is runnable. """
         return False
 
-    def __init__(self):
-        super().__init__()
-        self.default: Any = None
-        self.value: Any = None
-
-    def __str__(self):
-        return f'Command {self.name}'
-
-    def to_bytes(self) -> bytearray:
+    def to_patch_payload(self) -> bytearray:
         """
         Returns the representation of the command as a bytearray.
-        This is made to describe the command to the physical board during the handshake process.
-        The message format can be of two types:
-            - case of runnable: CODE | ID | settings as bytearray
-            - simple command : CODE | default value as bytearray (via encode() method)
+        This is used to:
+         - describes the command to the physical board during the handshake process.
+         - changes the settings of a command
         @todo Build the settings
         """
         header = bytearray([self.code, self.id])
-        data = self.encode(self.default)
-        return header + data
-
-    def encode(self, value: any) -> bytearray:
-        """ Encodes the given value as an array of bytes. """
-        return bytearray([value])
+        settings = self._get_settings()
+        return bytearray([len(settings) + 2]) + header + settings
 
     def send(self, board_id, value: any):
         """ Sends the command. """
@@ -134,8 +137,11 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
             if not board.open():
                 raise CommandException(f'Board {board.id} ({board.name}) is not connected.')
 
-        header = bytearray([self.code])
-        data = self.encode(value)
+        if self._is_runnable:
+            header = bytearray([CommandCode.MUTATION])
+        else:
+            header = bytearray([self.code])
+        data = self._get_mutation(value)
         board.send(header + data)
 
     def receive(self, connexion):
@@ -143,6 +149,9 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
 
     def process(self):
         """ Processes the command """
+
+    def __str__(self):
+        return f'Command {self.name}'
 
 
 class CommandFactory(metaclass=MetaSingleton):
