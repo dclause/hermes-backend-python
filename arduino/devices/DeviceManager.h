@@ -6,7 +6,7 @@
 #include "AbstractDevice.h"
 
 /**
- * Runnable manager: keeps track of all runnable devices.
+ * Device manager: keeps track of all devices.
  * @see AbstractDevice.h
  */
 class DeviceManager {
@@ -35,7 +35,7 @@ class DeviceManager {
         }
 
         /**
-         * Add a runnable device to the known list.
+         * Add a device to the known list.
          *
          * @param instance AbstractDevice: a device.
          * @return bool: If the device as been stored properly.
@@ -45,7 +45,7 @@ class DeviceManager {
         }
 
         /**
-         * Gets a runnable device on the list by its ID.
+         * Gets a device on the list by its ID.
          * @param id
          * @return AbstractDevice or NULL
          */
@@ -54,15 +54,15 @@ class DeviceManager {
         }
 
         /**
-         * Stringifies the runnable device for debug purpose.
+         * Stringifies the device for debug purpose.
          *
          * @return String
          */
         operator String() {
             String log = "AbstractDevice Manager:\n";
             for (uint8_t i = 0; i < this->devices_.count(); i++) {
-                AbstractDevice *runnable = this->devices_.get(i)->value;
-                log += "# - " + String(*runnable) + "\n";
+                AbstractDevice *device = this->devices_.get(i)->value;
+                log += "# - " + String(*device) + "\n";
             }
             return log;
         }

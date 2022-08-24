@@ -13,7 +13,7 @@ class ServoAction(AbstractCommand):
 
     def __init__(self):
         super().__init__()
-        self.pin: int = -1
+        self.pin: int = 0
         self.min: int = 0
         self.max: int = 180
 
@@ -29,7 +29,7 @@ class ServoAction(AbstractCommand):
         return bytearray([self.pin]) + self._encode_value(self.default)
 
     def _get_mutation(self, value: any) -> bytearray:
-        return bytearray([self.id]) + self._encode_value(value)
+        return self._encode_value(value)
 
     @classmethod
     def _encode_value(cls, value: int) -> bytearray:

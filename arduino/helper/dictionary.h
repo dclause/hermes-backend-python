@@ -56,8 +56,8 @@ enum class MessageCode : uint8_t {
     DEBUG = 35,  // Reserved @see arduino folder ioserial.h
     ACK = 11,
     HANDSHAKE = 12,
-    PATCH = 20,
-    MUTATION = 21,
+    SETTINGS = 20,
+    ACTION = 21,
 
     // //////////
     // DEVICES

@@ -9,30 +9,40 @@
 #include "DeviceFactory.h"
 
 /**
- * DIGITAL_WRITE Device: toggle a digital pin write.
+ * DIGITAL_WRITE Device: toggles a digital pin HIGH or LOW (0 or 1).
  *
  * @see MessageCode::DIGITAL_WRITE
  */
 class DigitalWriteDevice : public AbstractDevice {
     DEVICE_DECLARATION
 
+    protected:
+        uint8_t pin_;
+        uint8_t default_;
+        uint8_t value_;
+
     public:
 
-        DigitalWriteDevice() : AbstractDevice(2) {}
+        DigitalWriteDevice() : AbstractDevice(1) {}
 
         String getName() const { return "DigitalWrite"; }
+
+        void updateFromPayload(const uint8_t *payload) {
+            AbstractDevice::updateFromPayload(payload);
+            this->pin_ = payload[1];
+            this->default_ = payload[2];
+            this->value_ = this->default_;
+            pinMode(this->pin_, OUTPUT);
+            digitalWrite(this->pin_, this->value_);
+            TRACE(*this);
+        };
 
         void executePayload(uint8_t *payload) {
             TRACE("-----------");
             TRACE("Process DIGITAL_WRITE device:");
-
-            uint8_t pin = payload[0];
-            uint8_t value = payload[1];
-
-            TRACE("  > Set pin " + String(pin) + " to: " + String(value));
-
-            pinMode(pin, OUTPUT);
-            digitalWrite(pin, value);
+            this->value_ = payload[0];
+            TRACE("  > Set pin " + String(this->pin_) + " to: " + String(this->value_));
+            digitalWrite(this->pin_, this->value_);
             TRACE("-----------");
         }
 };

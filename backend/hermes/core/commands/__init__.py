@@ -74,10 +74,7 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
             if not board.open():
                 raise CommandException(f'Board {board.id} ({board.name}) is not connected.')
 
-        if self._is_runnable:
-            header = bytearray([MessageCode.MUTATION])
-        else:
-            header = bytearray([self.code])
+        header = bytearray([MessageCode.MUTATION, self.id])
         data = self._get_mutation(value)
         board.send(header + data)
 

@@ -16,6 +16,9 @@
 class VoidCommand : public AbstractCommand {
     COMMAND_DECLARATION
     public:
+
+        VoidCommand() : AbstractCommand(0) {}
+
         String getName() const { return "VOID"; }
 
         void executePayload(uint8_t *payload) {}

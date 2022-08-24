@@ -34,8 +34,6 @@ class ServoDevice : public AbstractDevice {
 
         String getName() const { return "SERVO"; }
 
-        bool isRunnable() const { return true; }
-
         void updateFromPayload(const uint8_t *payload) {
             AbstractDevice::updateFromPayload(payload);
             this->pin_ = payload[1];

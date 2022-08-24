@@ -30,7 +30,7 @@ class HandshakeCommand : public AbstractCommand {
             for (uint8_t i = 0; i < payload[0]; ++i) {
                 if (IO::wait_for_bytes(1)) {
                     MessageCode code = IO::read_command();
-                    if (code != MessageCode::PATCH) {
+                    if (code != MessageCode::SETTINGS) {
                         TRACE("ERROR in received code: " + String((uint8_t) code));
                         return;
                     }

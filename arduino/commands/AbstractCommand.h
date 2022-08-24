@@ -19,11 +19,7 @@
  *
  * A command can either be received (from the backend) or sent (to the backend).
  *
- * A command can be called "Runnable" if its execution is time dependent and should not be blocking.
- *      Ex.: Turning a servo takes time and we do want the whole robot to hold-on until done. Therefore the servo command
- *      is called "Runnable" and implements an update() mechanism that is a function time-dependent.
- *
- * A command is a suite of 8bits word:
+ * A command is a suite of 8bits words:
  *  - starting with an uint8_t (one of the MessageCode dictionary) that will be mapped to the appropriate class by
  *  the CommandFactory.
  *  - followed by a payload which is an arbitrary number of bytes for arguments that are read by the receivePayload_().
@@ -77,37 +73,6 @@ class AbstractCommand {
         uint8_t getId() const { return this->id_; };
 
         /**
-         * Defines if the command is "Runnable".
-         * (@see AbstractCommand description)
-         *
-         * @return boolean
-         */
-        virtual bool isRunnable() const { return false; }
-
-        /**
-         * Update the internal settings of a command from a bytes payload.
-         *
-         * @note This situation occurs when a handshake is made and the actions/inputs are declared by the backend to
-         * the board (@see HandshakeCommand) or when an action/input is updated (for instance the servo speed is changed).
-         *
-         * @note The implementation below is pretty light. But as an AbstractCommand, we only know that payload[0] is the
-         * the command id. Every implementation is responsible to override this method and know what the payload contains
-         * for itself.
-         *
-         * @param payload
-         */
-        virtual void updateFromPayload(const uint8_t *payload) {
-            if (this->id_ == 0) {
-                this->id_ = payload[0];
-            }
-        }
-
-        /**
-         * Update the command internal state depending on time of the nextTick.
-         */
-        virtual void nextTick() {};
-
-        /**
          * Processes the command when received from the serial port. That means receive the payload and execute it.
          */
         void process() {
@@ -115,12 +80,6 @@ class AbstractCommand {
             this->executePayload(this->payload_);
         };
 
-        /**
-         * Executes the command using the given payload.
-         *
-         * @param payload (uint8_t*)
-         */
-        virtual void executePayload(uint8_t *payload) = 0;
 
         /**
          * Stringifies the command for debug purpose.
@@ -166,6 +125,13 @@ class AbstractCommand {
             TRACE("Payload received: " + payloadAsInts);
 #endif
         }
+
+        /**
+         * Executes the command using the given payload.
+         *
+         * @param payload (uint8_t*)
+         */
+        virtual void executePayload(uint8_t *payload) = 0;
 };
 
 #endif// ARDUINO_COMMAND_H

@@ -9,8 +9,8 @@
 
 // ! All command includes must be listed here.
 #include "../commands/HandshakeCommand.h"
-#include "../commands/PatchCommand.h"
-#include "../commands/MutationCommand.h"
+#include "../commands/SettingsCommand.h"
+#include "../commands/ActionCommand.h"
 #include "../commands/VoidCommand.h"
 
 namespace Commands {

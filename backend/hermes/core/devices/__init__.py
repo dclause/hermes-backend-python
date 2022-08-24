@@ -16,25 +16,11 @@ Devices are detected when the package is imported for the first time and globall
 the `devices` key
 """
 from abc import abstractmethod
-from enum import IntEnum
 from typing import final
 
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
-
-
-class DeviceType(IntEnum):
-    """ Defines the device codes that are known by the application.
-
-    Each device code will be cast to a 8bits integer, therefore at most 255 commands can be interpreted.
-
-    Device codes cannot be edited later in time for compatibility purposes. Therefore, the list below may be unsorted as
-    time goes on and new device codes are added.
-    """
-
-    LED = 1
-    SERVO = 2
 
 
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):

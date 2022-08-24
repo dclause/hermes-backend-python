@@ -27,7 +27,7 @@ class BooleanAction(AbstractCommand):
         return bytearray([self.pin, self.default])
 
     def _get_mutation(self, value: any) -> bytearray:
-        return bytearray([self.pin, value])
+        return bytearray([value])
 
 
 class BooleanInput(AbstractCommand):
