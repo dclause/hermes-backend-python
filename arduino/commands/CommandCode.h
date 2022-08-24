@@ -61,6 +61,7 @@ enum class CommandCode : uint8_t {
     // //////////
     // 41 - 140: codes related to commands (for actuators).
     BOOLEAN_ACTION = 41,
+    DIGITAL_WRITE = 41,
     SERVO = 42,
 
     // //////////

@@ -7,7 +7,8 @@
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
-#include "RunnableManager.h"
+#include "../devices/AbstractDevice.h"
+#include "../devices/DeviceManager.h"
 
 
 /**
@@ -28,17 +29,17 @@ class MutationCommand : public AbstractCommand {
             TRACE("-----------");
             TRACE("Process MUTATION command:");
 
-            AbstractCommand *runnable = RunnableManager::getInstance().getCommand(payload[0]);
-            if (runnable == NULL) {
+            AbstractDevice *device = DeviceManager::getInstance().getDevice(payload[0]);
+            if (device == NULL) {
                 TRACE("  > Unfined command to mutate: " + String(payload[0]));
                 return;
             }
-            if (!runnable->isRunnable()) {
-                TRACE("  > Cannot mutate non runnable: " + String(*runnable));
+            if (!device->isRunnable()) {
+                TRACE("  > Cannot mutate non runnable: " + String(*device));
                 return;
             }
 
-            runnable->process();
+            device->process();
         }
 };
 

@@ -1,6 +1,7 @@
 #include "helper/debugger.h"
 #include "helper/ioserial.h"
 #include "helper/commands.h"
+#include "helper/devices.h"
 #include <Arduino.h>
 
 void setup() {
@@ -10,5 +11,5 @@ void setup() {
 
 void loop() {
     Commands::receive_and_process_next_command();
-    Commands::update_all_runnables();
+    Devices::update_all_devices();
 }

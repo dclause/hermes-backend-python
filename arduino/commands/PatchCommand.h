@@ -7,7 +7,9 @@
 #include "AbstractCommand.h"
 #include "CommandCode.h"
 #include "CommandFactory.h"
-#include "RunnableManager.h"
+#include "../devices/AbstractDevice.h"
+#include "../devices/DeviceFactory.h"
+#include "../devices/DeviceManager.h"
 
 
 /**
@@ -28,18 +30,18 @@ class PatchCommand : public AbstractCommand {
             TRACE("-----------");
             TRACE("Process PATCH command:");
 
-            // The payload received for a PATCH commandToPatch always starts by the CommandCode of the commandToPatch to patch.
+            // The payload received for a PATCH deviceToPatch always starts by the CommandCode of the deviceToPatch to patch.
             const CommandCode commandCode = static_cast<CommandCode>(payload[0]);
             TRACE(
                     "  > Received commandCode: " + String((uint8_t) commandCode));
-            AbstractCommand *commandToPatch = CommandFactory::getInstance().createCommand(commandCode);
-            if (commandToPatch == NULL) {
+            AbstractDevice *deviceToPatch = DeviceFactory::getInstance().createDevice(commandCode);
+            if (deviceToPatch == NULL) {
                 TRACE("  => PATCH abort: command not found.");
                 return;
             }
-            TRACE("  > Command to PATCH: " + String(*commandToPatch));
+            TRACE("  > Command to PATCH: " + String(*deviceToPatch));
 
-            if (commandToPatch->isRunnable()) {
+            if (deviceToPatch->isRunnable()) {
                 TRACE("  > CommandToPatch is runnable.");
 
                 // The data to use is the PATCH payload minus the first bytes (CommandCode)
@@ -48,24 +50,24 @@ class PatchCommand : public AbstractCommand {
                 // First check if the runnable is already declared.
                 // NOTE: The payload for a runnable necessarily starts with ID at offset 1.
                 TRACE("  > Search for existing runnable with ID: " + String(payload[1]));
-                AbstractCommand *existingRunnable = RunnableManager::getInstance().getCommand(payload[1]);
-                if (existingRunnable != NULL) {
+                AbstractDevice *existingDevice = DeviceManager::getInstance().getDevice(payload[1]);
+                if (existingDevice != NULL) {
                     TRACE("  > Runnable needs update.");
                     TRACE(
-                            "  > Updated " + String(*existingRunnable));
+                            "  > Updated " + String(*existingDevice));
                     // @todo implement the update.
                 } else {
                     TRACE("  > Runnable needs create.");
-                    commandToPatch->updateFromPayload(data);
-                    RunnableManager::getInstance().addCommand(commandToPatch);
+                    deviceToPatch->updateFromPayload(data);
+                    DeviceManager::getInstance().addDevice(deviceToPatch);
                     TRACE(
-                            "  > Created " + String(*commandToPatch));
+                            "  > Created " + String(*deviceToPatch));
                 }
             } else {
                 // The data to use is the PATCH payload minus the two first bytes (CommandCode + ID)
                 uint8_t *data = payload + 2;
-                // In the case of a simple commandToPatch, we execute right away the commandToPatch.
-                commandToPatch->executePayload(data);
+                // In the case of a simple deviceToPatch, we execute right away the deviceToPatch.
+                deviceToPatch->executePayload(data);
             }
         }
 };

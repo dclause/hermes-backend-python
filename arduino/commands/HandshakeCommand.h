@@ -32,13 +32,12 @@ class HandshakeCommand : public AbstractCommand {
                     CommandCode code = IO::read_command();
                     if (code != CommandCode::PATCH) {
                         TRACE("ERROR in received code: " + String((uint8_t) code));
-                        continue;
+                        return;
                     }
                     AbstractCommand *command = CommandFactory::getInstance().createCommand(code);
                     command->process();
                 }
             }
-
             IO::send_command(CommandCode::ACK);
         }
 };
