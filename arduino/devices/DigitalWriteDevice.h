@@ -4,14 +4,14 @@
 #include <Arduino.h>
 
 #include "../helper/debugger.h"
-#include "../commands/CommandCode.h"
+#include "../helper/dictionary.h"
 #include "AbstractDevice.h"
 #include "DeviceFactory.h"
 
 /**
  * DIGITAL_WRITE Device: toggle a digital pin write.
  *
- * @see CommandCode::DIGITAL_WRITE
+ * @see MessageCode::DIGITAL_WRITE
  */
 class DigitalWriteDevice : public AbstractDevice {
     DEVICE_DECLARATION
@@ -37,6 +37,6 @@ class DigitalWriteDevice : public AbstractDevice {
         }
 };
 
-REGISTER_DEVICE(CommandCode::DIGITAL_WRITE, DigitalWriteDevice)
+REGISTER_DEVICE(MessageCode::DIGITAL_WRITE, DigitalWriteDevice)
 
 #endif  // ARDUINO_DIGITAL_WRITE_DEVICE_H

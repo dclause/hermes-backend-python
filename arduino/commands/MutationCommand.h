@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 #include "../helper/debugger.h"
+#include "../helper/dictionary.h"
 #include "AbstractCommand.h"
-#include "CommandCode.h"
 #include "CommandFactory.h"
 #include "../devices/AbstractDevice.h"
 #include "../devices/DeviceManager.h"
@@ -14,7 +14,7 @@
 /**
  * MUTATION Command: create/patch a command and store it to command manager if it is a runnable.
  *
- * @see CommandCode::MUTATION
+ * @see MessageCode::MUTATION
  */
 class MutationCommand : public AbstractCommand {
     COMMAND_DECLARATION
@@ -43,6 +43,6 @@ class MutationCommand : public AbstractCommand {
         }
 };
 
-REGISTER_COMMAND(CommandCode::MUTATION, MutationCommand)
+REGISTER_COMMAND(MessageCode::MUTATION, MutationCommand)
 
 #endif  // ARDUINO_MUTATION_COMMAND_H

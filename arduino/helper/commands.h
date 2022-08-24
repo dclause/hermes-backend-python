@@ -3,17 +3,14 @@
 
 #include "ioserial.h"
 #include "map.h"
-#include "../commands/CommandCode.h"
+#include "dictionary.h"
 #include "../commands/AbstractCommand.h"
 #include "../commands/CommandFactory.h"
-#include "../commands/RunnableManager.h"
 
 // ! All command includes must be listed here.
-#include "../commands/BooleanActionCommand.h"
 #include "../commands/HandshakeCommand.h"
 #include "../commands/PatchCommand.h"
 #include "../commands/MutationCommand.h"
-#include "../commands/ServoCommand.h"
 #include "../commands/VoidCommand.h"
 
 namespace Commands {
@@ -25,7 +22,7 @@ namespace Commands {
     void receive_and_process_next_command() {
         if (IO::available() > 0) {
             // Read incoming byte: this represents an order.
-            CommandCode code = IO::read_command();
+            MessageCode code = IO::read_command();
 
             // Make a command out of it.
             AbstractCommand *command = CommandFactory::getInstance().createCommand(code);
@@ -38,18 +35,7 @@ namespace Commands {
             // Execute the command
             command->process();
 
-            IO::send_command(CommandCode::ACK);
-        }
-    }
-
-    /**
-     * Loop over Runnable commands and update them.
-     */
-    void update_all_runnables() {
-        KeyValuePair<uint8_t, AbstractCommand *> *node = RunnableManager::getInstance().getHead();
-        while (node) {
-            node->value->nextTick();
-            node = node->next;
+            IO::send_command(MessageCode::ACK);
         }
     }
 

@@ -24,7 +24,7 @@
  *      is called "Runnable" and implements an update() mechanism that is a function time-dependent.
  *
  * A command is a suite of 8bits word:
- *  - starting with an uint8_t (one of the CommandCode dictionary) that will be mapped to the appropriate class by
+ *  - starting with an uint8_t (one of the MessageCode dictionary) that will be mapped to the appropriate class by
  *  the CommandFactory.
  *  - followed by a payload which is an arbitrary number of bytes for arguments that are read by the receivePayload_().
  *

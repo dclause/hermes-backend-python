@@ -3,7 +3,7 @@
 
 #include "../helper/debugger.h"
 #include "../helper/map.h"
-#include "CommandCode.h"
+#include "../helper/dictionary.h"
 #include "AbstractCommand.h"
 
 #define COMMAND_DECLARATION protected: \
@@ -27,7 +27,7 @@ class CommandFactory {
     private:
         CommandFactory() = default;
 
-        KeyValueMap<CommandCode, CommandInstance> registeredCommands_;
+        KeyValueMap<MessageCode, CommandInstance> registeredCommands_;
 
     public:
         CommandFactory(const CommandFactory &) = delete;
@@ -40,29 +40,29 @@ class CommandFactory {
         }
 
         /**
-         * Let a CommandCode be associated to an instantiable callback.
+         * Let a MessageCode be associated to an instantiable callback.
          * Stores this association in the internal map.
          *
-         * @param code (CommandCode)
+         * @param code (MessageCode)
          * @param callback (CommandInstance) @see `using` statement at the start of file.
          * @return bool: If the command is properly registered.
          */
-        bool registerCommand(CommandCode code, CommandInstance callback) {
+        bool registerCommand(MessageCode code, CommandInstance callback) {
             return this->registeredCommands_.add(code, callback);
         }
 
         /**
-         * Instantiates an AbstractCommand of the proper type given a CommandCode.
+         * Instantiates an AbstractCommand of the proper type given a MessageCode.
          *
          * @note
-         * A proper command is always instantiated. If the CommandCode is unknown or if something goes wrong, the
+         * A proper command is always instantiated. If the MessageCode is unknown or if something goes wrong, the
          * VOID command is returned.
          * @see VoidCommand
          *
-         * @param code (CommandCode)
+         * @param code (MessageCode)
          * @return AbstractCommand: The instantiated command class.
          */
-        AbstractCommand *createCommand(CommandCode code) {
+        AbstractCommand *createCommand(MessageCode code) {
             CommandInstance command = this->registeredCommands_.getValue(code);
             if (command == NULL) { return NULL; }
             return command();

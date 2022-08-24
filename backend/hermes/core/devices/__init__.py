@@ -19,7 +19,7 @@ from abc import abstractmethod
 from enum import IntEnum
 from typing import final
 
-from hermes.core.commands import CommandCode
+from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
@@ -73,13 +73,13 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
         The purpose is to make sure every single bytearray representation of a device has the same format :
             - empty of no internal data to expose.
-            - CommandCode.PATCH | type | id | <internal _to_bytes() representation | CommandCode.END_OF_LINE
+            - MessageCode.PATCH | type | id | <internal _to_bytes() representation | MessageCode.END_OF_LINE
         """
         internal_to_bytes: bytearray = self._to_bytes()
         if len(internal_to_bytes):
-            return bytearray([CommandCode.PATCH, self.type.value, self.id]) + \
+            return bytearray([MessageCode.PATCH, self.type.value, self.id]) + \
                    internal_to_bytes + \
-                   bytearray([CommandCode.END_OF_LINE])
+                   bytearray([MessageCode.END_OF_LINE])
         return bytearray()
 
 

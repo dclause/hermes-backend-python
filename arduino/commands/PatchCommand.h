@@ -4,8 +4,8 @@
 #include <Arduino.h>
 
 #include "../helper/debugger.h"
+#include "../helper/dictionary.h"
 #include "AbstractCommand.h"
-#include "CommandCode.h"
 #include "CommandFactory.h"
 #include "../devices/AbstractDevice.h"
 #include "../devices/DeviceFactory.h"
@@ -15,7 +15,7 @@
 /**
  * PATCH Command: create/patch a command and store it to command manager if it is a runnable.
  *
- * @see CommandCode::PATCH
+ * @see MessageCode::PATCH
  */
 class PatchCommand : public AbstractCommand {
     COMMAND_DECLARATION
@@ -30,11 +30,11 @@ class PatchCommand : public AbstractCommand {
             TRACE("-----------");
             TRACE("Process PATCH command:");
 
-            // The payload received for a PATCH deviceToPatch always starts by the CommandCode of the deviceToPatch to patch.
-            const CommandCode commandCode = static_cast<CommandCode>(payload[0]);
+            // The payload received for a PATCH deviceToPatch always starts by the MessageCode of the deviceToPatch to patch.
+            const MessageCode messageCode = static_cast<MessageCode>(payload[0]);
             TRACE(
-                    "  > Received commandCode: " + String((uint8_t) commandCode));
-            AbstractDevice *deviceToPatch = DeviceFactory::getInstance().createDevice(commandCode);
+                    "  > Received messageCode: " + String((uint8_t) messageCode));
+            AbstractDevice *deviceToPatch = DeviceFactory::getInstance().createDevice(messageCode);
             if (deviceToPatch == NULL) {
                 TRACE("  => PATCH abort: command not found.");
                 return;
@@ -44,7 +44,7 @@ class PatchCommand : public AbstractCommand {
             if (deviceToPatch->isRunnable()) {
                 TRACE("  > CommandToPatch is runnable.");
 
-                // The data to use is the PATCH payload minus the first bytes (CommandCode)
+                // The data to use is the PATCH payload minus the first bytes (MessageCode)
                 uint8_t *data = payload + 1;
 
                 // First check if the runnable is already declared.
@@ -64,7 +64,7 @@ class PatchCommand : public AbstractCommand {
                             "  > Created " + String(*deviceToPatch));
                 }
             } else {
-                // The data to use is the PATCH payload minus the two first bytes (CommandCode + ID)
+                // The data to use is the PATCH payload minus the two first bytes (MessageCode + ID)
                 uint8_t *data = payload + 2;
                 // In the case of a simple deviceToPatch, we execute right away the deviceToPatch.
                 deviceToPatch->executePayload(data);
@@ -72,6 +72,6 @@ class PatchCommand : public AbstractCommand {
         }
 };
 
-REGISTER_COMMAND(CommandCode::PATCH, PatchCommand)
+REGISTER_COMMAND(MessageCode::PATCH, PatchCommand)
 
 #endif  // ARDUINO_PATCH_COMMAND_H

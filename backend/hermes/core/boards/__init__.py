@@ -19,7 +19,8 @@ from queue import Empty
 from func_timeout import func_set_timeout, FunctionTimedOut
 
 from hermes.core import logger
-from hermes.core.commands import CommandCode, CommandFactory, AbstractCommand
+from hermes.core.commands import CommandFactory, AbstractCommand
+from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin, TAbstractPlugin
 from hermes.core.protocols import AbstractProtocol, ProtocolException
 from hermes.core.struct import MetaPluginType, ClearableQueue
@@ -144,36 +145,24 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
         # NOTE: We cannot use the standard way to send command via the command send() method here.
         # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
-        self.protocol.send(bytearray([CommandCode.HANDSHAKE, len(all_commands)]))
+        self.protocol.send(bytearray([MessageCode.HANDSHAKE, len(all_commands)]))
 
         for (_, command) in all_commands.items():
             command_data: bytearray = command.to_patch_payload()
-            data = bytearray([CommandCode.PATCH]) + command_data
+            data = bytearray([MessageCode.PATCH]) + command_data
             logger.debug(f"Handshake PATCH: {data} - {list(data)}")
             self.protocol.send(data)
 
         # Blocking wait ACK.
-        #  @todo move this to a standardized 'wait_for_ack()' on protocol.
         command_code = None
-        while command_code is not CommandCode.ACK:
+        while command_code is not MessageCode.ACK:
             try:
-                command_code = CommandCode(self.protocol.read_byte())
+                command_code = MessageCode(self.protocol.read_byte())
                 command = CommandFactory().get_by_code(command_code)
                 command.receive(self.protocol)
                 command.process()
             except Exception:
                 continue
-
-        # # Patch all devices.
-        # for (_, device) in config.DEVICES.items():
-        #     if device.board is self.id:
-        #         data = bytearray([CommandCode.PATCH, device.code]) + device.to_bytes
-        #         self.protocol.send(data)
-        #
-        # # Blocking wait ACK.
-        # command_code = None
-        # while command_code is not CommandCode.ACK:
-        #     command_code = CommandCode(self.protocol.read_byte())
 
     def send(self, data: bytearray):
         """
@@ -240,8 +229,8 @@ class SerialListenerThread(threading.Thread):
     """
     Thread that listens to communication protocol for commands and executes it.
 
-    The thread reads a CommandCode from the communication protocol, turns it to an actual command and processes it.
-    If the CommandCode is an ACK, the thread releases one lock to the n_received_semaphore semaphore to clear the way
+    The thread reads a MessageCode from the communication protocol, turns it to an actual command and processes it.
+    If the MessageCode is an ACK, the thread releases one lock to the n_received_semaphore semaphore to clear the way
     for the CommandSenderThread.
 
     Args:
@@ -270,7 +259,7 @@ class SerialListenerThread(threading.Thread):
 
         while not self.exit_event.is_set():
             try:
-                command_code: CommandCode = CommandCode(self.protocol.read_byte())
+                command_code: MessageCode = MessageCode(self.protocol.read_byte())
                 logger.debug(f'SerialListenerThread: receive command code {command_code}')
             except Exception:
                 time.sleep(_RATE)
@@ -282,7 +271,7 @@ class SerialListenerThread(threading.Thread):
                 command.receive(self.protocol)
                 command.process()
 
-                if command_code == CommandCode.ACK:
+                if command_code == MessageCode.ACK:
                     self.n_received_semaphore.release()
             time.sleep(_RATE)
         logger.debug("SerialListenerThread: thread stops.")

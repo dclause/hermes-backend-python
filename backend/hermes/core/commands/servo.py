@@ -1,10 +1,11 @@
 """
 SERVO Command: Orders a servo to move to given position.
 
-code: CommandCode::SERVO
+code: MessageCode::SERVO
 """
 
-from hermes.core.commands import AbstractCommand, CommandCode
+from hermes.core.commands import AbstractCommand
+from hermes.core.dictionary import MessageCode
 
 
 class ServoAction(AbstractCommand):
@@ -17,8 +18,8 @@ class ServoAction(AbstractCommand):
         self.max: int = 180
 
     @property
-    def code(self) -> CommandCode:
-        return CommandCode.SERVO
+    def code(self) -> MessageCode:
+        return MessageCode.SERVO
 
     @property
     def _is_runnable(self) -> bool:

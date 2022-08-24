@@ -9,7 +9,7 @@
     <v-card-text>
       <boolean-action
         v-model="device.actions[0]"
-        :device="device"
+        :board="board"
         :label="feedback"
       />
     </v-card-text>

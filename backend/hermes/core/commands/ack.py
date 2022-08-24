@@ -1,18 +1,19 @@
 """
 ACK Command: acknowledge from the arduino board.
 
-code: CommandCode::ACK
+code: MessageCode::ACK
 """
 
-from hermes.core.commands import AbstractCommand, CommandCode
+from hermes.core.commands import AbstractCommand
+from hermes.core.dictionary import MessageCode
 
 
 class AckCommand(AbstractCommand):
     """ ACK command. """
 
     @property
-    def code(self) -> CommandCode:
-        return CommandCode.ACK
+    def code(self) -> MessageCode:
+        return MessageCode.ACK
 
     def _get_settings(self) -> bytearray:
         return bytearray()

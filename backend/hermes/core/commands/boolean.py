@@ -1,10 +1,11 @@
 """
 DigitalWrite Command: simple command attached to digitalPin.
 
-code: CommandCode::DIGITAL_WRITE
+code: MessageCode::DIGITAL_WRITE
 """
 
-from hermes.core.commands import AbstractCommand, CommandCode
+from hermes.core.commands import AbstractCommand
+from hermes.core.dictionary import MessageCode
 
 
 class BooleanAction(AbstractCommand):
@@ -15,8 +16,8 @@ class BooleanAction(AbstractCommand):
         self.pin: int = 0
 
     @property
-    def code(self) -> CommandCode:
-        return CommandCode.BOOLEAN_ACTION
+    def code(self) -> MessageCode:
+        return MessageCode.DIGITAL_WRITE
 
     @property
     def _is_runnable(self) -> bool:
@@ -37,8 +38,8 @@ class BooleanInput(AbstractCommand):
         return True
 
     @property
-    def code(self) -> CommandCode:
-        return CommandCode.BOOLEAN_INPUT
+    def code(self) -> MessageCode:
+        return MessageCode.BOOLEAN_INPUT
 
     def _get_settings(self) -> bytearray:
         return bytearray()

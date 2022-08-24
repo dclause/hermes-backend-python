@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 import serial
 from serial import SerialException
 
-from hermes.core.commands import CommandCode
+from hermes.core.dictionary import MessageCode
 from hermes.core.protocols import ProtocolException
 from hermes.core.protocols.serial import SerialProtocol
 
@@ -66,11 +66,11 @@ class SerialProtocolTest(unittest.TestCase):
     def test_read_byte(self):
         """ Tests serial protocol read_byte. """
         serial.Serial.read = MagicMock(name='serial.Serial.read', return_value=b'#')
-        self.assertEqual(CommandCode.DEBUG, self._serial_protocol.read_byte())
+        self.assertEqual(MessageCode.DEBUG, self._serial_protocol.read_byte())
 
     def test_send(self):
         """ Tests serial protocol send_command. """
-        self._serial_protocol.send(bytearray([CommandCode.DEBUG]))
+        self._serial_protocol.send(bytearray([MessageCode.DEBUG]))
         # pylint: disable-next=no-member
         serial.Serial.write.assert_called_once_with(b'#')  # noqa
 

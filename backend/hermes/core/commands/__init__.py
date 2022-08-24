@@ -9,84 +9,21 @@ A command is an action requested from and/or to a device/board. It can come from
 or any combination of those.
 @see Device definition in devices package.
 
-A command is represented by a unique 8bit identifier. Those are defined via the CommandCode enum.
+A command is represented by a unique 8bit identifier. Those are defined via the MessageCode enum.
 
 Commands are detected when the package is imported for the first time and globally available via the commandFactory.
 """
 from abc import abstractmethod
-from enum import IntEnum
 from typing import Any
 
 from hermes.core import logger, config
+from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType, MetaSingleton
 
 
 class CommandException(Exception):
     """ Base class for command related exceptions. """
-
-
-# @todo export this enum to a single 'knowledge dictionary' file and create a code generator to make it.
-# The purpose would be to not repeat the enum thought all languages and parts of the project.
-# @see frontend/composables/commands.ts
-# @see backend/hermes/core/commands/__init__/py
-# @see arduino/Commands/CommandCode.h
-
-class CommandCode(IntEnum):
-    """ Defines the command codes that can be sent/received.
-
-    Each command will be cast to a 8bits integer, therefore at most 255 commands can be interpreted.
-    Commands are (tried to) grouped by logical packages and assign arbitrarily a number.
-
-    Warnings:
-        Every number from 0 to 255 can be used for exchanges.
-
-        A few numbers can be generated as "noise" in the serial pipe and should be thus avoided.
-        These noises mainly happens when debugging the arduino code from the monitor. That is the reason they are
-        for specific purposes:
-          - 0 is ASCII [NULL] char: it is sent by Arduino IDE monitor when baudrate is changed
-          - 10 is ASCII [EndOfLine] char: it is sent by Arduino IDE monitor on each data sent.
-          - 35 is ASCII # char: is used to send debug data that should be ignored.
-
-        The values in this file must match with the values in the MessageCode.h file in the arduino project. A script is
-        provided in order to help to main the files in sync.
-        (@see messagecode.py in the scripts folder on the root mono-repo)
-
-    Notes:
-        Command code are maps to actual commands via the CommandFactory class.
-
-    See Also:
-        :file: scripts/messagecode.py
-        :class:`CommandFactory`
-    """
-
-    ######
-    # Reserved
-    VOID = 0  # Reserved @see attention point above
-    END_OF_LINE = 10  # Reserved @see attention point above
-    DEBUG = 35  # Reserved @see arduino folder ioserial.h
-
-    ######
-    # 0 to 40: generic purposes.
-    # /!\ Skipped 0 for VOID.
-    # /!\ Skipped 10 for END_OF_LINE.
-    ACK = 11
-    HANDSHAKE = 12
-    CONNECTED = 13
-    PATCH = 14
-    MUTATION = 15
-    # /!\ Skipped 35 for DEBUG.
-
-    ######
-    # 41 - 140: codes related to commands (for actuators).
-    BOOLEAN_ACTION = 41
-    SERVO = 42
-    BLINK = 43
-    ON_OFF = 44
-
-    ######
-    # 141 - 140: codes related to inputs (for sensors).
-    BOOLEAN_INPUT = 141
 
 
 class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
@@ -99,8 +36,8 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
 
     @property
     @abstractmethod
-    def code(self) -> CommandCode:
-        """ Each command type must have a 8bit code from the CommandCode dictionary. """
+    def code(self) -> MessageCode:
+        """ Each command type must have a 8bit code from the MessageCode dictionary. """
 
     @abstractmethod
     def _get_settings(self) -> bytearray:
@@ -138,7 +75,7 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
                 raise CommandException(f'Board {board.id} ({board.name}) is not connected.')
 
         if self._is_runnable:
-            header = bytearray([CommandCode.MUTATION])
+            header = bytearray([MessageCode.MUTATION])
         else:
             header = bytearray([self.code])
         data = self._get_mutation(value)
@@ -158,24 +95,24 @@ class CommandFactory(metaclass=MetaSingleton):
     """ Command factory class: instantiates a Command of a given type """
 
     def __init__(self):
-        self.__commands: dict[CommandCode, AbstractCommand] = {}
+        self.__commands: dict[MessageCode, AbstractCommand] = {}
 
         # Self registers all AbstractCommand defined plugins.
         for command in AbstractCommand.plugins:
             self.__commands[command().code] = command()
 
-    def get_by_code(self, code: CommandCode) -> AbstractCommand | None:
-        """ Instantiates a AbstractCommand based on a given CommandCode
+    def get_by_code(self, code: MessageCode) -> AbstractCommand | None:
+        """ Instantiates a AbstractCommand based on a given MessageCode
 
         Args:
-            code (CommandCode): The CommandCode of the Command to instantiate.
+            code (MessageCode): The MessageCode of the Command to instantiate.
         Returns:
             AbstractCommand | None
         Raises:
             CommandException: the command code does not exist.
 
         See Also:
-            :class:`CommandCode`
+            :class:`MessageCode`
         """
         command = self.__commands.get(code)
         if command is None:
@@ -194,7 +131,7 @@ class CommandFactory(metaclass=MetaSingleton):
             CommandException: the command name does not exist.
 
         See Also:
-            :class:`CommandCode`
+            :class:`MessageCode`
         """
         command = next((command for command in self.__commands.values() if getattr(command, 'name') == name), None)
         if command is None:
@@ -203,4 +140,4 @@ class CommandFactory(metaclass=MetaSingleton):
         return command
 
 
-__ALL__ = ["AbstractCommand", "CommandCode", "CommandFactory", "CommandException"]
+__ALL__ = ["AbstractCommand", "MessageCode", "CommandFactory", "CommandException"]

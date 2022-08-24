@@ -6,9 +6,9 @@
 import unittest
 
 from hermes.core.commands import CommandFactory
-from hermes.core.commands.blink import CommandCode
 from hermes.core.commands.debug import DebugCommand
 from hermes.core.commands.servo import ServoCommand
+from hermes.core.dictionary import MessageCode
 
 
 class CommandFactoryTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class CommandFactoryTest(unittest.TestCase):
 
     def test_get_by_code(self):
         """Test the CommandFactory get_by_code. Expects a AbstractCommand or None"""
-        self.assertIsInstance(CommandFactory().get_by_code(CommandCode.DEBUG), DebugCommand)
+        self.assertIsInstance(CommandFactory().get_by_code(MessageCode.DEBUG), DebugCommand)
         self.assertIs(CommandFactory().get_by_name('UNKNOWN'), None)
 
     def test_get_by_name(self):

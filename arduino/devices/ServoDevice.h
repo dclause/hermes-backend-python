@@ -2,14 +2,14 @@
 #define ARDUINO_SERVO_DEVICE_H
 
 #include <Servo.h>
-#include "../commands/CommandCode.h"
+#include "../helper/dictionary.h"
 #include "AbstractDevice.h"
 #include "DeviceFactory.h"
 
 /**
  * SERVO Device: turns servo to given angle.
  *
- * @see DeviceCode::SERVO
+ * @see MessageCode::SERVO
  */
 class ServoDevice : public AbstractDevice {
     DEVICE_DECLARATION
@@ -105,6 +105,6 @@ class ServoDevice : public AbstractDevice {
         }
 };
 
-REGISTER_DEVICE(CommandCode::SERVO, ServoDevice)
+REGISTER_DEVICE(MessageCode::SERVO, ServoDevice)
 
 #endif // ARDUINO_SERVO_DEVICE_H

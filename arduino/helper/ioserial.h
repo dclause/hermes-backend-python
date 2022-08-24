@@ -14,7 +14,7 @@
 
 #include <HardwareSerial.h>
 #include "debugger.h"
-#include "../commands/CommandCode.h"
+#include "dictionary.h"
 
 #define BAUDRATE 115200
 
@@ -84,12 +84,12 @@ namespace IO {
     }
 
     /**
-     * Receives and casts an 8bit word to a CommandCode.
+     * Receives and casts an 8bit word to a MessageCode.
      *
-     * @return CommandCode
+     * @return MessageCode
      */
-    CommandCode read_command() {
-        const CommandCode code = static_cast<CommandCode>(Serial.read());
+    MessageCode read_command() {
+        const MessageCode code = static_cast<MessageCode>(Serial.read());
         TRACE("Command code received: " + String((uint8_t) code));
         return code;
     }
@@ -126,7 +126,7 @@ namespace IO {
         uint8_t byte;
         while (wait_for_bytes(1)) {
             byte = Serial.read();
-            if (byte < 0 || byte == ((uint8_t) CommandCode::END_OF_LINE)) break;
+            if (byte < 0 || byte == ((uint8_t) MessageCode::END_OF_LINE)) break;
             buffer[index] = (int8_t) byte;
             index++;
             TRACE("read_until_endl:" + String(byte));
@@ -135,11 +135,11 @@ namespace IO {
     }
 
     /**
-     * Sends an 8bit word CommandCode.
+     * Sends an 8bit word MessageCode.
      *
-     * @param command (CommandCode)
+     * @param command (MessageCode)
      */
-    void send_command(const CommandCode command) {
+    void send_command(const MessageCode command) {
         TRACE("Send command: " + String((uint8_t) command));
         Serial.write(static_cast<uint8_t>(command));
     }

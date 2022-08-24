@@ -1,11 +1,12 @@
 """
 DEBUG Command: Displays debug data send from slave board.
 
-code: CommandCode::DEBUG
+code: MessageCode::DEBUG
 """
 
 from hermes.core import logger
-from hermes.core.commands import AbstractCommand, CommandCode
+from hermes.core.commands import AbstractCommand
+from hermes.core.dictionary import MessageCode
 from hermes.core.protocols import AbstractProtocol
 
 
@@ -17,8 +18,8 @@ class DebugCommand(AbstractCommand):
         self._data = ""
 
     @property
-    def code(self) -> CommandCode:
-        return CommandCode.DEBUG
+    def code(self) -> MessageCode:
+        return MessageCode.DEBUG
 
     def _get_settings(self) -> bytearray:
         return bytearray()

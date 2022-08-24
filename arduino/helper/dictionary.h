@@ -6,23 +6,26 @@
 
 /**
  * @todo export this enum to a single 'knowledge dictionary' file and create a code generator to make it.
- * @see frontend/composables/commands.ts
- * @see backend/hermes/core/commands/__init__/py
- * @see arduino/Commands/CommandCode.h
+ * @see backend/hermes/core/dictionary.py
+ * @see arduino/helpers/dictionary.h
  */
 
 /**
- * Defines the command codes that can be received/emitted.
+ * Defines the byte codes of semantic messages (commands, devices, etc...) that can be received/emitted.
  *
  * @note
  * Command codes are mapped to actual commands via the CommandFactory by registering the command class to the factory
  * keyed by the appropriate command code. This is done via the conjunction usage of the macros `COMMAND_DECLARATION`
  * and `REGISTER_COMMAND(N, T)`.
  * @see CommandFactory.h
+ * In the same way, Device codes are mapped to actual devices via the DeviceFactory by registering the device class
+ * to the factory keyed by the appropriate device code. This is done via the conjunction usage of the macros
+ * `DEVICE_DECLARATION` and `REGISTER_DEVICE(N, T)`.
+ * @see DeviceFactory.h
  *
  * @details
- * Each command must cast to an 8bits integer, therefore at most 255 commands can be interpreted.
- * Commands are (tried to) grouped by logical packages but the numbers are assigned as development go in no particular
+ * Each message must cast to an 8bits integer, therefore at most 255 messages can be semantically interpreted.
+ * Message codes are (tried to) grouped by logical packages but the numbers are assigned as development go in no particular
  * order.
  *
  * @attention
@@ -35,40 +38,36 @@
  *  - 10 is ASCII [EndOfLine] char: it is sent by Arduino IDE monitor on each data sent.
  *  - 35 is ASCII # char: is used to send debug data that should be ignored.*
  *
- * The values in this file must match with the values in the MessageCode.h file in the arduino project. A script is
+ * @todo implement the following
+ * The values in this file must match with the values in the MessageCode.h file in the backend project. A script is
  * provided in order to help to main the files in sync.
  * (@see messagecode.py in the scripts folder on the root mono-repo)
  */
-enum class CommandCode : uint8_t {
+enum class MessageCode : uint8_t {
 
     // //////////
     // Reserved
-    VOID = 0,  // Reserved @see attention point above
     END_OF_LINE = 10,  // Reserved @see attention point above
-    DEBUG = 35,  // Reserved @see arduino folder ioserial.h
 
-    // //////////
-    // 0 to 40: generic purposes.
-    // /!\ Skipped 0 for VOID.
-    // /!\ Skipped 10 for END_OF_LINE.
+    // /////////
+    // COMMANDS
+    // 0 - 40: codes related to generic commands.
+    VOID = 0,  // Reserved @see attention point above
+    DEBUG = 35,  // Reserved @see arduino folder ioserial.h
     ACK = 11,
     HANDSHAKE = 12,
-    CONNECTED = 13,
-    PATCH = 14,
-    MUTATION = 15,
-    // /!\ Skipped 35 for DEBUG.
+    PATCH = 20,
+    MUTATION = 21,
 
     // //////////
-    // 41 - 140: codes related to commands (for actuators).
-    BOOLEAN_ACTION = 41,
+    // DEVICES
     DIGITAL_WRITE = 41,
     SERVO = 42,
 
     // //////////
-    // 141 - 140: codes related to inputs (for sensors).
     BOOLEAN_INPUT = 141,
 };
 
-typedef enum CommandCode CommandCode;
+typedef enum MessageCode MessageCode;
 
 #endif // ARDUINO_COMMAND_CODE_H
