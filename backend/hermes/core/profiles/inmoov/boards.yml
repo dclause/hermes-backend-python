@@ -5,7 +5,7 @@ model: 'MEGA'
 protocol: !SerialProtocol
   port: 'COM3'
 actions:
-  - !BooleanAction
+  - !BooleanOutputDevice
     id: 2
     name: LED Orange
     default: false

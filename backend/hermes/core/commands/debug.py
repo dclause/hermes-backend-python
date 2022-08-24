@@ -21,12 +21,6 @@ class DebugCommand(AbstractCommand):
     def code(self) -> MessageCode:
         return MessageCode.DEBUG
 
-    def _get_settings(self) -> bytearray:
-        return bytearray()
-
-    def _get_mutation(self, value: any) -> bytearray:
-        return bytearray()
-
     def receive(self, connexion: AbstractProtocol):
         self._data = connexion.read_line()
 

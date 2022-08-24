@@ -5,10 +5,10 @@ This package contains all implemented devices provided by default in HERMES.
 A device is a physical piece of electronic wired to a Board (ex: led, servo, etc...).
 @see Board definition in boards package.
 
-A device state is mutable via commands (@see Command definition in commands package).
-The commands can be sent via the 'command' socketIO method.
+A device state is mutable via devices (@see Device definition in devices package).
+The devices can be sent via the 'device' socketIO method.
 @see Server definition in server.py.
-@see Command definition in commands package.
+@see Device definition in devices package.
 
 Devices can be created from configs file leaving in the config/devices.yml file. Each device must validate the
 schema provided within this package.
@@ -16,57 +16,116 @@ Devices are detected when the package is imported for the first time and globall
 the `devices` key
 """
 from abc import abstractmethod
-from typing import final
+from typing import Any
 
+from hermes.core import logger, config
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
-from hermes.core.struct import MetaPluginType
+from hermes.core.struct import MetaPluginType, MetaSingleton
+
+
+class DeviceException(Exception):
+    """ Base class for device related exceptions. """
 
 
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type devices. """
 
-    # @todo Remove all entry parameters. Add a hydrate() method.
-    def __init__(self, board: int, name: str = "", actions=None, inputs=None):
+    def __init__(self):
         super().__init__()
-        if actions is None:
-            actions = []
-        if inputs is None:
-            inputs = []
-        self.name = name
-        self.board: int = board
-        self.actions = actions
-        self.inputs = inputs
+        self.default: Any = None
+        self.value: Any = None
+
+    @property
+    @abstractmethod
+    def code(self) -> MessageCode:
+        """ Each device type must be a 8bit code from the MessageCode dictionary. """
 
     @abstractmethod
-    def _to_bytes(self) -> bytearray:
+    def _encode_settings(self) -> bytearray:
+        """ Encodes the settings of the device as a byte array. """
+        return bytearray()
+
+    @abstractmethod
+    def _encode_value(self, value: any) -> bytearray:
+        """ Encodes the given value as an array of bytes. """
+        return bytearray([value])
+
+    def to_settings_payload(self) -> bytearray:
         """
-        Returns the bytearray representation of the device necessary to rebuild the device on the robot side.
+        Returns the representation of the device as a bytearray.
+        This is used to:
+         - describes the device to the physical board during the handshake process.
+         - changes the settings of a device
+        @todo Build the settings
+        """
+        header = bytearray([self.code, self.id])
+        settings = self._encode_settings()
+        return bytearray([len(settings) + 2]) + header + settings
 
-        The PATCH command (@see commands/patch.py) will create a unified header for a device (code, id), hence this
-        method should exclude those. (@see devices/led.py for a simple example).
+    def set_value(self, board_id, value: any):
+        """ Sends the command. """
+        board = config.BOARDS[board_id]
 
+        if not board.connected:
+            if not board.open():
+                raise DeviceException(f'Board {board.id} ({board.name}) is not connected.')
+
+        header = bytearray([MessageCode.MUTATION, self.id])
+        data = self._encode_value(value)
+        board.send(header + data)
+
+    def __str__(self):
+        return f'Device {self.name}'
+
+
+class DeviceFactory(metaclass=MetaSingleton):
+    """ Device factory class: instantiates a Device of a given type """
+
+    def __init__(self):
+        self.__devices: dict[MessageCode, AbstractDevice] = {}
+
+        # Self registers all AbstractDevice defined plugins.
+        for device in AbstractDevice.plugins:
+            self.__devices[device().code] = device()
+
+    def get_by_code(self, code: MessageCode) -> AbstractDevice | None:
+        """ Instantiates a AbstractDevice based on a given MessageCode
+
+        Args:
+            code (MessageCode): The MessageCode of the Device to instantiate.
         Returns:
-            bytearray
+            AbstractDevice | None
+        Raises:
+            DeviceException: the device code does not exist.
+
+        See Also:
+            :class:`MessageCode`
         """
-        return bytearray()
+        device = self.__devices.get(code)
+        if device is None:
+            logger.error(f'Device {code} do not exists.')
+            raise DeviceException(f'Device with code `{code}` do not exists.')
+        return device
 
-    @final
-    def to_bytes(self) -> bytearray:
+    def get_by_name(self, name: str) -> AbstractDevice | None:
+        """ Instantiates a AbstractDevice based on a given name
+
+        Args
+            name (str): The name of the Device to instantiate.
+        Returns
+            AbstractDevice or None
+        Raises:
+            DeviceException: the device name does not exist.
+
+        See Also:
+            :class:`MessageCode`
         """
-        Exposed version of '_to_bytes()' method.
-        @see _to_bytes()
-
-        The purpose is to make sure every single bytearray representation of a device has the same format :
-            - empty of no internal data to expose.
-            - MessageCode.PATCH | type | id | <internal _to_bytes() representation | MessageCode.END_OF_LINE
-        """
-        internal_to_bytes: bytearray = self._to_bytes()
-        if len(internal_to_bytes):
-            return bytearray([MessageCode.PATCH, self.type.value, self.id]) + \
-                   internal_to_bytes + \
-                   bytearray([MessageCode.END_OF_LINE])
-        return bytearray()
+        device = next((device for device in self.__devices.values() if getattr(device, 'name') == name), None)
+        if device is None:
+            logger.error(f'Device {name} do not exists.')
+            raise DeviceException(f'Device with name `{name}` do not exists.')
+        return device
 
 
-__ALL__ = ["AbstractDevice", "DeviceType"]
+__ALL__ = ["AbstractDevice", "DeviceFactory"]

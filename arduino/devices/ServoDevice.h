@@ -34,8 +34,8 @@ class ServoDevice : public AbstractDevice {
 
         String getName() const { return "SERVO"; }
 
-        void updateFromPayload(const uint8_t *payload) {
-            AbstractDevice::updateFromPayload(payload);
+        void updateSettings(const uint8_t *payload) {
+            AbstractDevice::updateSettings(payload);
             this->pin_ = payload[1];
             this->default_position_ = this->readPosition_(payload[2], payload[3]);
             this->requested_position_ = this->default_position_;

@@ -27,8 +27,8 @@ class DigitalWriteDevice : public AbstractDevice {
 
         String getName() const { return "DigitalWrite"; }
 
-        void updateFromPayload(const uint8_t *payload) {
-            AbstractDevice::updateFromPayload(payload);
+        void updateSettings(const uint8_t *payload) {
+            AbstractDevice::updateSettings(payload);
             this->pin_ = payload[1];
             this->default_ = payload[2];
             this->value_ = this->default_;

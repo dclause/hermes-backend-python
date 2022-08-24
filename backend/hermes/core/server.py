@@ -12,7 +12,7 @@ from flask_socketio import SocketIO, emit
 
 from hermes import __version__
 from hermes.core import config, logger
-from hermes.core.commands import AbstractCommand
+from hermes.core.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
 
 
@@ -76,8 +76,8 @@ class _WebServerThread(Thread):
         def mutation(board_id: int, command_id: int, value: int):
             logger.debug(f'## socketIO received "Mutation" with parameter: {board_id} {command_id} {value}')
             try:
-                command: AbstractCommand = config.BOARDS[board_id].actions[command_id]
-                command.send(board_id, value)
+                device: AbstractDevice = config.BOARDS[board_id].actions[command_id]
+                device.set_value(board_id, value)
                 config.BOARDS[board_id].actions[command_id].state = value
             except Exception as exception:
                 logger.error(f'Mutation error: command could not be sent because: "{exception}".')
@@ -85,7 +85,8 @@ class _WebServerThread(Thread):
 
         # ----------------------------------------
         # WebGUI optional definition
-        # ----------------------------------------
+        # ----------------------------------------.
+        print(config.GLOBAL['web']['enabled'])
         if config.GLOBAL['web']['enabled']:
 
             @self._server.route('/', defaults={'path': ''})

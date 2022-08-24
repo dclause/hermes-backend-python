@@ -1,7 +1,7 @@
 <template>
   <div
-    class="command command-boolean"
     :title="infoComputed"
+    class="command command-boolean"
   >
     <v-label class="text-body-2 font-weight-bold">
       {{ labelComputed }}
@@ -10,10 +10,10 @@
       v-model="command.state"
       :label="feedbackComputed"
       color="primary"
+      density="compact"
       hide-details
       inline
       inset
-      density="compact"
       @change="onChange"
     />
   </div>
@@ -52,9 +52,10 @@ const props = defineProps({
   }
 });
 
-// Defines for v-model
-const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
 const commandStore = useCommandStore();
+
+// Define for v-model
+const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
 
 // Build label.
 const labelComputed = computed(() => {

@@ -1,6 +1,6 @@
 <template>
-  <v-card width="calc(33.33% - 16px)">
-    <v-card-title>
+  <v-card>
+    <v-card-title class="d-flex">
       {{ device.name }}
       <v-spacer />
       <v-icon

@@ -44,10 +44,7 @@ class AbstractDevice {
 
         /**
          * Returns the ID of this device.
-         * We use a getter to the protected id_ attribute to make sure no-one changes this from the outside.
-         * The only way to change the ID is via the updateFromPayload() method which ensures the ID can't be changed
-         * afterward.
-         *
+         * 
          * @return String
          */
         uint8_t getId() const { return this->id_; };
@@ -64,7 +61,7 @@ class AbstractDevice {
          *
          * @param payload
          */
-        virtual void updateFromPayload(const uint8_t *payload) {
+        virtual void updateSettings(const uint8_t *payload) {
             if (this->id_ == 0) {
                 this->id_ = payload[0];
             }

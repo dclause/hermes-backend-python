@@ -16,7 +16,7 @@ Commands are detected when the package is imported for the first time and global
 from abc import abstractmethod
 from typing import Any
 
-from hermes.core import logger, config
+from hermes.core import logger
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType, MetaSingleton
@@ -37,46 +37,7 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     @property
     @abstractmethod
     def code(self) -> MessageCode:
-        """ Each command type must have a 8bit code from the MessageCode dictionary. """
-
-    @abstractmethod
-    def _get_settings(self) -> bytearray:
-        """ Encodes the settings of the command as a byte array. """
-        return bytearray()
-
-    @abstractmethod
-    def _get_mutation(self, value: any) -> bytearray:
-        """ Encodes the given value as an array of bytes. """
-        return bytearray([value])
-
-    @property
-    def _is_runnable(self) -> bool:
-        """ Defines if the command is runnable. """
-        return False
-
-    def to_patch_payload(self) -> bytearray:
-        """
-        Returns the representation of the command as a bytearray.
-        This is used to:
-         - describes the command to the physical board during the handshake process.
-         - changes the settings of a command
-        @todo Build the settings
-        """
-        header = bytearray([self.code, self.id])
-        settings = self._get_settings()
-        return bytearray([len(settings) + 2]) + header + settings
-
-    def send(self, board_id, value: any):
-        """ Sends the command. """
-        board = config.BOARDS[board_id]
-
-        if not board.connected:
-            if not board.open():
-                raise CommandException(f'Board {board.id} ({board.name}) is not connected.')
-
-        header = bytearray([MessageCode.MUTATION, self.id])
-        data = self._get_mutation(value)
-        board.send(header + data)
+        """ Each command type must be a 8bit code from the MessageCode dictionary. """
 
     def receive(self, connexion):
         """ Reads the additional data sent with the command. """

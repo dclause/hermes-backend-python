@@ -27,27 +27,27 @@
       >
         <v-expansion-panel elevation="0">
           <v-expansion-panel-title
-            expand-icon="mdi-plus"
             collapse-icon="mdi-minus"
+            expand-icon="mdi-plus"
           >
             Actions
           </v-expansion-panel-title>
           <v-expansion-panel-text>
             <component
-              :is="useCommand(command.controller)"
-              v-for="(command, key) in board.actions"
+              :is="useDevice(device.controller)"
+              v-for="(device, key) in board.actions"
               :key="key"
               v-model="board.actions[key]"
               :board="board"
-              info=""
               class="md-2"
+              info=""
             />
           </v-expansion-panel-text>
         </v-expansion-panel>
         <v-expansion-panel elevation="0">
           <v-expansion-panel-title
-            expand-icon="mdi-plus"
             collapse-icon="mdi-minus"
+            expand-icon="mdi-plus"
           >
             Inputs
           </v-expansion-panel-title>
@@ -62,7 +62,7 @@
 
 <script lang="ts" setup>
 import { useBoardStore } from "@/stores/boards";
-import { useCommand } from "@/composables/commands";
+import { useDevice } from "@/composables/devices";
 import { useProtocol } from "@/composables/protocols";
 
 const props = defineProps({

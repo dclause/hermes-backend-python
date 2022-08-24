@@ -20,6 +20,7 @@ from func_timeout import func_set_timeout, FunctionTimedOut
 
 from hermes.core import logger
 from hermes.core.commands import CommandFactory, AbstractCommand
+from hermes.core.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin, TAbstractPlugin
 from hermes.core.protocols import AbstractProtocol, ProtocolException
@@ -35,8 +36,8 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
     def __init__(self, protocol: AbstractProtocol):
         super().__init__()
-        self.actions: dict[int, AbstractCommand] = {}
-        self.inputs: dict[int, AbstractCommand] = {}
+        self.actions: dict[int, AbstractDevice] = {}
+        self.inputs: dict[int, AbstractDevice] = {}
 
         self.connected: bool = False
         self.protocol: AbstractProtocol = protocol
@@ -148,7 +149,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         self.protocol.send(bytearray([MessageCode.HANDSHAKE, len(all_commands)]))
 
         for (_, command) in all_commands.items():
-            command_data: bytearray = command.to_patch_payload()
+            command_data: bytearray = command.to_settings_payload()
             data = bytearray([MessageCode.PATCH]) + command_data
             logger.debug(f"Handshake PATCH: {data} - {list(data)}")
             self.protocol.send(data)
@@ -219,6 +220,7 @@ class SerialSenderThread(threading.Thread):
                 continue
 
             with self.serial_lock:
+                # @todo should be close connexion on the board if this fails ?
                 self.protocol.send(data)
 
             time.sleep(_RATE)

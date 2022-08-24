@@ -54,7 +54,7 @@ class SettingsCommand : public AbstractCommand {
                 // @todo implement the update.
             } else {
                 TRACE("  > Device needs create.");
-                deviceToPatch->updateFromPayload(data);
+                deviceToPatch->updateSettings(data);
                 DeviceManager::getInstance().addDevice(deviceToPatch);
                 TRACE("  > Created " + String(*deviceToPatch));
             }

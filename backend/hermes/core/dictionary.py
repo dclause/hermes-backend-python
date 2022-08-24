@@ -55,7 +55,7 @@ class MessageCode(IntEnum):
 
     ######
     # DEVICES
-    DIGITAL_WRITE = 41
+    BOOLEAN_OUTPUT = 41
     SERVO = 42
 
     ######

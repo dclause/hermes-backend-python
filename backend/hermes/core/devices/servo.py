@@ -4,11 +4,11 @@ SERVO Command: Orders a servo to move to given position.
 code: MessageCode::SERVO
 """
 
-from hermes.core.commands import AbstractCommand
+from hermes.core.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
 
 
-class ServoAction(AbstractCommand):
+class ServoDevice(AbstractDevice):
     """ Sends a Servo command """
 
     def __init__(self):
@@ -21,16 +21,8 @@ class ServoAction(AbstractCommand):
     def code(self) -> MessageCode:
         return MessageCode.SERVO
 
-    @property
-    def _is_runnable(self) -> bool:
-        return True
-
-    def _get_settings(self) -> bytearray:
+    def _encode_settings(self) -> bytearray:
         return bytearray([self.pin]) + self._encode_value(self.default)
 
-    def _get_mutation(self, value: any) -> bytearray:
-        return self._encode_value(value)
-
-    @classmethod
-    def _encode_value(cls, value: int) -> bytearray:
+    def _encode_value(self, value: any) -> bytearray:
         return bytearray(value.to_bytes(2, byteorder='big'))

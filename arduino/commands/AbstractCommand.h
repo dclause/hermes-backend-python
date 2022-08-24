@@ -64,9 +64,6 @@ class AbstractCommand {
 
         /**
          * Returns the ID of this command.
-         * We use a getter to the protected id_ attribute to make sure no-one changes this from the outside.
-         * The only way to change the ID is via the updateFromPayload() method which ensures the ID can't be changed
-         * afterward.
          *
          * @return String
          */

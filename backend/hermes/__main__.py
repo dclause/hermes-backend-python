@@ -60,7 +60,7 @@ class App:
 #                'name': 'Demo LED',
 #                'board': 1,
 #                'controls': [
-#                    BooleanAction(),
+#                    BooleanOutputDevice(),
 #                    OnOffCommand(),
 #                ],
 #            },

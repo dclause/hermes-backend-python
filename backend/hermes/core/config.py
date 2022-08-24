@@ -183,17 +183,6 @@ BOARDS: dict[int, AbstractBoard] = {}
 DEVICES: dict[int, AbstractDevice] = {}
 
 
-# @todo rework when needs get better defined
-# def update(new_values):
-#     """ Patches the GLOBAL states with given values. """
-#     for key, value in new_values.items():
-#         if isinstance(value, collections.abc.Mapping):
-#             CONFIG[key] = new_values(CONFIG.get(key, {}), value)
-#         else:
-#             CONFIG[key] = value
-#     return CONFIG
-
-
 def init():
     """
     Initializes global config objects.

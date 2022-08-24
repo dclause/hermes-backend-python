@@ -3,11 +3,11 @@
     <v-card-title class="d-flex">
       {{ device.name }}
       <v-spacer />
-      <svg-led width="30" />
+      <svg-servo width="30" />
     </v-card-title>
     <v-card-subtitle>{{ board.name }}</v-card-subtitle>
     <v-card-text>
-      <boolean-action
+      <servo-action
         v-model="device"
         :board="board"
       />
@@ -17,10 +17,10 @@
 
 <script lang="ts" setup>
 import { WritableComputedRef } from "vue";
-import SvgLed from "@/components/icons/SvgLed.vue";
-import BooleanAction from "@/components/commands/BooleanAction.vue";
 import { CommandConfigurationProperties } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
+import ServoAction from "@/components/commands/ServoAction.vue";
+import SvgServo from "@/components/icons/SvgServo.vue";
 
 const props = defineProps({
   modelValue: {

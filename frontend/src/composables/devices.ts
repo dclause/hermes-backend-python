@@ -1,5 +1,6 @@
-import LedDevice from "@/components/devices/LedDevice.vue";
 import CustomDevice from "@/components/devices/CustomDevice.vue";
+import LedDevice from "@/components/devices/LedDevice.vue";
+import ServoDevice from "@/components/devices/ServoDevice.vue";
 import { CommandConfigurationProperties } from "@/composables/commands";
 
 export type DeviceConfigurationProperties = {
@@ -19,7 +20,7 @@ export type DeviceConfigurationProperties = {
 export function useDevice(deviceType: string): unknown {
   const devices: Record<string, unknown> = {
     LedDevice: LedDevice,
-    CustomDevice: CustomDevice
+    ServoDevice: ServoDevice
   };
   return devices[deviceType] ?? CustomDevice;
 }
