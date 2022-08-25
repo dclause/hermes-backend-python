@@ -94,19 +94,19 @@ def _get_modules_config() -> MutableMapping:
 
     # Read global configuration from modules.
     config = {StorageType.GLOBAL: storage.read(StorageNamespace.MODULE, StorageType.GLOBAL)}
-    configuration = merge(configuration, config)
+    merge(configuration, config)
 
     # Read profile specific configuration from modules.
     profile = {StorageType.PROFILE: storage.read(StorageNamespace.MODULE, StorageType.PROFILE)}
-    configuration = merge(configuration, profile)
+    merge(configuration, profile)
 
     # Read boards from modules.
     boards = {StorageType.BOARD: storage.read(StorageNamespace.MODULE, StorageType.BOARD)}
-    configuration = merge(configuration, boards, strategy=Strategy.ADDITIVE)
+    merge(configuration, boards, strategy=Strategy.ADDITIVE)
 
     # Read devices from modules.
     devices = {StorageType.DEVICE: storage.read(StorageNamespace.MODULE, StorageType.DEVICE)}
-    configuration = merge(configuration, devices, strategy=Strategy.ADDITIVE)
+    merge(configuration, devices, strategy=Strategy.ADDITIVE)
 
     logger.debug('> Read configuration from modules:')
     logger.debug(configuration)
@@ -124,11 +124,11 @@ def _get_profile_config() -> MutableMapping:
 
     # Read global configuration in the profile.
     config = {StorageType.GLOBAL: storage.read(StorageNamespace.PROFILE, StorageType.GLOBAL)}
-    configuration = merge(configuration, config)
+    merge(configuration, config)
 
     # Read profile specific configuration in the profile.
     profile = {StorageType.PROFILE: storage.read(StorageNamespace.PROFILE, StorageType.PROFILE)}
-    configuration = merge(configuration, profile)
+    merge(configuration, profile)
 
     # Read boards from the profile
     boards = {StorageType.BOARD: storage.read(StorageNamespace.PROFILE, StorageType.BOARD)}
@@ -154,7 +154,7 @@ def _get_core_config() -> MutableMapping:
 
     # Read global configuration from core.
     config = {StorageType.GLOBAL: storage.read(StorageNamespace.CORE, StorageType.GLOBAL)}
-    configuration = merge(configuration, config)
+    merge(configuration, config)
 
     logger.debug('> Read configuration from core:')
     logger.debug(configuration)
@@ -205,26 +205,26 @@ def init():
 
     # pylint: disable-next=global-statement
     global GLOBAL
-    GLOBAL = merge(
-        default_config[StorageType.GLOBAL],
-        core_config[StorageType.GLOBAL],
-        modules_config[StorageType.GLOBAL],
-        profile_config[StorageType.GLOBAL],
-        cmd_config[StorageType.GLOBAL]
-    )
+    GLOBAL = merge({},
+                   default_config[StorageType.GLOBAL],
+                   core_config[StorageType.GLOBAL],
+                   modules_config[StorageType.GLOBAL],
+                   profile_config[StorageType.GLOBAL],
+                   cmd_config[StorageType.GLOBAL]
+                   )
 
     ########################
     # Merge profile config.
 
     # pylint: disable-next=global-statement
     global PROFILE
-    PROFILE = merge(
-        default_config[StorageType.PROFILE],
-        core_config[StorageType.PROFILE],
-        modules_config[StorageType.PROFILE],
-        profile_config[StorageType.PROFILE],
-        cmd_config[StorageType.PROFILE]
-    )
+    PROFILE = merge({},
+                    default_config[StorageType.PROFILE],
+                    core_config[StorageType.PROFILE],
+                    modules_config[StorageType.PROFILE],
+                    profile_config[StorageType.PROFILE],
+                    cmd_config[StorageType.PROFILE]
+                    )
 
     ########################
     # Concatenate boards.

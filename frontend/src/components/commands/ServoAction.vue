@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import { WritableComputedRef } from "vue";
+import { ref, WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
 import { defineModel } from "@/composables/vmodel";
 import {
@@ -101,10 +101,11 @@ const infoComputed = useCommandInfoComputed(command.value, props);
 const feedbackComputed = useCommandFeedbackComputed(command.value, props);
 
 // Position is used as a v-model for the input number field and will then be merged back to the command model of the slider.
-const position = command.value.state;
+const position = ref(command.value.state);
 
 // Send the command when the toggle changes.
 // @todo Rework this method to use @end event when available with Vuetify 3.
+// @see https://github.com/vuetifyjs/vuetify/issues/15675
 const onSliderEnd = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
   if (target?.className.includes("v-slider-")) {
@@ -125,10 +126,12 @@ const sendCommand = () => {
 
 const decrement = () => {
   command.value.state = Math.max(command.value.min, --command.value.state);
+  position.value = command.value.state;
   sendCommand();
 };
 const increment = () => {
   command.value.state = Math.min(command.value.max, ++command.value.state);
+  position.value = command.value.state;
   sendCommand();
 };
 

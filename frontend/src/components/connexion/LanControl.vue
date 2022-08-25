@@ -58,7 +58,6 @@ socket
     configStore.$patch({ connected: undefined });
   })
   .on("handshake", (global, profile, boards, devices) => {
-    console.warn("Handshake received");
     configStore.$state = global;
     profileStore.$state = profile;
     boardStore.$patch({ boards: boards });
@@ -68,7 +67,6 @@ socket
     configStore.$patch({ connected: false });
   })
   .on("patch", (board_id, partial) => {
-    console.warn("Received patch order for", board_id, partial);
     boardStore.$patch({
       boards: { [board_id]: partial }
     });

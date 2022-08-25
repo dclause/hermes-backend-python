@@ -15,7 +15,7 @@ namespace Devices {
     void update_all_devices() {
         KeyValuePair<uint8_t, AbstractDevice *> *device = DeviceManager::getInstance().getHead();
         while (device) {
-            device->value->nextTick();
+            device->value->update();
             device = device->next;
         }
     }

@@ -13,9 +13,14 @@
 class AbstractDevice {
     protected:
         uint8_t id_ = 0;
+
         int expected_payload_size_;
         uint8_t effective_payload_size_;
         uint8_t *payload_;
+
+        // Expressed in milliseconds (ms).
+        uint32_t time_of_last_update_;
+        uint32_t delay_between_updates_ = 0;
 
     public:
 
@@ -44,7 +49,7 @@ class AbstractDevice {
 
         /**
          * Returns the ID of this device.
-         * 
+         *
          * @return String
          */
         uint8_t getId() const { return this->id_; };
@@ -68,12 +73,19 @@ class AbstractDevice {
         }
 
         /**
-         * Update the device internal state depending on time of the nextTick.
+         * Updates a device internals if necessary.
          */
-        virtual void nextTick() {};
+        void update() {
+            uint32_t currentTime = millis();
+            if (this->shouldPerformNextTick_(currentTime)) {
+                this->doUpdate(currentTime);
+                this->time_of_last_update_ = currentTime;
+            }
+        }
 
         /**
          * Processes the device when received from the serial port. That means receive the payload and execute it.
+         * @todo eliminate this method.
          */
         void process() {
             this->receivePayload_();
@@ -131,6 +143,15 @@ class AbstractDevice {
             TRACE("Payload received: " + payloadAsInts);
 #endif
         }
+
+        bool shouldPerformNextTick_(const uint32_t current_time) {
+            return current_time - this->time_of_last_update_ >= this->delay_between_updates_;
+        }
+
+        /**
+         * Updates the device internal state.
+         */
+        virtual void doUpdate(const uint32_t current_time) {};
 };
 
 #endif// ARDUINO_DEVICE_H
