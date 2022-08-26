@@ -1,6 +1,9 @@
 <code_scheme name="Default" version="173">
-  <Objective-C>
-    <option name="INDENT_CLASS_MEMBERS" value="8" />
-    <option name="INDENT_VISIBILITY_KEYWORDS" value="4" />
-  </Objective-C>
+    <Objective-C>
+        <option name="INDENT_CLASS_MEMBERS" value="8"/>
+        <option name="INDENT_VISIBILITY_KEYWORDS" value="4"/>
+    </Objective-C>
+    <codeStyleSettings language="ObjectiveC">
+        <option name="RIGHT_MARGIN" value="180"/>
+    </codeStyleSettings>
 </code_scheme>
