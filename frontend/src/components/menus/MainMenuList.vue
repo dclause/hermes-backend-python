@@ -3,9 +3,9 @@
     <v-tooltip>
       <template #activator="{ props }">
         <v-list-item
+          :to="{ name: 'boards'}"
           prepend-icon="mdi-memory"
           title="Boards"
-          to="boards"
           v-bind="props"
         />
       </template>
@@ -15,9 +15,9 @@
     <v-tooltip>
       <template #activator="{ props }">
         <v-list-item
+          :to="{ name: 'devices'}"
           prepend-icon="mdi-robot-industrial"
           title="Groups"
-          to="devices"
           v-bind="props"
         />
       </template>

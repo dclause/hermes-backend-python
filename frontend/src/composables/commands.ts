@@ -14,8 +14,13 @@ export type CommandConfigurationProperties = {
 }
 
 /**
- * Returns a list of available commands.
- * Defaults to UnknownCommand if not existing.
+ * Returns the command component to use among available list.
+ * Defaults to UnknownCommand if not given.
+ *
+ * @note: this is done to avoid lazy-loading components.
+ * It may seem opposite to usual performance recommendations, but we want here
+ * to avoid any extra server work or network load once the UI is started, hence
+ * we are okay with a longer initial load time.
  */
 export function useCommand(commandType: string): unknown {
   const commands: Record<string, unknown> = {

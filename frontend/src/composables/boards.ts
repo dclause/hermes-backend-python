@@ -9,8 +9,13 @@ export declare interface BoardConfigurationProperties {
 }
 
 /**
- * Returns a list of available boards.
- * Defaults to UnknownBoard if not existing.
+ * Returns the board component to use among available list.
+ * Defaults to CustomBoard if not given.
+ *
+ * @note: this is done to avoid lazy-loading components.
+ * It may seem opposite to usual performance recommendations, but we want here
+ * to avoid any extra server work or network load once the UI is started, hence
+ * we are okay with a longer initial load time.
  */
 export function useBoard(boardType: string): unknown {
   const boards: Record<string, unknown> = {

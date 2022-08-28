@@ -1,25 +1,17 @@
 <template>
-  <v-container
-    v-if="connected"
-    class="d-flex align-content-start flex-wrap"
-    fluid
-  >
-    <component
-      :is="useDevice(device.controller)"
-      v-for="device in devices"
-      :key="device.id"
-      class="ma-2"
-      :device-id="device.id"
-    />
-  </v-container>
-  <lan-broken v-else />
+  <component
+    :is="useDevice(device.controller)"
+    v-for="device in devices"
+    :key="device.id"
+    :device-id="device.id"
+    class="ma-2"
+  />
 </template>
 
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { useDevice } from "@/composables/devices";
 import { useDeviceStore } from "@/stores/devices";
-import LanBroken from "@/components/connexion/LanBroken.vue";
 import { useConfigStore } from "@/stores/config";
 
 // Devices

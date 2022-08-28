@@ -49,8 +49,9 @@ Main app component: defines a single layout for all pages.
       <v-container
         class="pa-8"
         fluid
+        style="overflow-x:auto;"
       >
-        <router-view />
+        <component :is="layout" />
       </v-container>
     </v-main>
   </v-app>
@@ -62,8 +63,13 @@ import MainMenuList from "@/components/menus/MainMenuList.vue";
 import SvgRobot from "@/components/icons/SvgRobot.vue";
 import { storeToRefs } from "pinia";
 import { useProfileStore } from "@/stores/profile";
+import { useRoute } from "vue-router";
+import { useLayout } from "@/composables/layouts";
 
 const profileStore = useProfileStore();
 const { name } = storeToRefs(profileStore);
+
+const route = useRoute();
+const layout = useLayout(route.meta.layout as string);
 
 </script>

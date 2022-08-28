@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
+import BoardPage from "../pages/BoardPage.vue";
 import BoardListPage from "../pages/BoardListPage.vue";
 import DeviceListPage from "../pages/DeviceListPage.vue";
 import HomePage from "../pages/HomePage.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: [
     {
       path: "/",
@@ -20,6 +21,11 @@ const router = createRouter({
       path: "/boards",
       name: "boards",
       component: BoardListPage
+    },
+    {
+      path: "/board/:boardId",
+      name: "board",
+      component: BoardPage
     },
     {
       path: "/devices",
