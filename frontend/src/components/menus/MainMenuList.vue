@@ -7,7 +7,7 @@
       <template #activator="{ props }">
         <v-list-item
           :active="isRouteActive('boards') || isRouteActive('board')"
-          :to="{ name: 'board', params: { boardId: 'all' }}"
+          :to="{ name: 'boards' }"
           v-bind="props"
         >
           <v-icon
@@ -43,7 +43,6 @@ import { useRoute } from "vue-router";
 
 const route = useRoute();
 const isRouteActive = (name) => {
-  console.log("#####", route.name === name);
   return route.name === name;
 };
 

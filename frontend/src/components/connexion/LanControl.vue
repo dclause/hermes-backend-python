@@ -54,7 +54,6 @@ socket
     configStore.$patch({ connected: true });
   })
   .on("reconnect_attempt", () => {
-    console.log("attempt reconnect");
     configStore.$patch({ connected: undefined });
   })
   .on("handshake", (global, profile, boards, devices) => {

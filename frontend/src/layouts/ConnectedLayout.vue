@@ -1,5 +1,5 @@
 <template>
-  <router-view v-if="connected" />
+  <slot v-if="connected" />
   <lan-broken v-else />
 </template>
 
