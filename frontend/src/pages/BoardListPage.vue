@@ -11,7 +11,7 @@
       <v-icon>
         mdi-plus
       </v-icon>
-      <span class="d-none d-sm-block">New board</span>
+      <span class="d-none d-sm-block">{{ $t("components.board.new") }}</span>
     </v-btn>
   </div>
   <v-table
@@ -21,20 +21,20 @@
     <thead>
       <tr>
         <th class="col-status d-none d-sm-table-cell">
-          Status
+          {{ $t("components.board.status") }}
         </th>
         <th class="col-name">
-          Board name
+          {{ $t("components.board.name") }}
         </th>
         <th class="col-type d-none d-md-table-cell">
-          Board type
+          {{ $t("components.board.type") }}
         </th>
         <th class="col-protocol d-none d-sm-table-cell">
-          Protocol
+          {{ $t("components.board.protocol") }}
         </th>
 
         <th class="col-actions">
-          Actions
+          {{ $t("components.board.actions") }}
         </th>
       </tr>
     </thead>
@@ -51,7 +51,8 @@
                 v-bind="props"
               />
             </template>
-            <span>{{ connected ? "connected" : "offline" }}</span>
+            <span>{{ connected ? $t("global.connexion.status.connected") : $t("global.connexion.status.offline")
+            }}</span>
           </v-tooltip>
         </td>
         <td class="col-name">

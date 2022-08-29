@@ -3,6 +3,7 @@ import ServoAction from "@/components/commands/ServoAction.vue";
 import UnknownCommand from "@/components/commands/UnknownCommand.vue";
 import { computed } from "vue";
 import { BoardConfigurationProperties } from "@/composables/boards";
+import i18n from "@/plugins/vue-i18n";
 
 export type CommandConfigurationProperties = {
   id: number,
@@ -35,13 +36,13 @@ export function useCommand(commandType: string): unknown {
  * @param command
  * @param props
  */
-export function useCommandInfoComputed(command: CommandConfigurationProperties, props: Record<string, unknown>): unknown {
+export function useCommandTooltipComputed(command: CommandConfigurationProperties, props: Record<string, unknown>): unknown {
   return computed(() => {
     if (props.info !== undefined) {
       return props.info;
     }
     const board = props.board as BoardConfigurationProperties;
-    return `Board "${board.name}" (PIN ${command.pin}): ${command.state}`;
+    return i18n.global.t("components.command.board", { board: board.name, pin: command.pin, state: command.state });
   });
 }
 
@@ -55,7 +56,7 @@ export function useCommandLabelComputed(command: CommandConfigurationProperties,
     if (props.label !== undefined) {
       return props.label;
     }
-    return `Command "${command.name}" :`;
+    return i18n.global.t("components.command.command", { name: command.name }) + " :";
   });
 }
 
@@ -69,7 +70,7 @@ export function useCommandFeedbackComputed(command: CommandConfigurationProperti
     if (props.feedback !== undefined) {
       return props.feedback;
     }
-    return `PIN ${command.pin}: ${command.state}`;
+    return i18n.global.t("components.command.pin", { name: command.name, state: command.state });
   });
 }
 

@@ -1,5 +1,5 @@
 <template>
-  Protocol: {{ protocol.name }}
+  {{ $t("components.board.protocol") }}: {{ protocol.name }}
 </template>
 
 <script lang="ts" setup>

@@ -4,6 +4,6 @@ import components from "./components";
 
 export default {
   global: global,
-  page: pages,
-  component: components
+  pages: pages,
+  components: components
 };

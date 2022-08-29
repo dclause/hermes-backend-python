@@ -11,11 +11,10 @@
         </v-avatar>
         <div>
           <v-card-title class="text-h5">
-            Oops ... the connection was lost
+            {{ $t("global.connexion.lost.title") }}
           </v-card-title>
           <v-card-subtitle>
-            This is ground control to robot... please respond
-            !
+            {{ $t("global.connexion.lost.description") }}
           </v-card-subtitle>
         </div>
       </div>

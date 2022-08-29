@@ -10,8 +10,8 @@
     </v-card-title>
     <v-card-subtitle>
       <slot name="title">
-        <div>Type: {{ board.model }}</div>
-        <div>Status: {{ board.connected }}</div>
+        <div>{{ $t("components.board.type") }}: {{ board.model }}</div>
+        <div>{{ $t("components.board.status") }}: {{ board.connected }}</div>
         <div>
           <component
             :is="useProtocol(board.protocol.controller)"
@@ -30,9 +30,9 @@
             collapse-icon="mdi-minus"
             expand-icon="mdi-plus"
           >
-            Actions
+            {{ $t("components.board.controls") }}
           </v-expansion-panel-title>
-          <v-expansion-panel-text>
+          <v-expansion-panel-text v-if="board.actions.length">
             <component
               :is="useDevice(device.controller)"
               v-for="(device, key) in board.actions"
@@ -43,16 +43,30 @@
               info=""
             />
           </v-expansion-panel-text>
+          <v-expansion-panel-text v-else>
+            <em>{{ $t("components.board.no_actions") }}</em>
+          </v-expansion-panel-text>
         </v-expansion-panel>
         <v-expansion-panel elevation="0">
           <v-expansion-panel-title
             collapse-icon="mdi-minus"
             expand-icon="mdi-plus"
           >
-            Inputs
+            {{ $t("components.board.inputs") }}
           </v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <em>No input for this board.</em>
+          <v-expansion-panel-text v-if="board.inputs.length">
+            <component
+              :is="useDevice(device.controller)"
+              v-for="(device, key) in board.inputs"
+              :key="key"
+              v-model="board.inputs[key]"
+              :board="board"
+              class="md-2"
+              info=""
+            />
+          </v-expansion-panel-text>
+          <v-expansion-panel-text v-else>
+            <em>{{ $t("components.board.no_inputs") }}</em>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>

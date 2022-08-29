@@ -1,6 +1,6 @@
 <template>
   <div class="font-italic text-error-lighten-1">
-    No UI controller for this command
+    {{ $t("components.command.none") }}
   </div>
 </template>
 

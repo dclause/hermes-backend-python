@@ -11,12 +11,12 @@
         </v-avatar>
         <div>
           <v-card-title class="text-h5">
-            Oops ... This page does not exists
+            {{ $t("pages.notfound.title") }}
           </v-card-title>
           <v-card-subtitle>
-            Better
+            {{ $t("pages.notfound.description") }}
             <app-link :to="{name: 'home'}">
-              get back to known territories
+              {{ $t("pages.notfound.link") }}
             </app-link>
             !
           </v-card-subtitle>

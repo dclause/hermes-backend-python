@@ -25,7 +25,7 @@ import { useCommandStore } from "@/stores/commands";
 import {
   CommandConfigurationProperties,
   useCommandFeedbackComputed,
-  useCommandInfoComputed
+  useCommandTooltipComputed
 } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 
@@ -66,7 +66,7 @@ const labelComputed = computed(() => {
 });
 
 // Build info (used when hover command).
-const infoComputed = useCommandInfoComputed(command.value, props);
+const infoComputed = useCommandTooltipComputed(command.value, props);
 
 // Build feedback label.
 const feedbackComputed = useCommandFeedbackComputed(command.value, props);

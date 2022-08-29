@@ -57,8 +57,8 @@ import { defineModel } from "@/composables/vmodel";
 import {
   CommandConfigurationProperties,
   useCommandFeedbackComputed,
-  useCommandInfoComputed,
-  useCommandLabelComputed
+  useCommandLabelComputed,
+  useCommandTooltipComputed
 } from "@/composables/commands";
 
 type ServoCommandConfigurationProperties = CommandConfigurationProperties & {
@@ -97,7 +97,7 @@ const command: WritableComputedRef<ServoCommandConfigurationProperties> = define
 const commandStore = useCommandStore();
 
 const labelComputed = useCommandLabelComputed(command.value, props);
-const infoComputed = useCommandInfoComputed(command.value, props);
+const infoComputed = useCommandTooltipComputed(command.value, props);
 const feedbackComputed = useCommandFeedbackComputed(command.value, props);
 
 // Position is used as a v-model for the input number field and will then be merged back to the command model of the slider.

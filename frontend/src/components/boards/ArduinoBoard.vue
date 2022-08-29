@@ -1,8 +1,8 @@
 <template>
   <custom-board board-id="boardId">
     <template #title>
-      <div>Type: {{ board.model }}</div>
-      <div>Status: {{ board.connected }}</div>
+      <div>{{ $t("components.board.type") }}: {{ board.model }}</div>
+      <div>{{ $t("components.board.type") }}: {{ board.connected }}</div>
     </template>
   </custom-board>
 </template>

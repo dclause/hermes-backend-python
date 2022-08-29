@@ -7,7 +7,7 @@
         v-bind="props"
       />
     </template>
-    <span>Server: {{ status }}</span>
+    <span>{{ $t("global.connexion.server") }}: {{ status }}</span>
   </v-tooltip>
 </template>
 
@@ -19,6 +19,7 @@ import { useConfigStore } from "@/stores/config";
 import { useProfileStore } from "@/stores/profile";
 import { useBoardStore } from "@/stores/boards";
 import { useDeviceStore } from "@/stores/devices";
+import { useI18n } from "vue-i18n";
 
 // Extract composable.
 const configStore = useConfigStore();
@@ -27,6 +28,7 @@ const boardStore = useBoardStore();
 const deviceStore = useDeviceStore();
 const socket = useSocket();
 
+const i18n = useI18n();
 const { connected } = storeToRefs(configStore);
 const pending = computed(() => connected.value === undefined);
 
@@ -41,11 +43,11 @@ const icon = computed(() => {
 
 const status = computed(() => {
   if (pending.value) {
-    return "connecting...";
+    return i18n.t("global.connexion.status.connecting");
   } else if (connected.value) {
-    return "connected";
+    return i18n.t("global.connexion.status.connected");
   }
-  return "disconnected";
+  return i18n.t("global.connexion.status.disconnected");
 });
 
 // Defines socket receivable messages.

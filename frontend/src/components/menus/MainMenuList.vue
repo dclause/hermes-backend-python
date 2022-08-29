@@ -17,7 +17,7 @@
           />
         </v-list-item>
       </template>
-      <span>Boards</span>
+      <span>{{ $t("pages.boards.menu") }}</span>
     </v-tooltip>
 
     <v-tooltip>
@@ -33,7 +33,7 @@
           />
         </v-list-item>
       </template>
-      <span>Groups</span>
+      <span>{{ $t("pages.groups.menu") }}</span>
     </v-tooltip>
   </v-list>
 </template>

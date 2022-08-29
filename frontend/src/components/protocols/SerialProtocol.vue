@@ -1,5 +1,7 @@
 <template>
-  {{ prefix }} <span class="d-none d-md-inline-block">Serial on&nbsp;</span>{{ protocol.port }}
+  {{ prefix }} <span class="d-none d-md-inline-block">
+    {{ $t("components.protocol.serial") }}
+  </span>&nbsp;{{ protocol.port }}
 </template>
 
 <script lang="ts" setup>

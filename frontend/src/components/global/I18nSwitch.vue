@@ -2,9 +2,9 @@
   <div class="locale-changer">
     <v-select
       v-model="$i18n.locale"
-      :hint="$t('page.settings.language.description')"
+      :hint="$t('pages.settings.language.description')"
       :items="langs"
-      :label="$t('page.settings.language.label')"
+      :label="$t('pages.settings.language.label')"
       item-title="name"
       item-value="code"
       persistent-hint
