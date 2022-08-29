@@ -8,10 +8,13 @@
 import "@mdi/font/css/materialdesignicons.css";
 import "@/styles/_variables.scss";
 
-// Vuetify
 import { createVuetify } from "vuetify";
+import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
+import { useI18n } from "vue-i18n";
+import i18n from "./vue-i18n";
 
 export default createVuetify({
+  locale: createVueI18nAdapter({ i18n, useI18n }),
   theme: {
     // options: { customProperties: true },
     defaultTheme: "light",

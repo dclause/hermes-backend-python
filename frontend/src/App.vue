@@ -36,7 +36,7 @@ Main app component: defines a single layout for all pages.
       color="primary"
       density="compact"
     >
-      <v-app-bar-title>HERMES - a Robot Management System</v-app-bar-title>
+      <v-app-bar-title>HERMES - {{ $t("global.app.slogan") }}</v-app-bar-title>
 
       <template #append>
         <LanControl />
@@ -51,6 +51,7 @@ Main app component: defines a single layout for all pages.
         fluid
         style="overflow-x:auto;"
       >
+        <i18n-switch />
         <component :is="layout">
           <router-view />
         </component>
@@ -67,6 +68,7 @@ import { useProfileStore } from "@/stores/profile";
 import LanControl from "@/components/connexion/LanControl.vue";
 import MainMenuList from "@/components/menus/MainMenuList.vue";
 import SvgRobot from "@/components/icons/SvgRobot.vue";
+import I18nSwitch from "@/components/global/I18nSwitch.vue";
 
 const profileStore = useProfileStore();
 const { name } = storeToRefs(profileStore);
@@ -74,7 +76,6 @@ const route = useRoute();
 
 const layout = ref("ConnectedLayout");
 watch(() => route.meta, (meta) => {
-  console.log("######### changed route", meta.layout as string);
   layout.value = meta.layout as string || "ConnectedLayout";
 });
 </script>

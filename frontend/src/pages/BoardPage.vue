@@ -1,17 +1,20 @@
 <template>
-  Hello board
+  <div class="d-flex justify-space-between align-center mb-4">
+    <h1 class="d-inline-block text-h5 text-md-h4">
+      {{ board.name }}
+    </h1>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { storeToRefs } from "pinia";
+import { useRoute } from "vue-router";
 import { useBoardStore } from "@/stores/boards";
-import { useConfigStore } from "@/stores/config";
+
+const route = useRoute();
+const boardId: number = Number.parseInt(route.params.boardId as string);
 
 const boardStore = useBoardStore();
-const { boards } = storeToRefs(boardStore);
-
-const configStore = useConfigStore();
-const { connected } = storeToRefs(configStore);
+const board = boardStore.getBoard(boardId);
 
 </script>
 

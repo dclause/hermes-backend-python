@@ -8,6 +8,7 @@
         <v-list-item
           :active="isRouteActive('boards') || isRouteActive('board')"
           :to="{ name: 'boards' }"
+          style="font-size: 1.2em;"
           v-bind="props"
         >
           <v-icon
