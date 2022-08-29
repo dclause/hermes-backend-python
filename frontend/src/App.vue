@@ -39,8 +39,11 @@ Main app component: defines a single layout for all pages.
       <v-app-bar-title>HERMES - {{ $t("global.app.slogan") }}</v-app-bar-title>
 
       <template #append>
-        <LanControl />
-        <v-btn icon="mdi-cog" />
+        <lan-control />
+        <v-btn
+          :to="{name:'settings'}"
+          icon="mdi-cog"
+        />
       </template>
     </v-app-bar>
 
@@ -51,7 +54,6 @@ Main app component: defines a single layout for all pages.
         fluid
         style="overflow-x:auto;"
       >
-        <i18n-switch />
         <component :is="layout">
           <router-view />
         </component>
@@ -68,7 +70,6 @@ import { useProfileStore } from "@/stores/profile";
 import LanControl from "@/components/connexion/LanControl.vue";
 import MainMenuList from "@/components/menus/MainMenuList.vue";
 import SvgRobot from "@/components/icons/SvgRobot.vue";
-import I18nSwitch from "@/components/global/I18nSwitch.vue";
 
 const profileStore = useProfileStore();
 const { name } = storeToRefs(profileStore);

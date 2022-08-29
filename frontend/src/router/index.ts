@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
-import DeviceListPage from "@/pages/DeviceListPage.vue";
-import NotFoundPage from "@/pages/NotFoundPage.vue";
-import HomePage from "@/pages/HomePage.vue";
 import boardPages from "./boards";
+import DeviceListPage from "@/pages/DeviceListPage.vue";
+import HomePage from "@/pages/HomePage.vue";
+import NotFoundPage from "@/pages/NotFoundPage.vue";
+import SettingsPage from "@/pages/SettingsPage.vue";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -17,6 +18,14 @@ const router = createRouter({
       path: "/about",
       name: "about",
       component: () => import("../pages/AboutPage.vue")
+    },
+    {
+      path: "/settings",
+      name: "settings",
+      component: () => SettingsPage,
+      meta: {
+        layout: "SimpleLayout"
+      }
     },
     ...boardPages,
     {
