@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-space-between align-center mb-4">
-    <h1 class="d-inline-block text-h5 text-md-h4">
+    <h1 class="text-h5 text-md-h4">
       My boards
     </h1>
     <v-btn
@@ -33,7 +33,7 @@
           {{ $t("components.board.protocol") }}
         </th>
 
-        <th class="col-actions">
+        <th class="col-actions text-center">
           {{ $t("components.board.actions") }}
         </th>
       </tr>
@@ -51,8 +51,9 @@
                 v-bind="props"
               />
             </template>
-            <span>{{ connected ? $t("global.connexion.status.connected") : $t("global.connexion.status.offline")
-            }}</span>
+            <span>
+              {{ connected ? $t("global.connexion.status.connected") : $t("global.connexion.status.offline") }}
+            </span>
           </v-tooltip>
         </td>
         <td class="col-name">
@@ -61,7 +62,7 @@
           </app-link>
         </td>
         <td class="col-type d-none d-md-table-cell">
-          {{ board.controller }} {{ board.model }}
+          {{ getController(board) }} {{ board.model }}
         </td>
         <td class="col-protocol d-none d-sm-table-cell">
           <component
@@ -70,13 +71,26 @@
           />
         </td>
 
-        <td class="col-actions" />
+        <td class="col-actions text-center">
+          <v-btn
+            icon="mdi-pencil"
+            size="x-small"
+            variant="plain"
+          />
+          <v-btn
+            icon="mdi-trash-can"
+            size="x-small"
+            variant="plain"
+          />
+        </td>
       </tr>
     </tbody>
   </v-table>
 </template>
 
 <script lang="ts" setup>
+import type { BoardConfigurationProperties } from "@/composables/boards";
+import { useBoardController } from "@/composables/boards";
 import { storeToRefs } from "pinia";
 import { useBoardStore } from "@/stores/boards";
 import { useConfigStore } from "@/stores/config";
@@ -89,6 +103,7 @@ const { boards } = storeToRefs(boardStore);
 const configStore = useConfigStore();
 const { connected } = storeToRefs(configStore);
 
+const getController = (board: BoardConfigurationProperties) => useBoardController(board.controller as string);
 </script>
 
 <style lang="scss" scoped>

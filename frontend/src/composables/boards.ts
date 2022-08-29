@@ -1,3 +1,4 @@
+import ArduinoBoard from "@/components/boards/ArduinoBoard.vue";
 import CustomBoard from "@/components/boards/CustomBoard.vue";
 
 export declare interface BoardConfigurationProperties {
@@ -19,7 +20,16 @@ export declare interface BoardConfigurationProperties {
  */
 export function useBoard(boardType: string): unknown {
   const boards: Record<string, unknown> = {
-    // ArduinoBoard: ArduinoBoard
+    ArduinoBoard: ArduinoBoard
   };
   return boards[boardType] ?? CustomBoard;
+}
+
+export function useBoardController(boardType: string): string {
+  switch (boardType) {
+    case "ArduinoBoard":
+      return "Arduino";
+    default:
+      return boardType;
+  }
 }

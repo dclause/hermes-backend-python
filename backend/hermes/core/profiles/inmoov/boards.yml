@@ -1,5 +1,5 @@
-!ArduinoBoard
-name: 'Arduino board A'
+- !ArduinoBoard
+name: 'Board Left'
 id: 1
 model: 'MEGA'
 protocol: !SerialProtocol
@@ -58,6 +58,75 @@ actions:
   - !ServoAction
     id: 8
     name: "Hand Left #Pinky"
+    default: 0
+    pin: 6
+    min: 0
+    max: 300
+    start: 0
+    end: 200
+inputs: [ ]
+
+---
+  !ArduinoBoard
+name: 'Board Right'
+id: 1
+model: 'MEGA'
+protocol: !SerialProtocol
+  port: 'COM3'
+actions:
+  - !BooleanOutputDevice
+    id: 2
+    name: LED Orange
+    default: false
+    pin: 13
+  - !ServoAction
+    id: 3
+    name: "Hand Right #Wrist"
+    default: 160
+    pin: 7
+    min: 0
+    max: 300
+    start: 0
+    end: 300
+  - !ServoAction
+    id: 4
+    name: "Hand Right #Thumb"
+    default: 0
+    pin: 2
+    min: 0
+    max: 300
+    start: 0
+    end: 200
+  - !ServoAction
+    id: 5
+    name: "Hand Right #Index"
+    default: 0
+    pin: 3
+    min: 0
+    max: 300
+    start: 0
+    end: 200
+  - !ServoAction
+    id: 6
+    name: "Hand Right #Middle"
+    default: 0
+    pin: 4
+    min: 0
+    max: 300
+    start: 0
+    end: 200
+  - !ServoAction
+    id: 7
+    name: "Hand Right #Ring"
+    default: 0
+    pin: 5
+    min: 0
+    max: 300
+    start: 0
+    end: 200
+  - !ServoAction
+    id: 8
+    name: "Hand Right #Pinky"
     default: 0
     pin: 6
     min: 0

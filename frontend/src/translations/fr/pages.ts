@@ -5,6 +5,8 @@ export default {
     link: "revenir en territoire connu"
   },
   settings: {
+    menu: "Paramètres",
+    title: "HERMES - Configurations",
     language: {
       label: "Langue",
       description: "Sélectionner la langue de l'interface."
@@ -13,6 +15,12 @@ export default {
   boards: {
     menu: "Cartes",
     title: "Mes cartes"
+  },
+  board: {
+    tab: {
+      info: "Informations",
+      history: "Historique"
+    }
   },
   groups: {
     menu: "Groupes",

@@ -5,6 +5,8 @@ export default {
     link: "get back to known territories"
   },
   settings: {
+    menu: "Settings",
+    title: "HERMES - Configurations",
     language: {
       label: "Language",
       description: "Select the interface's language."
@@ -13,6 +15,12 @@ export default {
   boards: {
     menu: "Boards",
     title: "My boards"
+  },
+  board: {
+    tab: {
+      info: "Information",
+      history: "History"
+    }
   },
   groups: {
     menu: "Groups",

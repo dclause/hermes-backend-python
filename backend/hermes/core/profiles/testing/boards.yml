@@ -1,22 +1,38 @@
 !ArduinoBoard
-name: 'Arduino MEGA testing board'
+name: 'Testing Board'
 id: 1
 model: 'MEGA'
 protocol: !SerialProtocol
   port: 'COM3'
 actions:
-  - !BooleanOutputDevice
+  - !LedDevice
     id: 2
     name: LED Orange
     default: false
     pin: 13
-  - !ServoAction
+    group: 1
+  - !ServoDevice
     id: 3
     name: "Mini servo"
-    default: 90
+    default: 0
     pin: 9
+    tmin: 0
+    tmax: 180
     min: 0
     max: 180
-    start: 0
-    end: 180
+    speed: 90
+    acceleration: 10
+    group: 2
+  - !ServoDevice
+    id: 4
+    name: "Maxi servo"
+    default: 0
+    pin: 8
+    tmin: 0
+    tmax: 300
+    min: 0
+    max: 300
+    speed: 90
+    acceleration: 50
+    group: 2
 inputs: [ ]
