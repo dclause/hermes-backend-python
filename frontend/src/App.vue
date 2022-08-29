@@ -51,20 +51,30 @@ Main app component: defines a single layout for all pages.
         fluid
         style="overflow-x:auto;"
       >
-        <router-view />
+        <component :is="layout">
+          <router-view />
+        </component>
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts" setup>
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
+import { storeToRefs } from "pinia";
+import { useProfileStore } from "@/stores/profile";
 import LanControl from "@/components/connexion/LanControl.vue";
 import MainMenuList from "@/components/menus/MainMenuList.vue";
 import SvgRobot from "@/components/icons/SvgRobot.vue";
-import { storeToRefs } from "pinia";
-import { useProfileStore } from "@/stores/profile";
 
 const profileStore = useProfileStore();
 const { name } = storeToRefs(profileStore);
+const route = useRoute();
 
+const layout = ref("ConnectedLayout");
+watch(() => route.meta, (meta) => {
+  console.log("######### changed route", meta.layout as string);
+  layout.value = meta.layout as string || "ConnectedLayout";
+});
 </script>

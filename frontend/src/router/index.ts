@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: "/:catchAll(.*)*",
       name: "404",
-      component: () => NotFoundPage,
+      component: NotFoundPage,
       meta: {
         layout: "SimpleLayout"
       }
