@@ -10,11 +10,16 @@
           <svg-robot-broken />
         </v-avatar>
         <div>
-          <v-card-title class="text-h5">
+          <v-card-title class="text-h5 pt-0 pb-0">
             {{ $t("global.connexion.lost.title") }}
           </v-card-title>
           <v-card-subtitle>
-            {{ $t("global.connexion.lost.description") }}
+            <div class="font-italic mb-4">
+              {{ $t("global.connexion.lost.description") }}
+            </div>
+            <div class="text-body-1">
+              {{ $t("global.connexion.lost.helper") }}
+            </div>
           </v-card-subtitle>
         </div>
       </div>

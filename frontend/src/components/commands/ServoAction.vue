@@ -1,19 +1,24 @@
 <template>
   <div
+    :class="{'d-flex align-center command-compact': variant === 'compact'}"
     :title="infoComputed"
     class="command command-servo"
   >
-    <v-label class="text-body-2 font-weight-bold">
+    <v-label class="command-label font-weight-bold">
       {{ labelComputed }}
     </v-label>
-
+    <div class="command-pin ml-2 mr-2 text-lowercase font-italic d-none d-sm-block">
+      ({{ $t("components.board.pin") }}: {{ command.pin }})
+    </div>
     <v-slider
       v-model="command.state"
       :label="feedbackComputed"
       :max="command.max"
       :min="command.min"
       :step="1"
+      class="command-slider"
       color="primary"
+      hide-details
       track-color="grey"
       @mouseup="onSliderEnd"
       @update:model-value="position = command.state"
@@ -38,6 +43,7 @@
           v-model="position"
           :max="command.max"
           :min="command.min"
+          class="command-input"
           density="compact"
           hide-details
           single-line
@@ -47,6 +53,17 @@
         />
       </template>
     </v-slider>
+    <v-text-field
+      v-model="position"
+      :max="command.max"
+      :min="command.min"
+      class="command-input flex-grow-0 d-block d-md-none"
+      density="compact"
+      hide-details
+      single-line
+      type="number"
+      @change="setPosition"
+    />
   </div>
 </template>
 
@@ -70,6 +87,10 @@ type ServoCommandConfigurationProperties = CommandConfigurationProperties & {
 }
 
 const props = defineProps({
+  variant: {
+    type: String,
+    default: "normal"
+  },
   modelValue: {
     type: Object,
     required: true
@@ -138,9 +159,32 @@ const increment = () => {
 </script>
 
 <style lang="scss" scoped>
+@import 'vuetify/lib/styles/settings/variables';
+
 .command {
-  .v-label {
-    font-size: 0.9rem;
+  &-compact {
+    .command-label {
+      width: 7rem;
+      text-overflow: ellipsis;
+    }
+
+    .command-pin {
+      width: 4rem;
+    }
+
+    .command-slider {
+      display: none;
+    }
+
+    .command-input {
+      width: 100px;
+    }
+
+    @media #{map-get($display-breakpoints, 'md-and-up')} {
+      .command-slider {
+        display: grid;
+      }
+    }
   }
 }
 </style>

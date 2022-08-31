@@ -5,6 +5,7 @@ export default {
     type: "Type",
     status: "Status",
     protocol: "Protocol",
+    pin: "Pin",
     actions: "Actions",
     controls: "Controls and Actions",
     no_actions: "No actions available for this board.",

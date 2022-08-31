@@ -4,7 +4,7 @@
       {{ board.name }}
     </h1>
     <v-btn
-      icon="mdi-pencil"
+      icon="mdi-dots-vertical"
       variant="plain"
     />
   </div>
@@ -74,8 +74,8 @@
               v-model="board.actions[key]"
               :board="board"
               class="md-2"
-              density="compact"
               info=""
+              variant="compact"
             />
             <v-divider />
           </div>
@@ -102,8 +102,8 @@
               v-model="board.inputs[key]"
               :board="board"
               class="md-2"
-              density="compact"
               info=""
+              variant="compact"
             />
             <v-divider />
           </div>

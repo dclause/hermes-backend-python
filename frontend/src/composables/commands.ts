@@ -56,6 +56,9 @@ export function useCommandLabelComputed(command: CommandConfigurationProperties,
     if (props.label !== undefined) {
       return props.label;
     }
+    if (props.variant === "compact") {
+      return command.name;
+    }
     return i18n.global.t("components.command.command", { name: command.name }) + " :";
   });
 }
@@ -70,7 +73,10 @@ export function useCommandFeedbackComputed(command: CommandConfigurationProperti
     if (props.feedback !== undefined) {
       return props.feedback;
     }
-    return i18n.global.t("components.command.pin", { name: command.name, state: command.state });
+    if (props.variant === "compact") {
+      return "";
+    }
+    return i18n.global.t("components.command.pin", { pin: command.pin, state: command.state });
   });
 }
 

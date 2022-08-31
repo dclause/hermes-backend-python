@@ -3,5 +3,6 @@
 </template>
 
 <script setup>
-
-import I18nSwitch from "@/components/global/I18nSwitch.vue";</script>
+import I18nSwitch from "@/components/global/I18nSwitch.vue";
+// prettier: no-newline
+</script>

@@ -5,6 +5,7 @@ export default {
     type: "Type",
     status: "Status",
     protocol: "Protocole",
+    pin: "Pin",
     actions: "Actions",
     controls: "Contrôles et Actions",
     no_actions: "Aucune contrôle disponible pour cette carte.",

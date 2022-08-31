@@ -1,14 +1,19 @@
 <template>
   <div
+    :class="{'d-flex align-center command-compact': variant === 'compact'}"
     :title="infoComputed"
     class="command command-boolean"
   >
-    <v-label class="text-body-2 font-weight-bold">
+    <v-label class="command-label font-weight-bold">
       {{ labelComputed }}
     </v-label>
+    <div class="command-pin ml-2 mr-2 text-lowercase font-italic d-none d-sm-block">
+      ({{ $t("components.board.pin") }}: {{ command.pin }})
+    </div>
     <v-switch
       v-model="command.state"
       :label="feedbackComputed"
+      class="ml-5"
       color="primary"
       density="compact"
       hide-details
@@ -20,16 +25,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, WritableComputedRef } from "vue";
+import { WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
 import {
   CommandConfigurationProperties,
   useCommandFeedbackComputed,
+  useCommandLabelComputed,
   useCommandTooltipComputed
 } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 
 const props = defineProps({
+  variant: {
+    type: String,
+    default: "normal"
+  },
   modelValue: {
     type: Object,
     required: true
@@ -58,12 +68,7 @@ const commandStore = useCommandStore();
 const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
 
 // Build label.
-const labelComputed = computed(() => {
-  if (props.label !== undefined) {
-    return props.label;
-  }
-  return `Command "${command.value.name}" :`;
-});
+const labelComputed = useCommandLabelComputed(command.value, props);
 
 // Build info (used when hover command).
 const infoComputed = useCommandTooltipComputed(command.value, props);
@@ -80,12 +85,15 @@ const onChange = () => {
 
 <style lang="scss" scoped>
 .command {
-  .v-label {
-    font-size: 0.9rem;
-  }
+  &-compact {
+    .command-label {
+      width: 7rem;
+      text-overflow: ellipsis;
+    }
 
-  .v-selection-control {
-    height: auto;
+    .command-pin {
+      width: 4rem;
+    }
   }
 }
 </style>

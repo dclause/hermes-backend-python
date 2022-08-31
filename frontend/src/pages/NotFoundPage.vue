@@ -13,7 +13,7 @@
           <v-card-title class="text-h5">
             {{ $t("pages.notfound.title") }}
           </v-card-title>
-          <v-card-subtitle>
+          <v-card-subtitle class="text-body-1">
             {{ $t("pages.notfound.description") }}
             <app-link :to="{name: 'home'}">
               {{ $t("pages.notfound.link") }}
@@ -27,6 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-
 import AppLink from "@/components/global/AppLink.vue";
-import SvgRobotBroken from "@/components/icons/SvgRobotBroken.vue";</script>
+import SvgRobotBroken from "@/components/icons/SvgRobotBroken.vue";
+// prettier: no-newline
+</script>

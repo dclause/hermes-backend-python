@@ -30,6 +30,10 @@ import { useCommand } from "@/composables/commands";
 import { DeviceConfigurationProperties } from "@/composables/devices";
 
 const props = defineProps({
+  variant: {
+    type: String,
+    default: "normal"
+  },
   deviceId: {
     type: Number,
     required: true
