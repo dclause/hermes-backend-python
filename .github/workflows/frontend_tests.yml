@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.10.6
+      - name: Set up Node 16
         uses: actions/setup-node@v3
         with:
           node-version: '16'
