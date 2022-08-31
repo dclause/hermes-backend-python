@@ -1,7 +1,13 @@
+[![GitHub release](https://img.shields.io/github/release/dclause/hermes?include_prereleases=&sort=semver&color=blue)](https://github.com/dclause/hermes/releases/)
+[![License](https://img.shields.io/github/license/dclause/hermes)](https://github.com/dclause/hermes/blob/main/LICENSE)
+[![Backend tests](https://img.shields.io/github/workflow/status/dclause/hermes/backend_tests.yml)](https://github.com/dclause/hermes/actions/workflows/backend_tests.yml")
+[![Frontend tests](https://img.shields.io/github/workflow/status/dclause/hermes/frontend_tests.yml)](https://github.com/dclause/hermes/actions/workflows/frontend_tests.yml")
+
+[![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://github.com/dclause/hermes#readme "Go to project documentation")
+
 # HERMES - a Robot Management System (RMS)
 
 Hermes - _a Robot Management System (RMS)_ - is a set of tools to remotely pilot a robot.
-
 
 It is designated for robots with a single embedded master system (computer, raspberry, etc..) sending orders to a 
 set of slave sub-systems (itself or arduino(s)) connected via serial (extendable to other protocols).
@@ -29,10 +35,10 @@ HERMES is an experimentation of my own to unify the control of some of my person
   Haas._
 - a full [InMoov robot](https://inmoov.fr) - _an open-source project by Gaël Langevin._
 
-Inspired by [MyRobotLab](http://myrobotlab.org/), it <ins>tries</ins> to be lighter (to be used on a raspberry), easier and 
+Inspired by [MyRobotLab](http://myrobotlab.org/), it _<ins>tries</ins>_ to be lighter (to be used on a raspberry), easier and 
   more user-friendly.
 
-
 ***
+
 **The HERMES project is done on my spare time, it does not intend to compete with any other solutions you might want to 
 try.** 
