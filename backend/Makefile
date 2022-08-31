@@ -55,7 +55,7 @@ deps-install: ## Install the dependencies
 	@type $(PIP) >/dev/null 2>&1 || (echo "Run 'curl https://bootstrap.pypa.io/get-pip.py|sudo python3' first." >&2 ; exit 1)
 	@$(PIP) install -r requirements.txt
 
-dev-deps-install: ## Install the dependencies
+dev-deps-install: ## Install the dev dependencies
 	@type $(PIP) >/dev/null 2>&1 || (echo "Run 'curl https://bootstrap.pypa.io/get-pip.py|sudo python3' first." >&2 ; exit 1)
 	@$(PIP) install -r dev_requirements.txt
 

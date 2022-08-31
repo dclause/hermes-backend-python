@@ -1,39 +1,31 @@
 <template>
-  <div
-    :class="{'d-flex align-center command-compact': variant === 'compact'}"
-    :title="infoComputed"
-    class="command command-boolean"
+  <generic-action
+    v-model="command"
+    :board="board"
+    :variant="variant"
   >
-    <v-label class="command-label font-weight-bold">
-      {{ labelComputed }}
-    </v-label>
-    <div class="command-pin ml-2 mr-2 text-lowercase font-italic d-none d-sm-block">
-      ({{ $t("components.board.pin") }}: {{ command.pin }})
-    </div>
-    <v-switch
-      v-model="command.state"
-      :label="feedbackComputed"
-      class="ml-5"
-      color="primary"
-      density="compact"
-      hide-details
-      inline
-      inset
-      @change="onChange"
-    />
-  </div>
+    <template #action>
+      <v-switch
+        v-model="command.state"
+        :label="feedbackComputed"
+        class="ml-5"
+        color="primary"
+        density="compact"
+        hide-details
+        inline
+        inset
+        @change="onChange"
+      />
+    </template>
+  </generic-action>
 </template>
 
 <script lang="ts" setup>
 import { WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
-import {
-  CommandConfigurationProperties,
-  useCommandFeedbackComputed,
-  useCommandLabelComputed,
-  useCommandTooltipComputed
-} from "@/composables/commands";
+import { CommandConfigurationProperties, useCommandFeedbackComputed } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
+import GenericAction from "@/components/commands/GenericAction.vue";
 
 const props = defineProps({
   variant: {
@@ -67,12 +59,6 @@ const commandStore = useCommandStore();
 // Define for v-model
 const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
 
-// Build label.
-const labelComputed = useCommandLabelComputed(command.value, props);
-
-// Build info (used when hover command).
-const infoComputed = useCommandTooltipComputed(command.value, props);
-
 // Build feedback label.
 const feedbackComputed = useCommandFeedbackComputed(command.value, props);
 
@@ -82,18 +68,3 @@ const onChange = () => {
 };
 
 </script>
-
-<style lang="scss" scoped>
-.command {
-  &-compact {
-    .command-label {
-      width: 7rem;
-      text-overflow: ellipsis;
-    }
-
-    .command-pin {
-      width: 4rem;
-    }
-  }
-}
-</style>

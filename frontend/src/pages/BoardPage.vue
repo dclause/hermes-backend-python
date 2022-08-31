@@ -120,7 +120,7 @@
     >
       <v-card>
         <v-card-text>
-          {{ $t("pages.board.tab.history") }}
+          @todo
         </v-card-text>
       </v-card>
     </v-window-item>

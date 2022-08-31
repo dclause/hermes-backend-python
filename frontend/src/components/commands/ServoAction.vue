@@ -1,82 +1,74 @@
 <template>
-  <div
-    :class="{'d-flex align-center command-compact': variant === 'compact'}"
-    :title="infoComputed"
-    class="command command-servo"
+  <generic-action
+    v-model="command"
+    :board="board"
+    :variant="variant"
   >
-    <v-label class="command-label font-weight-bold">
-      {{ labelComputed }}
-    </v-label>
-    <div class="command-pin ml-2 mr-2 text-lowercase font-italic d-none d-sm-block">
-      ({{ $t("components.board.pin") }}: {{ command.pin }})
-    </div>
-    <v-slider
-      v-model="command.state"
-      :label="feedbackComputed"
-      :max="command.max"
-      :min="command.min"
-      :step="1"
-      class="command-slider"
-      color="primary"
-      hide-details
-      track-color="grey"
-      @mouseup="onSliderEnd"
-      @update:model-value="position = command.state"
-    >
-      <template #prepend>
-        <v-btn
-          icon="mdi-minus"
-          size="small"
-          variant="text"
-          @click="decrement"
-        />
-      </template>
+    <template #action>
+      <v-slider
+        v-model="command.state"
+        :label="feedbackComputed"
+        :max="command.max"
+        :min="command.min"
+        :step="1"
+        class="command-slider"
+        color="primary"
+        hide-details
+        track-color="grey"
+        @mouseup="onSliderEnd"
+        @update:model-value="position = command.state"
+      >
+        <template #prepend>
+          <v-btn
+            icon="mdi-minus"
+            size="small"
+            variant="text"
+            @click="decrement"
+          />
+        </template>
 
-      <template #append>
-        <v-btn
-          icon="mdi-plus"
-          size="small"
-          variant="text"
-          @click="increment"
-        />
-        <v-text-field
-          v-model="position"
-          :max="command.max"
-          :min="command.min"
-          class="command-input"
-          density="compact"
-          hide-details
-          single-line
-          style="width: 100px"
-          type="number"
-          @change="setPosition"
-        />
-      </template>
-    </v-slider>
-    <v-text-field
-      v-model="position"
-      :max="command.max"
-      :min="command.min"
-      class="command-input flex-grow-0 d-block d-md-none"
-      density="compact"
-      hide-details
-      single-line
-      type="number"
-      @change="setPosition"
-    />
-  </div>
+        <template #append>
+          <v-btn
+            icon="mdi-plus"
+            size="small"
+            variant="text"
+            @click="increment"
+          />
+          <v-text-field
+            v-model="position"
+            :max="command.max"
+            :min="command.min"
+            class="command-input"
+            density="compact"
+            hide-details
+            single-line
+            style="width: 100px"
+            type="number"
+            @change="setPosition"
+          />
+        </template>
+      </v-slider>
+      <v-text-field
+        v-model="position"
+        :max="command.max"
+        :min="command.min"
+        class="command-input flex-grow-0 d-block d-md-none"
+        density="compact"
+        hide-details
+        single-line
+        type="number"
+        @change="setPosition"
+      />
+    </template>
+  </generic-action>
 </template>
 
 <script lang="ts" setup>
 import { ref, WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
 import { defineModel } from "@/composables/vmodel";
-import {
-  CommandConfigurationProperties,
-  useCommandFeedbackComputed,
-  useCommandLabelComputed,
-  useCommandTooltipComputed
-} from "@/composables/commands";
+import { CommandConfigurationProperties, useCommandFeedbackComputed } from "@/composables/commands";
+import GenericAction from "@/components/commands/GenericAction.vue";
 
 type ServoCommandConfigurationProperties = CommandConfigurationProperties & {
   state: number
@@ -117,8 +109,6 @@ const props = defineProps({
 const command: WritableComputedRef<ServoCommandConfigurationProperties> = defineModel(props);
 const commandStore = useCommandStore();
 
-const labelComputed = useCommandLabelComputed(command.value, props);
-const infoComputed = useCommandTooltipComputed(command.value, props);
 const feedbackComputed = useCommandFeedbackComputed(command.value, props);
 
 // Position is used as a v-model for the input number field and will then be merged back to the command model of the slider.
@@ -164,15 +154,6 @@ const increment = () => {
 
 .command {
   &-compact {
-    .command-label {
-      width: 7rem;
-      text-overflow: ellipsis;
-    }
-
-    .command-pin {
-      width: 4rem;
-    }
-
     .command-slider {
       display: none;
     }
