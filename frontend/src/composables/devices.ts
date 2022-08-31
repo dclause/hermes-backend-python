@@ -1,4 +1,4 @@
-import CustomDevice from "@/components/devices/CustomDevice.vue";
+import GenericDevice from "@/components/devices/GenericDevice.vue";
 import LedDevice from "@/components/devices/LedDevice.vue";
 import ServoDevice from "@/components/devices/ServoDevice.vue";
 import { CommandConfigurationProperties } from "@/composables/commands";
@@ -27,5 +27,5 @@ export function useDevice(deviceType: string): unknown {
     LedDevice: LedDevice,
     ServoDevice: ServoDevice
   };
-  return devices[deviceType] ?? CustomDevice;
+  return devices[deviceType] ?? GenericDevice;
 }

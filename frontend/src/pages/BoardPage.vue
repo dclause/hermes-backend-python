@@ -142,7 +142,7 @@ const boardStore = useBoardStore();
 const board = boardStore.getBoard(boardId);
 const getController = useBoardController(board.controller as string);
 
-const tab = ref("info");
+const tab = ref("controls");
 </script>
 
 <style lang="scss" scoped>

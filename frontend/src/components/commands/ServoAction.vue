@@ -137,7 +137,8 @@ const onSliderEnd = (event: MouseEvent) => {
 // Set the position to the slider (used when the input number text is updated).
 const setPosition = (event: InputEvent) => {
   const target = event.target as HTMLInputElement;
-  command.value.state = Math.min(command.value.max, Math.max(command.value.min, parseInt(target?.value)));
+  position.value = Math.min(command.value.max, Math.max(command.value.min, parseInt(target?.value)));
+  command.value.state = position.value;
   sendCommand();
 };
 

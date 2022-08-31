@@ -36,7 +36,9 @@ Main app component: defines a single layout for all pages.
       color="primary"
       density="compact"
     >
-      <v-app-bar-title>HERMES - {{ $t("global.app.slogan") }}</v-app-bar-title>
+      <v-app-bar-title>
+        HERMES <span class="d-none d-sm-inline-block">- {{ $t("global.app.slogan") }}</span>
+      </v-app-bar-title>
 
       <template #append>
         <lan-control />
