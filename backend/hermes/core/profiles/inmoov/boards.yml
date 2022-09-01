@@ -1,136 +1,160 @@
-- !ArduinoBoard
+!ArduinoBoard
 name: 'Board Left'
 id: 1
 model: 'MEGA'
 protocol: !SerialProtocol
-  port: 'COM3'
+  port: '/dev/tty/ACM0'
 actions:
-  - !BooleanOutputDevice
-    id: 2
-    name: LED Orange
-    default: false
-    pin: 13
-  - !ServoAction
-    id: 3
+  - !ServoDevice
+    id: 1
     name: "Hand Left #Wrist"
-    default: 160
+    default: 150
     pin: 7
+    tmin: 0
+    tmax: 300
     min: 0
     max: 300
-    start: 0
-    end: 300
-  - !ServoAction
-    id: 4
+    speed: -1
+    acceleration: 90
+  - !ServoDevice
+    id: 2
     name: "Hand Left #Thumb"
-    default: 0
+    default: 40
     pin: 2
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 5
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 3
     name: "Hand Left #Index"
-    default: 0
+    default: 60
     pin: 3
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 6
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 4
     name: "Hand Left #Middle"
-    default: 0
+    default: 70
     pin: 4
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 7
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 5
     name: "Hand Left #Ring"
-    default: 0
+    default: 100
     pin: 5
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 8
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 6
     name: "Hand Left #Pinky"
-    default: 0
+    default: 140
     pin: 6
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
+    max: 220
+    speed: -1
+    acceleration: -1
 inputs: [ ]
 
 ---
   !ArduinoBoard
 name: 'Board Right'
-id: 1
+id: 2
 model: 'MEGA'
 protocol: !SerialProtocol
-  port: 'COM3'
+  port: '/dev/tty/ACM1'
 actions:
-  - !BooleanOutputDevice
-    id: 2
-    name: LED Orange
-    default: false
-    pin: 13
-  - !ServoAction
-    id: 3
+  - !ServoDevice
+    id: 1
     name: "Hand Right #Wrist"
-    default: 160
+    default: 150
     pin: 7
+    tmin: 0
+    tmax: 300
     min: 0
     max: 300
-    start: 0
-    end: 300
-  - !ServoAction
-    id: 4
+    speed: -1
+    acceleration: 90
+  - !ServoDevice
+    id: 2
     name: "Hand Right #Thumb"
-    default: 0
+    default: 40
     pin: 2
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 5
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 3
     name: "Hand Right #Index"
-    default: 0
+    default: 60
     pin: 3
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 6
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 4
     name: "Hand Right #Middle"
-    default: 0
+    default: 70
     pin: 4
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 7
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 5
     name: "Hand Right #Ring"
-    default: 0
+    default: 100
     pin: 5
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
-  - !ServoAction
-    id: 8
+    max: 220
+    speed: -1
+    acceleration: -1
+  - !ServoDevice
+    id: 6
     name: "Hand Right #Pinky"
-    default: 0
+    default: 140
     pin: 6
+    tmin: 0
+    tmax: 300
     min: 0
-    max: 300
-    start: 0
-    end: 200
+    max: 220
+    speed: -1
+    acceleration: -1
+inputs: [ ]
+
+---
+  !ArduinoBoard
+name: 'Nano board'
+id: 2
+model: 'NANO'
+protocol: !SerialProtocol
+  port: '/dev/ttyUSB0'
+actions: [ ]
 inputs: [ ]
