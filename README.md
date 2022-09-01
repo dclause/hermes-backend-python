@@ -20,6 +20,13 @@ It is composed of three main parts:
 
 # Try it!
 
+**The project needs python 3.10 or later.**
+
+For raspberryPI, you can use:
+```
+wget -qO - https://raw.githubusercontent.com/tvdsluijs/sh-python-installer/main/python.sh | sudo bash -s 3.10.6
+```
+
 **Current develops happen on the `main` branch**:
 ```
 git clone --branch main https://github.com/dclause/hermes.git HERMES
