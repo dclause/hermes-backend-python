@@ -22,9 +22,9 @@ from hermes.core import logger
 from hermes.core.commands import CommandFactory, AbstractCommand
 from hermes.core.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
-from hermes.core.plugins import AbstractPlugin, TAbstractPlugin
+from hermes.core.plugins import AbstractPlugin, TypeAbstractPlugin
 from hermes.core.protocols import AbstractProtocol, ProtocolException
-from hermes.core.struct import MetaPluginType, ClearableQueue
+from hermes.core.struct import ClearableQueue, MetaPluginType
 
 
 class BoardException(Exception):
@@ -68,7 +68,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         ]
 
     @classmethod
-    def from_yaml(cls, constructor, node) -> TAbstractPlugin:
+    def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:
         board = super().from_yaml(constructor, node)
         # pylint: disable-next=no-member
         board.actions = {actionPlugin.id: actionPlugin for actionPlugin in board.actions}

@@ -7,7 +7,7 @@ protocol: !SerialProtocol
 actions:
   - !ServoDevice
     id: 1
-    name: "Hand Left #Wrist"
+    name: "Wrist"
     default: 150
     pin: 7
     tmin: 0
@@ -18,7 +18,7 @@ actions:
     acceleration: 90
   - !ServoDevice
     id: 2
-    name: "Hand Left #Thumb"
+    name: "Thumb"
     default: 40
     pin: 2
     tmin: 0
@@ -29,7 +29,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 3
-    name: "Hand Left #Index"
+    name: "Index"
     default: 60
     pin: 3
     tmin: 0
@@ -40,7 +40,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 4
-    name: "Hand Left #Middle"
+    name: "Middle"
     default: 70
     pin: 4
     tmin: 0
@@ -51,7 +51,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 5
-    name: "Hand Left #Ring"
+    name: "Ring"
     default: 100
     pin: 5
     tmin: 0
@@ -62,7 +62,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 6
-    name: "Hand Left #Pinky"
+    name: "Pinky"
     default: 140
     pin: 6
     tmin: 0
@@ -83,7 +83,7 @@ protocol: !SerialProtocol
 actions:
   - !ServoDevice
     id: 1
-    name: "Hand Right #Wrist"
+    name: "Wrist"
     default: 150
     pin: 7
     tmin: 0
@@ -94,7 +94,7 @@ actions:
     acceleration: 90
   - !ServoDevice
     id: 2
-    name: "Hand Right #Thumb"
+    name: "Thumb"
     default: 40
     pin: 2
     tmin: 0
@@ -105,7 +105,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 3
-    name: "Hand Right #Index"
+    name: "Index"
     default: 60
     pin: 3
     tmin: 0
@@ -116,7 +116,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 4
-    name: "Hand Right #Middle"
+    name: "Middle"
     default: 70
     pin: 4
     tmin: 0
@@ -127,7 +127,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 5
-    name: "Hand Right #Ring"
+    name: "Ring"
     default: 100
     pin: 5
     tmin: 0
@@ -138,7 +138,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 6
-    name: "Hand Right #Pinky"
+    name: "Pinky"
     default: 140
     pin: 6
     tmin: 0
@@ -152,7 +152,7 @@ inputs: [ ]
 ---
   !ArduinoBoard
 name: 'Nano board'
-id: 2
+id: 3
 model: 'NANO'
 protocol: !SerialProtocol
   port: '/dev/ttyUSB0'

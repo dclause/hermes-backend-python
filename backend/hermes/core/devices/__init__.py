@@ -18,10 +18,11 @@ the `devices` key
 from abc import abstractmethod
 from typing import Any
 
-from hermes.core import logger, config
+from hermes.core import logger
+from hermes.core.config import CONFIG
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
-from hermes.core.struct import MetaPluginType, MetaSingleton
+from hermes.core.struct import MetaSingleton, MetaPluginType
 
 
 class DeviceException(Exception):
@@ -34,7 +35,6 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     def __init__(self):
         super().__init__()
         self.default: Any = None
-        self.value: Any = None
 
     @property
     @abstractmethod
@@ -57,15 +57,14 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         This is used to:
          - describes the device to the physical board during the handshake process.
          - changes the settings of a device
-        @todo Build the settings
         """
         header = bytearray([self.code, self.id])
         settings = self._encode_settings()
         return bytearray([len(settings) + 2]) + header + settings
 
-    def set_value(self, board_id, value: any):
+    def set_value(self, board_id, value: Any):
         """ Sends the command. """
-        board = config.BOARDS[board_id]
+        board = CONFIG.get('boards')[board_id]
 
         if not board.connected:
             if not board.open():

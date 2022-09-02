@@ -1,25 +1,6 @@
 """
 Serial communication handling.
-Used by boards in serial mode (only supported mode as of today).
-
---
-TLDR: To send a command, ClearableQueue it. That ClearableQueue is consumed by a dedicated thread of each board
-(CommandSenderThread) which actually sends the command. The number of commands sent is limited until ACK are received to
-prevent growing the serial buffer (SerialListenerThread).
---
-
-This package introduces multithreading to handle communication over the serial port.
-
-Commands that need to be sent over `serial` should be queues using a :class:CommandQueue.
-
-- The class :class:CommandThread defines a separated thread which role is to consume that ClearableQueue and actually
-send the commands. It can only send a given amount of commands, hence the CommandQueue acting as a waiting
-ClearableQueue.
-The number of commands sent is tracked via a semaphore and only frees the way when the corresponding ACK is received.
-
-- The class :class:ListenerThread defines a separated which role is to receive data from the serial communication and
-execute the corresponding command. It is also frees the semaphore when receiving ACK to let the :class:CommandThread
-continue its work on sending queued commands.
+Used by boards with SERIAL protocol type (only supported mode as of today).
 """
 
 import glob
@@ -51,7 +32,7 @@ class SerialProtocol(AbstractProtocol):
             )
             self._serial.flush()
         except SerialException as error:
-            logger.error(f'Serial connexion: Port {self._serial_port} could not be opened.')
+            logger.error(f'Serial connexion: Port {self._serial_port} could not be opened: {error}')
             logger.info(f'Available ports are {self.get_serial_ports()}')
             raise ProtocolException(
                 f'Port {self._serial_port} could not be opened'

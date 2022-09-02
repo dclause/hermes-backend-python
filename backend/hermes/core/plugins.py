@@ -27,7 +27,7 @@ from typing import Any, TypeVar
 from hermes.core import logger
 from hermes.core.helpers import ROOT_DIR
 
-TAbstractPlugin = TypeVar("TAbstractPlugin", bound="AbstractPlugin")
+TypeAbstractPlugin = TypeVar("TypeAbstractPlugin", bound="AbstractPlugin")
 
 
 class AbstractPlugin:
@@ -84,7 +84,7 @@ class AbstractPlugin:
         return obj
 
     @classmethod
-    def from_yaml(cls, constructor, node) -> TAbstractPlugin:
+    def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:
         """ Converts a representation node to a Python object. """
 
         # Builds a state object from the yaml data.
@@ -126,8 +126,10 @@ def init():
     """
     Loads all plugins.
 
-    Explores the directory structure and search for all .py files within directories corresponding to plugin types.
-    The plugins should be in the core or the modules directories.
+    Explores the directory structure and search for all .py files within directories corresponding to plugin types
+    to import it.
+    The plugins could be in the core or the modules directories.
+    @todo evaluation if there is a better way.
     """
     logger.info(" > Plugin discovery")
 
@@ -140,4 +142,7 @@ def init():
             # If the file is in one of plugin_types folders, it surely is a plugin, hence load it.
             if plugin_type in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
                 modulename = os.path.basename(filepath)[:-3]
-                importlib.import_module(f'hermes.core.{plugin_type}.{modulename}')
+                if 'hermes' + os.path.sep + 'core' in filepath:
+                    importlib.import_module(f'hermes.core.{plugin_type}.{modulename}')
+                if 'hermes' + os.path.sep + 'modules' in filepath:
+                    importlib.import_module(f'hermes.modules.{plugin_type}.{modulename}')

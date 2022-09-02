@@ -12,14 +12,9 @@ import ruamel.yaml
 from mergedeep import merge
 
 from hermes.core import logger
-from hermes.core.boards import AbstractBoard
-from hermes.core.boards.arduino import StringEnum
-from hermes.core.commands import AbstractCommand
-from hermes.core.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
-# @todo rename to _effectiveStorage
-# @todo document
-from hermes.core.protocols import AbstractProtocol
+from hermes.core.plugins import AbstractPlugin
+from hermes.core.struct import StringEnum
 
 _storage = ruamel.yaml.YAML(typ='safe')
 _storage.sort_base_mapping_type_on_output = False
@@ -44,53 +39,42 @@ def init():
     """ Init the YAML loader/dumper. """
     logger.info(' > Init storage')
 
-    # Register boards.
-    for board_type in AbstractBoard.plugins:
-        _storage.register_class(board_type)
-
-    # Register devices.
-    for device_type in AbstractDevice.plugins:
-        _storage.register_class(device_type)
-
-    # Register commands.
-    for command_type in AbstractCommand.plugins:
-        _storage.register_class(command_type)
-
-    # Register protocols.
-    for protocol_type in AbstractProtocol.plugins:
-        _storage.register_class(protocol_type)
+    # @todo fixme: 'plugins' only does not fail by convention.
+    for classtype in AbstractPlugin.__subclasses__():
+        for plugin in classtype.plugins:
+            _storage.register_class(plugin)
 
 
-def read(namespace: StorageNamespace, config_type: StorageType) -> dict:
+def load() -> dict[str, Any]:
     """
-    Reads the given config type from the given namespace.
-
-    Args:
-        namespace (StorageNamespace):
-            The namespace within the hermes application where the configuration is expected.
-        config_type (StorageType):
-            The configuration type.
-
+    Load all available configurations and merge/concatenate it accordingly
     Returns:
        List(str, Any): A list of configurations
     """
-    configs = {}
-
-    # Find all files corresponding to the config_type for the given namespace.
-    filenames = glob.glob(os.path.join(ROOT_DIR, namespace, '**', f'{config_type}.yml'), recursive=True)
-    for filename in filenames:
-        with open(filename, 'r', encoding='utf-8') as file:
-            if config_type is StorageType.GLOBAL or config_type is StorageType.PROFILE:
-                data = _storage.load(file)
-                configs = merge(configs, data)
-            else:
-                data = {}
-                plugins = _storage.load_all(file)
-                for plugin in plugins:
-                    data[plugin.id] = plugin
-                configs = {**configs, **data}
-
-    return configs
+    config: dict[str, Any] = {}
+    for namespace in StorageNamespace:
+        # Find all files corresponding to the config_type for the given namespace.
+        filenames = glob.glob(os.path.join(ROOT_DIR, namespace, '*.yml'), recursive=False)
+        for filename in filenames:
+            plugin_name = os.path.basename(filename)[:-4]
+            with open(filename, 'r', encoding='utf-8') as file:
+                if plugin_name not in config:
+                    config[plugin_name] = {}
+                data = _storage.load_all(file)
+                for plugin in data:
+                    if isinstance(plugin, dict):
+                        config[plugin_name] = merge({}, config[plugin_name], plugin)
+                    elif isinstance(plugin, list):
+                        data = {}
+                        for index, item in enumerate(plugin):
+                            if 'id' in item:
+                                index = item['id']
+                            data[index] = item
+                        config[plugin_name] = {**config[plugin_name], **data}
+                    else:
+                        data = {plugin.id: plugin}
+                        config[plugin_name] = {**config[plugin_name], **data}
+    return config
 
 
 def write(config_type: StorageType, data: Any) -> None:

@@ -19,6 +19,6 @@ export default {
     pin: "PIN {pin}: {state}"
   },
   protocol: {
-    serial: "Série via"
+    serial: "SERIAL via"
   }
 };

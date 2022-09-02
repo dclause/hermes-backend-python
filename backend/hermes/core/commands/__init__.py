@@ -19,7 +19,7 @@ from typing import Any
 from hermes.core import logger
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
-from hermes.core.struct import MetaPluginType, MetaSingleton
+from hermes.core.struct import MetaSingleton, MetaPluginType
 
 
 class CommandException(Exception):

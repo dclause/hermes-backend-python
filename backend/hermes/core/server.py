@@ -5,13 +5,15 @@ This webserver is responsible for :
 """
 import os
 from threading import Thread
+from typing import Any
 
 from flask import Flask, jsonify, send_file
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
 from hermes import __version__
-from hermes.core import config, logger
+from hermes.core import logger
+from hermes.core.config import CONFIG
 from hermes.core.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
 
@@ -66,27 +68,26 @@ class _WebServerThread(Thread):
             Pushes all current config to the client.
             """
             emit('handshake', (
-                config.GLOBAL,
-                config.PROFILE,
-                {key: board.serialize(recursive=True) for key, board in config.BOARDS.items()},
-                {key: device.serialize(recursive=True) for key, device in config.DEVICES.items()}
+                CONFIG.get('global'),
+                CONFIG.get('profile'),
+                {key: board.serialize(recursive=True) for key, board in CONFIG.get('boards').items()}
             ))
 
         @self._socketio.on('action')
-        def mutation(board_id: int, command_id: int, value: int):
+        def mutation(board_id: int, command_id: int, value: Any):
             logger.debug(f'## socketIO received "Mutation" with parameter: {board_id} {command_id} {value}')
             try:
-                device: AbstractDevice = config.BOARDS[board_id].actions[command_id]
+                device: AbstractDevice = CONFIG.get('boards')[board_id].actions[command_id]
                 device.set_value(board_id, value)
-                config.BOARDS[board_id].actions[command_id].state = value
+                CONFIG.get('boards')[board_id].actions[command_id].state = value
             except Exception as exception:
                 logger.error(f'Mutation error: command could not be sent because: "{exception}".')
-            emit('patch', (board_id, config.BOARDS[board_id].serialize(recursive=True)), broadcast=True)
+            emit('patch', (board_id, CONFIG.get('boards')[board_id].serialize(recursive=True)), broadcast=True)
 
         # ----------------------------------------
         # WebGUI optional definition
         # ----------------------------------------.
-        if config.GLOBAL['web']['enabled']:
+        if CONFIG.get('global')['web']['enabled']:
 
             @self._server.route('/', defaults={'path': ''})
             @self._server.route('/<string:path>')
@@ -101,9 +102,9 @@ class _WebServerThread(Thread):
     def run(self):
         self._socketio.run(
             self._server,
-            host=config.GLOBAL['server']['host'],
-            port=config.GLOBAL['server']['port'],
-            debug=config.GLOBAL['server']['debug'],
+            host=CONFIG.get('global')['server']['host'],
+            port=CONFIG.get('global')['server']['port'],
+            debug=CONFIG.get('global')['server']['debug'],
             use_reloader=False
         )
 
