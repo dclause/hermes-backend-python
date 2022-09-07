@@ -6,13 +6,13 @@ protocol: !SerialProtocol
   port: 'COM3'
 actions:
   - !LedDevice
-    id: 2
+    id: 1
     name: LED Orange
     default: false
     pin: 13
     group: 1
   - !ServoDevice
-    id: 3
+    id: 2
     name: "Mini servo"
     default: 0
     pin: 9
@@ -24,8 +24,48 @@ actions:
     acceleration: 10
     group: 2
   - !ServoDevice
-    id: 4
+    id: 3
     name: "Maxi servo"
+    default: 0
+    pin: 8
+    tmin: 0
+    tmax: 300
+    min: 0
+    max: 300
+    speed: 90
+    acceleration: 50
+    group: 2
+inputs: [ ]
+
+---
+  !ArduinoBoard
+name: 'Testing Board #2'
+id: 2
+model: 'MEGA'
+protocol: !SerialProtocol
+  port: 'COM5'
+actions:
+  - !LedDevice
+    id: 1
+    name: "LED Orange #2"
+    default: false
+    pin: 13
+    group: 1
+  - !ServoDevice
+    id: 2
+    name: "Mini servo #2"
+    default: 0
+    pin: 9
+    tmin: 0
+    tmax: 180
+    min: 0
+    max: 180
+    speed: 90
+    acceleration: 10
+    group: 2
+  - !ServoDevice
+    id: 3
+    name: "Maxi servo #2"
     default: 0
     pin: 8
     tmin: 0

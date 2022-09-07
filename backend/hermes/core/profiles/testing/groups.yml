@@ -1,0 +1,30 @@
+- name: "Group Global"
+  id: 1
+  order: 1
+  parent: 0
+  layout: "50_50"
+  content:
+    - board: 1
+      device: 1
+      order: 2
+- name: "Group #1"
+  id: 2
+  order: 1
+  parent: 1
+  content:
+    - board: 1
+      device: 2
+      order: 1
+- name: "Group #2"
+  id: 3
+  order: 2
+  parent: 1
+  content:
+    - board: 2
+      device: 3
+      order: 1
+- name: "Group #3"
+  id: 4
+  order: 2
+  parent: 2
+  content: [ ]
