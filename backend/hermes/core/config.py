@@ -41,7 +41,6 @@ class Config(metaclass=MetaSingleton):
 
         logger.debug('> Total build configuration:')
         logger.debug(Config.__config)
-        print(Config.__config)
 
     @staticmethod
     def get(name: str) -> dict[str, Any]:

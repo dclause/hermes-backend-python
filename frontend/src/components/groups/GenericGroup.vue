@@ -85,7 +85,7 @@ const groupClasses = computed(() => {
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .group {
   flex: 0 0 auto;
 

@@ -3,7 +3,7 @@
     ref="action"
     :class="{'d-flex flex-grow-1 align-center command-compact': variant === 'compact'}"
     :title="infoComputed"
-    class="command command-boolean"
+    class="command"
   >
     <v-label class="command-label font-weight-bold">
       {{ labelComputed }}

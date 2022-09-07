@@ -3,22 +3,22 @@ name: 'Board Left'
 id: 1
 model: 'MEGA'
 protocol: !SerialProtocol
-  port: '/dev/tty/ACM0'
+  port: '/dev/ttyACM0'
 actions:
   - !ServoDevice
     id: 1
-    name: "Wrist"
-    default: 150
+    name: "Left #Wrist"
+    default: 200
     pin: 7
     tmin: 0
     tmax: 300
     min: 0
     max: 300
     speed: -1
-    acceleration: 90
+    acceleration: -1
   - !ServoDevice
     id: 2
-    name: "Thumb"
+    name: "Left #Thumb"
     default: 40
     pin: 2
     tmin: 0
@@ -29,8 +29,8 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 3
-    name: "Index"
-    default: 60
+    name: "Left #Index"
+    default: 55
     pin: 3
     tmin: 0
     tmax: 300
@@ -40,8 +40,8 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 4
-    name: "Middle"
-    default: 70
+    name: "Left #Middle"
+    default: 65
     pin: 4
     tmin: 0
     tmax: 300
@@ -51,8 +51,8 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 5
-    name: "Ring"
-    default: 100
+    name: "Left #Ring"
+    default: 85
     pin: 5
     tmin: 0
     tmax: 300
@@ -62,8 +62,8 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 6
-    name: "Pinky"
-    default: 140
+    name: "Left #Pinky"
+    default: 70
     pin: 6
     tmin: 0
     tmax: 300
@@ -79,11 +79,11 @@ name: 'Board Right'
 id: 2
 model: 'MEGA'
 protocol: !SerialProtocol
-  port: '/dev/tty/ACM1'
+  port: '/dev/ttyACM1'
 actions:
   - !ServoDevice
     id: 1
-    name: "Wrist"
+    name: "Right #Wrist"
     default: 150
     pin: 7
     tmin: 0
@@ -94,18 +94,18 @@ actions:
     acceleration: 90
   - !ServoDevice
     id: 2
-    name: "Thumb"
+    name: "Right #Thumb"
     default: 40
     pin: 2
     tmin: 0
     tmax: 300
     min: 0
-    max: 220
+    max: 165
     speed: -1
     acceleration: -1
   - !ServoDevice
     id: 3
-    name: "Index"
+    name: "Right #Index"
     default: 60
     pin: 3
     tmin: 0
@@ -116,7 +116,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 4
-    name: "Middle"
+    name: "Right #Middle"
     default: 70
     pin: 4
     tmin: 0
@@ -127,7 +127,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 5
-    name: "Ring"
+    name: "Right #Ring"
     default: 100
     pin: 5
     tmin: 0
@@ -138,7 +138,7 @@ actions:
     acceleration: -1
   - !ServoDevice
     id: 6
-    name: "Pinky"
+    name: "Right #Pinky"
     default: 140
     pin: 6
     tmin: 0
@@ -147,14 +147,4 @@ actions:
     max: 220
     speed: -1
     acceleration: -1
-inputs: [ ]
-
----
-  !ArduinoBoard
-name: 'Nano board'
-id: 3
-model: 'NANO'
-protocol: !SerialProtocol
-  port: '/dev/ttyUSB0'
-actions: [ ]
 inputs: [ ]

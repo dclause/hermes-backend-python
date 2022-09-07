@@ -4,6 +4,7 @@
     v-model="command"
     :board="board"
     :variant="variant"
+    class="command-servo"
   >
     <template #action>
       <v-slider
@@ -40,11 +41,10 @@
             v-model="position"
             :max="command.max"
             :min="command.min"
-            class="command-input"
+            class="command-input pa-0"
             density="compact"
             hide-details
             single-line
-            style="width: 100px"
             type="number"
             @change="setPosition"
           />
@@ -55,7 +55,7 @@
         v-model="position"
         :max="command.max"
         :min="command.min"
-        class="command-input flex-grow-0 d-block"
+        class="command-input pa-0 flex-grow-0 d-block"
         density="compact"
         hide-details
         single-line
@@ -112,7 +112,8 @@ const props = defineProps({
 
 const action = ref(null);
 const { width } = useElementSize(action);
-const isWideScreen = computed(() => width.value > 600);
+console.log(width);
+const isWideScreen = computed(() => width.value > 500);
 
 // Defines for v-model
 const command: WritableComputedRef<ServoCommandConfigurationProperties> = defineModel(props);
@@ -158,11 +159,15 @@ const increment = () => {
 
 </script>
 
-<style lang="scss" scoped>
-.command {
-  &-compact {
+<style lang="scss">
+.command-servo {
+  &.command-compact {
     .command-input {
-      width: 100px;
+      width: 70px;
+
+      input, .v-field__input {
+        padding: 0 10px;
+      }
     }
   }
 }

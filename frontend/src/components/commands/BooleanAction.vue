@@ -3,6 +3,7 @@
     v-model="command"
     :board="board"
     :variant="variant"
+    class="command-boolean"
   >
     <template #action>
       <v-switch

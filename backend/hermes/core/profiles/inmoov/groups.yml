@@ -1,0 +1,52 @@
+- name: "Left & Right Hands"
+  id: 1
+  order: 1
+  parent: 0
+  layout: "50_50"
+  content: [ ]
+- name: "Left Hand"
+  id: 2
+  order: 1
+  parent: 1
+  content:
+    - board: 1
+      device: 1
+      order: 1
+    - board: 1
+      device: 2
+      order: 2
+    - board: 1
+      device: 3
+      order: 3
+    - board: 1
+      device: 4
+      order: 4
+    - board: 1
+      device: 5
+      order: 5
+    - board: 1
+      device: 6
+      order: 6
+- name: "Right Hand"
+  id: 3
+  order: 2
+  parent: 1
+  content:
+    - board: 2
+      device: 1
+      order: 1
+    - board: 2
+      device: 2
+      order: 2
+    - board: 2
+      device: 3
+      order: 3
+    - board: 2
+      device: 4
+      order: 4
+    - board: 2
+      device: 5
+      order: 5
+    - board: 2
+      device: 6
+      order: 6
