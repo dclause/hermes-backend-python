@@ -43,7 +43,7 @@
 
 <script lang="ts" setup>
 import { WritableComputedRef } from "vue";
-import { CommandConfigurationProperties } from "@/composables/commands";
+import type { CommandConfigurationProperties } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 import UnknownCommand from "@/components/commands/UnknownCommand.vue";
 

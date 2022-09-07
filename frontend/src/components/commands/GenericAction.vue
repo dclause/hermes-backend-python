@@ -1,5 +1,6 @@
 <template>
   <div
+    ref="action"
     :class="{'d-flex flex-grow-1 align-center command-compact': variant === 'compact'}"
     :title="infoComputed"
     class="command command-boolean"
@@ -7,7 +8,10 @@
     <v-label class="command-label font-weight-bold">
       {{ labelComputed }}
     </v-label>
-    <div class="command-pin ml-2 mr-2 text-lowercase font-italic d-none d-sm-block">
+    <div
+      v-if="isWideScreen"
+      class="command-pin ml-2 mr-2 text-lowercase font-italic"
+    >
       ({{ $t("components.board.pin") }}: {{ command.pin }})
     </div>
     <slot name="action">
@@ -17,16 +21,15 @@
 </template>
 
 <script lang="ts" setup>
-import { WritableComputedRef } from "vue";
-import { useCommandStore } from "@/stores/commands";
+import { computed, ref, WritableComputedRef } from "vue";
 import {
   CommandConfigurationProperties,
-  useCommandFeedbackComputed,
   useCommandLabelComputed,
   useCommandTooltipComputed
 } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 import UnknownCommand from "@/components/commands/UnknownCommand.vue";
+import { useElementSize } from "@vueuse/core";
 
 const props = defineProps({
   variant: {
@@ -55,7 +58,9 @@ const props = defineProps({
   }
 });
 
-const commandStore = useCommandStore();
+const action = ref(null);
+const { width } = useElementSize(action);
+const isWideScreen = computed(() => width.value > 600);
 
 // Define for v-model
 const command: WritableComputedRef<CommandConfigurationProperties> = defineModel(props);
@@ -65,14 +70,6 @@ const labelComputed = useCommandLabelComputed(command.value, props);
 
 // Build info (used when hover command).
 const infoComputed = useCommandTooltipComputed(command.value, props);
-
-// Build feedback label.
-const feedbackComputed = useCommandFeedbackComputed(command.value, props);
-
-// Send the command when the toggle changes.
-const onChange = () => {
-  commandStore.sendCommand(props.board.id, command.value.id, command.value.state);
-};
 
 </script>
 

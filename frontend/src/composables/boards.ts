@@ -1,11 +1,13 @@
 import ArduinoBoard from "@/components/boards/ArduinoBoard.vue";
 import CustomBoard from "@/components/boards/CustomBoard.vue";
+import type { CommandConfigurationProperties } from "@/composables/commands";
 
-export declare interface BoardConfigurationProperties {
+export declare type BoardConfigurationProperties = {
   id: number,
   name?: string,
   model: string,
-
+  actions: CommandConfigurationProperties[],
+  inputs: CommandConfigurationProperties[],
   [x: string]: unknown,
 }
 

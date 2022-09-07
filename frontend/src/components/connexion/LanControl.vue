@@ -18,14 +18,14 @@ import { computed } from "vue";
 import { useConfigStore } from "@/stores/config";
 import { useProfileStore } from "@/stores/profile";
 import { useBoardStore } from "@/stores/boards";
-import { useDeviceStore } from "@/stores/devices";
 import { useI18n } from "vue-i18n";
+import { useGroupStore } from "@/stores/groups";
 
 // Extract composable.
 const configStore = useConfigStore();
 const profileStore = useProfileStore();
 const boardStore = useBoardStore();
-const deviceStore = useDeviceStore();
+const groupStore = useGroupStore();
 const socket = useSocket();
 
 const i18n = useI18n();
@@ -58,11 +58,12 @@ socket
   .on("reconnect_attempt", () => {
     configStore.$patch({ connected: undefined });
   })
-  .on("handshake", (global, profile, boards, devices) => {
+  // @todo how to receive arbitrary number of data and assign it to proper store ?
+  .on("handshake", (global, profile, boards, groups) => {
     configStore.$state = global;
     profileStore.$state = profile;
     boardStore.$patch({ boards: boards });
-    deviceStore.$patch({ devices: devices });
+    groupStore.$patch({ groups: Object.values(groups) });
   })
   .on("disconnect", () => {
     configStore.$patch({ connected: false });

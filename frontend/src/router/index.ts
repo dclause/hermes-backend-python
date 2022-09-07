@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import boardPages from "./boards";
 import AboutPage from "@/pages/AboutPage.vue";
-import DeviceListPage from "@/pages/DeviceListPage.vue";
+import GroupListPage from "@/pages/GroupListPage.vue";
 import HomePage from "@/pages/HomePage.vue";
 import NotFoundPage from "@/pages/NotFoundPage.vue";
 import SettingsPage from "@/pages/SettingsPage.vue";
@@ -30,9 +30,9 @@ const router = createRouter({
     },
     ...boardPages,
     {
-      path: "/devices",
-      name: "devices",
-      component: DeviceListPage
+      path: "/groups",
+      name: "groups",
+      component: GroupListPage
     },
     {
       path: "/:catchAll(.*)*",

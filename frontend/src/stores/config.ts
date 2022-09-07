@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 
-export declare interface ConfigurationProperties {
+export declare type ConfigurationProperties = {
   connected: boolean;
   server?: ServerConfigurationProperties;
   web?: ServerConfigurationProperties;
 }
 
-export declare interface ServerConfigurationProperties {
+export declare type ServerConfigurationProperties = {
   host?: string;
   port?: number;
   debug?: boolean;

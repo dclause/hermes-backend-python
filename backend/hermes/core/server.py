@@ -70,7 +70,8 @@ class _WebServerThread(Thread):
             emit('handshake', (
                 CONFIG.get('global'),
                 CONFIG.get('profile'),
-                {key: board.serialize(recursive=True) for key, board in CONFIG.get('boards').items()}
+                {key: board.serialize(recursive=True) for key, board in CONFIG.get('boards').items()},
+                CONFIG.get('groups'),
             ))
 
         @self._socketio.on('action')

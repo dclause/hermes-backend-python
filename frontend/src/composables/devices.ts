@@ -1,7 +1,7 @@
 import GenericDevice from "@/components/devices/GenericDevice.vue";
 import LedDevice from "@/components/devices/LedDevice.vue";
 import ServoDevice from "@/components/devices/ServoDevice.vue";
-import { CommandConfigurationProperties } from "@/composables/commands";
+import type { CommandConfigurationProperties } from "@/composables/commands";
 
 export type DeviceConfigurationProperties = {
   id: number;

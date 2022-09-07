@@ -2,7 +2,7 @@ import BooleanAction from "@/components/commands/BooleanAction.vue";
 import ServoAction from "@/components/commands/ServoAction.vue";
 import UnknownCommand from "@/components/commands/UnknownCommand.vue";
 import { computed } from "vue";
-import { BoardConfigurationProperties } from "@/composables/boards";
+import type { BoardConfigurationProperties } from "@/composables/boards";
 import i18n from "@/plugins/vue-i18n";
 
 export type CommandConfigurationProperties = {

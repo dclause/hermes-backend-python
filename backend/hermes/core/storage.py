@@ -39,7 +39,7 @@ def init():
     """ Init the YAML loader/dumper. """
     logger.info(' > Init storage')
 
-    # @todo fixme: 'plugins' only does not fail by convention.
+    # @todo fixme: 'plugins' here only does not fail by convention.
     for classtype in AbstractPlugin.__subclasses__():
         for plugin in classtype.plugins:
             _storage.register_class(plugin)

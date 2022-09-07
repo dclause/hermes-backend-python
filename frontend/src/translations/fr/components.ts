@@ -20,5 +20,10 @@ export default {
   },
   protocol: {
     serial: "SERIAL via"
+  },
+  group: {
+    new: "Nouveau groupe",
+    no_content: "Ce groupe n'a aucun contenu",
+    add_content: "Ajouter un contenu"
   }
 };

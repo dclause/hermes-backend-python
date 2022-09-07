@@ -23,7 +23,8 @@
 <script lang="ts" setup>
 import { WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
-import { CommandConfigurationProperties, useCommandFeedbackComputed } from "@/composables/commands";
+import type { CommandConfigurationProperties } from "@/composables/commands";
+import { useCommandFeedbackComputed } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 import GenericAction from "@/components/commands/GenericAction.vue";
 

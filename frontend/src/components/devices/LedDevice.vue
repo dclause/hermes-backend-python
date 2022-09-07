@@ -26,7 +26,7 @@
 import { WritableComputedRef } from "vue";
 import SvgLed from "@/components/icons/SvgLed.vue";
 import BooleanAction from "@/components/commands/BooleanAction.vue";
-import { CommandConfigurationProperties } from "@/composables/commands";
+import type { CommandConfigurationProperties } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 import GenericDevice from "@/components/devices/GenericDevice.vue";
 

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { BoardConfigurationProperties } from "@/composables/boards";
+import type { BoardConfigurationProperties } from "@/composables/boards";
 
 export const useBoardStore = defineStore({
   id: "boards",

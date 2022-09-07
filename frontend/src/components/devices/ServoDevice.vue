@@ -24,7 +24,7 @@
 
 <script lang="ts" setup>
 import { WritableComputedRef } from "vue";
-import { CommandConfigurationProperties } from "@/composables/commands";
+import type { CommandConfigurationProperties } from "@/composables/commands";
 import { defineModel } from "@/composables/vmodel";
 import ServoAction from "@/components/commands/ServoAction.vue";
 import SvgServo from "@/components/icons/SvgServo.vue";

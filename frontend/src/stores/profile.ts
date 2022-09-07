@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export declare interface ProfileProperties {
+export declare type ProfileProperties = {
   name: string;
   description: string;
 }

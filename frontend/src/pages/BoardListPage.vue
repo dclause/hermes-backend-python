@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex justify-space-between align-center mb-4">
     <h1 class="text-h5 text-md-h4">
-      My boards
+      {{ $t("pages.boards.title") }}
     </h1>
     <v-btn
       :icon="$vuetify.display.xs === true"

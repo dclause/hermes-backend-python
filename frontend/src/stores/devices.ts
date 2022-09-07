@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { DeviceConfigurationProperties } from "@/composables/devices";
+import type { DeviceConfigurationProperties } from "@/composables/devices";
 
 export const useDeviceStore = defineStore({
   id: "devices",

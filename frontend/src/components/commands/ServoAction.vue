@@ -1,11 +1,13 @@
 <template>
   <generic-action
+    ref="action"
     v-model="command"
     :board="board"
     :variant="variant"
   >
     <template #action>
       <v-slider
+        v-if="isWideScreen"
         v-model="command.state"
         :label="feedbackComputed"
         :max="command.max"
@@ -49,10 +51,11 @@
         </template>
       </v-slider>
       <v-text-field
+        v-else
         v-model="position"
         :max="command.max"
         :min="command.min"
-        class="command-input flex-grow-0 d-block d-md-none"
+        class="command-input flex-grow-0 d-block"
         density="compact"
         hide-details
         single-line
@@ -64,11 +67,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, WritableComputedRef } from "vue";
+import { computed, ref, WritableComputedRef } from "vue";
 import { useCommandStore } from "@/stores/commands";
 import { defineModel } from "@/composables/vmodel";
-import { CommandConfigurationProperties, useCommandFeedbackComputed } from "@/composables/commands";
+import type { CommandConfigurationProperties } from "@/composables/commands";
+import { useCommandFeedbackComputed } from "@/composables/commands";
 import GenericAction from "@/components/commands/GenericAction.vue";
+import { useElementSize } from "@vueuse/core";
 
 type ServoCommandConfigurationProperties = CommandConfigurationProperties & {
   state: number
@@ -104,6 +109,10 @@ const props = defineProps({
     default: undefined
   }
 });
+
+const action = ref(null);
+const { width } = useElementSize(action);
+const isWideScreen = computed(() => width.value > 600);
 
 // Defines for v-model
 const command: WritableComputedRef<ServoCommandConfigurationProperties> = defineModel(props);
@@ -150,22 +159,10 @@ const increment = () => {
 </script>
 
 <style lang="scss" scoped>
-@import 'vuetify/lib/styles/settings/variables';
-
 .command {
   &-compact {
-    .command-slider {
-      display: none;
-    }
-
     .command-input {
       width: 100px;
-    }
-
-    @media #{map-get($display-breakpoints, 'md-and-up')} {
-      .command-slider {
-        display: grid;
-      }
     }
   }
 }

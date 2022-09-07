@@ -24,7 +24,7 @@
       <template #activator="{ props }">
         <v-list-item
           :active="isRouteActive('groups')"
-          :to="{ name: 'devices'}"
+          :to="{ name: 'groups'}"
           v-bind="props"
         >
           <v-icon
