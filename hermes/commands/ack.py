@@ -4,7 +4,7 @@ ACK Command: acknowledge from the arduino board.
 code: MessageCode::ACK
 """
 
-from hermes.core.commands import AbstractCommand
+from hermes.commands import AbstractCommand
 from hermes.core.dictionary import MessageCode
 
 

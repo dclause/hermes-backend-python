@@ -4,7 +4,7 @@ DigitalWrite Command: simple command attached to digitalPin.
 code: MessageCode::BOOLEAN_OUTPUT
 """
 
-from hermes.core.devices import AbstractDevice
+from hermes.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
 
 

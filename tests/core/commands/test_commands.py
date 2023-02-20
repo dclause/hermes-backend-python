@@ -5,9 +5,9 @@
 
 import unittest
 
-from hermes.core.commands import CommandFactory
-from hermes.core.commands.debug import DebugCommand
-from hermes.core.commands.servo import ServoCommand
+from hermes.commands import CommandFactory
+from hermes.commands.debug import DebugCommand
+from hermes.commands.servo import ServoCommand
 from hermes.core.dictionary import MessageCode
 
 

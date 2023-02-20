@@ -5,9 +5,9 @@ code: MessageCode::DEBUG
 """
 
 from hermes.core import logger
-from hermes.core.commands import AbstractCommand
+from hermes.commands import AbstractCommand
 from hermes.core.dictionary import MessageCode
-from hermes.core.protocols import AbstractProtocol
+from hermes.protocols import AbstractProtocol
 
 
 class DebugCommand(AbstractCommand):

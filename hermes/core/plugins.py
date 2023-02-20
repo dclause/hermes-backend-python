@@ -2,10 +2,10 @@
 Handles plugins discovery.
 
 Plugins are classes of any plugin-like abstract types:
-    - protocol (@see hermes.core.protocols): defines communication protocols between boards.
-    - board (@see hermes.core.boards): defines supported board types (raspberry, arduino, etc...)
-    - device (@see hermes.core.devices): defines supported device types (led, servo, etc...)
-    - command (@see hermes.core.commands): defines supported command types (blink, servo, debug, etc...)
+    - protocol (@see hermes.protocols): defines communication protocols between boards.
+    - board (@see hermes.boards): defines supported board types (raspberry, arduino, etc...)
+    - device (@see hermes.devices): defines supported device types (led, servo, etc...)
+    - command (@see hermes.commands): defines supported command types (blink, servo, debug, etc...)
 
 The discovery of a plugin (foobar) of a given type (xxx) consists of loading the file containing its class definition
 located at either of these locations:
@@ -142,7 +142,7 @@ def init():
             # If the file is in one of plugin_types folders, it surely is a plugin, hence load it.
             if plugin_type in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
                 modulename = os.path.basename(filepath)[:-3]
-                if 'hermes' + os.path.sep + 'core' in filepath:
-                    importlib.import_module(f'hermes.core.{plugin_type}.{modulename}')
-                if 'hermes' + os.path.sep + 'modules' in filepath:
+                if 'hermes' + os.path.sep in filepath:
+                    importlib.import_module(f'hermes.{plugin_type}.{modulename}')
+                if 'modules' + os.path.sep in filepath:
                     importlib.import_module(f'hermes.modules.{plugin_type}.{modulename}')

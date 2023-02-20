@@ -4,7 +4,7 @@ SERVO Command: Orders a servo to move to given position.
 code: MessageCode::SERVO
 """
 
-from hermes.core.devices import AbstractDevice
+from hermes.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
 
 

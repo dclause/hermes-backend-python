@@ -9,7 +9,7 @@ import sys
 from serial import Serial, SerialException
 
 from hermes.core import logger
-from hermes.core.protocols import AbstractProtocol, ProtocolException
+from hermes.protocols import AbstractProtocol, ProtocolException
 
 
 class SerialProtocol(AbstractProtocol):
@@ -90,11 +90,13 @@ class SerialProtocol(AbstractProtocol):
             raise EnvironmentError('Unsupported platform')
 
         results = []
+        print(ports)
         for port in ports:
             try:
                 connexion = Serial(port)
                 connexion.close()
                 results.append(port)
-            except (OSError, SerialException):
+            except (OSError, SerialException) as error:
+                print(error)
                 pass
         return results

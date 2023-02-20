@@ -14,7 +14,7 @@ from flask_socketio import SocketIO, emit
 from hermes import __version__
 from hermes.core import logger
 from hermes.core.config import CONFIG
-from hermes.core.devices import AbstractDevice
+from hermes.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
 
 

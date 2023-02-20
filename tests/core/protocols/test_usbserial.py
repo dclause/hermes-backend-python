@@ -10,8 +10,8 @@ import serial
 from serial import SerialException
 
 from hermes.core.dictionary import MessageCode
-from hermes.core.protocols import ProtocolException
-from hermes.core.protocols.serial import SerialProtocol
+from hermes.protocols import ProtocolException
+from hermes.protocols.serial import SerialProtocol
 
 
 class SerialProtocolTest(unittest.TestCase):

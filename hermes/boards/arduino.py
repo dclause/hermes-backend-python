@@ -2,8 +2,8 @@
 Represents a connexion to an electronic board (arduino-like) by embedding its pyserial connexion.
 """
 
-from hermes.core.boards import AbstractBoard
-from hermes.core.protocols import AbstractProtocol
+from hermes.boards import AbstractBoard
+from hermes.protocols import AbstractProtocol
 from hermes.core.struct import StringEnum
 
 

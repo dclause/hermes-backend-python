@@ -70,13 +70,13 @@ def _get_cmd_config() -> MutableMapping:
     # Optional PORT number argument (eg. -p 9999)
     parser.add_argument('-p', '--port', action='store', dest='port', default=9999, help='PORT number for the GUI')
 
-    # Optional WEBGUI boolean argument (eg. -w)
-    parser.add_argument('-w', '--webGUI', action='store_true', dest='webGUI', help='Starts serving the GUI')
+    # Optional open UI argument (eg. --open)
+    parser.add_argument('--open', action='store_true', dest='webGUI', help='Opens the UI in a browser on startup')
 
-    # Specify output of "--debug"
+    # Optional debug argument (eg. --debug)
     parser.add_argument('--debug', action='store_true', dest='debug')
 
-    # Specify output of "--version"
+    # Optional version argument (eg. --debug)
     parser.add_argument('--version', action='version', version=f'RMS version {__version__}')
 
     cmdline_args = vars(parser.parse_args())

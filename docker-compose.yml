@@ -48,3 +48,5 @@ services:
       - "traefik.http.routers.HERMES_python.rule=Host(`hermes.localhost`)"
       - "traefik.http.services.HERMES_python.loadbalancer.server.port=5000"
     tty: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
