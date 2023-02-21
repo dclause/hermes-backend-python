@@ -11,8 +11,8 @@ from threading import Thread
 
 import uvicorn
 from fastapi import FastAPI
+from uvicorn.supervisors import ChangeReload
 
-from hermes import __version__
 from hermes.core import logger
 from hermes.core.config import CONFIG
 from hermes.ui import frontend
@@ -34,31 +34,43 @@ class _ServerThread(Thread):
         # @todo socket API.
 
     def run(self):
-        log_level = 'debug' if CONFIG.get('global')['debug'] else 'warning'
-        # uvicorn.run(self.api,
-        #             host=CONFIG.get('global')['api']['host'],
-        #             port=CONFIG.get('global')['api']['port'],
-        #             log_level=log_level,
-        #             reload=False)  # @todo allow reload=True
-        uvicorn.run(self.ui,
+        log_level = 'debug' if CONFIG.get('global')['debug'] else 'info'
+        # uvicorn.server.HANDLED_SIGNALS = []
+        uvicorn.supervisors.basereload.HANDLED_SIGNALS = []
+        uvicorn.run('hermes.core.server:init',
                     host=CONFIG.get('global')['ui']['host'],
                     port=CONFIG.get('global')['ui']['port'],
                     log_level=log_level,
-                    reload=False)  # @todo allow reload=True
+                    reload=True,
+                    reload_dirs=['hermes'],
+                    reload_includes=['*.py']
+                    )  # @todo allow reload=True
+        # config = uvicorn.Config('hermes.core.server:SERVER.ui',
+        #                         host=CONFIG.get('global')['ui']['host'],
+        #                         port=CONFIG.get('global')['ui']['port'],
+        #                         log_level=log_level,
+        #                         reload=True,
+        #                         reload_dirs=['hermes'],
+        #                         reload_includes=['*.py']
+        #                         )  # @todo allow reload=True
+        # server = uvicorn.Server(config=config)
+        # sock = config.bind_socket()
+        # ChangeReload(config, target=server.run, sockets=[sock]).run()
 
     def close(self):
         """ Closes the socketIO connection. """
         # @todo
 
 
-_server = _ServerThread()
-
+SERVER = _ServerThread()
 
 def init():
     """ Starts the webserver. """
     logger.info(' > Loading server')
-    if CONFIG.get('global')['ui']['enabled']:
-        frontend.init(_server.ui)
+
+    frontend.init(SERVER.ui)
+
+    return SERVER.ui
     # if CONFIG.get('global')['api']['enabled']:
     #     api.init(_server.app)
 
@@ -81,12 +93,12 @@ def start():
         webbrowser.open(f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}/')
 
     if start_api or start_ui:
-        _server.start()
+        SERVER.start()
 
 
 def close():
     """ Stops the webserver. """
     logger.info(' > Close webserver')
-    if _server.is_alive():
-        _server.close()
-        _server.join()
+    if SERVER.is_alive():
+        SERVER.close()
+        SERVER.join()
