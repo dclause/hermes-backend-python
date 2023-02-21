@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 """ HERMES application entry point. """
-
 from hermes.core import logger, server, plugins, storage
 from hermes.core.config import CONFIG
 

@@ -10,3 +10,5 @@ ruamel.yaml===0.17.21
 simple-websocket==0.8.0
 dnspython==2.2.1
 nicegui==1.1.9
+fastAPI==0.92.0
+uvicorn==0.20.0

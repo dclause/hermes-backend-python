@@ -67,35 +67,68 @@ def _get_cmd_config() -> MutableMapping:
     """
     parser = argparse.ArgumentParser()
 
-    # Optional PORT number argument (eg. -p 9999)
-    parser.add_argument('-p', '--port', action='store', dest='port', default=9999, help='PORT number for the GUI')
+    # Optional API start option + port / host configurations
+    api_group = parser.add_argument_group('Websocket API')
+    api_group.add_argument('--api', action='store_true', dest='api', help='Starts the websocket API server.')
+    api_group.add_argument('-ah', '--api-host', action='store', dest='api-port', default=argparse.SUPPRESS,
+                           help='API host configuration')
+    api_group.add_argument('-ap', '--api-port', action='store', dest='api-host', default=argparse.SUPPRESS,
+                           help='API port configuration')
 
-    # Optional open embedded UI argument (eg. --open)
-    parser.add_argument('--gui', action='store_true', dest='gui', help='Opens the UI in a browser on startup')
-
-    # Optional alternate UI argument (eg. --frontend)
-    parser.add_argument('--frontend', action='store_true', dest='frontend', help='Opens the UI in a browser on startup')
+    # Optional UI start option + port / host configurations
+    api_group = parser.add_argument_group('Frontend UI')
+    api_group.add_argument('--ui',
+                           action='store_true',
+                           dest='ui',
+                           help='Starts the UI server.')
+    parser.add_argument('--open',
+                        action='store_true',
+                        dest='open',
+                        default=argparse.SUPPRESS,
+                        help='Open the UI in browser on startup (needs --ui enabled).')
+    api_group.add_argument('-uh', '--ui-host',
+                           action='store',
+                           dest='ui-port',
+                           default=argparse.SUPPRESS,
+                           help='Frontend UI host configuration')
+    api_group.add_argument('-up', '--ui-port',
+                           action='store',
+                           dest='ui-host',
+                           default=argparse.SUPPRESS,
+                           help='Frontend UI port configuration')
 
     # Optional debug argument (eg. --debug)
     parser.add_argument('--debug', action='store_true', dest='debug')
 
     # Optional version argument (eg. --debug)
-    parser.add_argument('--version', action='version', version=f'RMS version {__version__}')
+    parser.add_argument('--version',
+                        action='version',
+                        default=argparse.SUPPRESS,
+                        version=f'HERMES version {__version__}')
 
     cmdline_args = vars(parser.parse_args())
-    # @todo server should be rename API
-    # @todo web should be rename frontend: evaluate if useful to actually support it.
     configuration = {
+        'api': {
+            'enabled': cmdline_args['api'],
+        },
         'ui': {
-            'enabled': cmdline_args['gui'],
-        },
-        'web': {
-            'enabled': cmdline_args['frontend'],
-        },
-        'server': {
-            'port': cmdline_args['port']
+            'enabled': cmdline_args['ui'],
         }
     }
+
+    # Add ui configuration overrides.
+    if 'open' in cmdline_args:
+        configuration['ui']['open'] = True
+    if 'ui-host' in cmdline_args:
+        configuration['ui']['host'] = cmdline_args['ui-host']
+    if 'ui-port' in cmdline_args:
+        configuration['ui']['port'] = cmdline_args['ui-port']
+
+    # Add api configuration overrides.
+    if 'api-host' in cmdline_args:
+        configuration['api']['host'] = cmdline_args['api-host']
+    if 'api-port' in cmdline_args:
+        configuration['api']['port'] = cmdline_args['api-port']
 
     if cmdline_args['debug']:
         logger.loglevel(logger.DEBUG)

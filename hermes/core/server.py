@@ -6,136 +6,90 @@ This webserver is responsible for :
 @todo convert this all from flask to fastAPI.
 @todo remove flask dependency all together.
 """
-import os
+import webbrowser
 from threading import Thread
-from typing import Any
 
-from flask import Flask, jsonify, send_file
-from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+import uvicorn
+from fastapi import FastAPI
 
 from hermes import __version__
 from hermes.core import logger
 from hermes.core.config import CONFIG
-from hermes.devices import AbstractDevice
-from hermes.core.helpers import ROOT_DIR
+from hermes.ui import frontend
 
-class _WebServerThread(Thread):
+
+class _ServerThread(Thread):
     """ Custom thread class to the webserver in the background. """
 
     def __init__(self):
         """ Initializes the webserver (socker + http). """
 
         Thread.__init__(self)
-        self.daemon = True
+        self.app = FastAPI()
 
         # ----------------------------------------
         # Web  server route definition
         # ----------------------------------------
-        self._server = Flask(__name__)
-        CORS(self._server)
+        # @todo CORS for the server ?
 
-        @self._server.route("/heartbeat")
-        def heartbeat():
-            return jsonify({
+        @self.app.get("/healthcheck")
+        @self.app.get("/healthcheck")
+        def healthcheck():
+            return {
                 'status': 'healthy',
                 'version': __version__
-            })
+            }
 
         # ----------------------------------------
         # SockerIO server route definition
         # ----------------------------------------
-        self._socketio = SocketIO(self._server, cors_allowed_origins='*')
-
-        @self._socketio.on('connect')
-        def connect(payload):
-            logger.info(f'## socketIO client connected: {payload}')
-            handshake()
-
-        @self._socketio.on('disconnect')
-        def disconnect():
-            logger.info('## socketIO client disconnected')
-
-        @self._socketio.on('ping')
-        def ping():
-            """
-            Answer to a ping by a pong.
-            This can be used by the clients to check the latency of a ping/pong message exchange with this server.
-            """
-            emit('pong')
-
-        @self._socketio.on('handshake')
-        def handshake():
-            """
-            Pushes all current config to the client.
-            """
-            emit('handshake', (
-                CONFIG.get('global'),
-                CONFIG.get('profile'),
-                {key: board.serialize(recursive=True) for key, board in CONFIG.get('boards').items()},
-                CONFIG.get('groups'),
-            ))
-
-        @self._socketio.on('action')
-        def mutation(board_id: int, command_id: int, value: Any):
-            logger.debug(f'## socketIO received "Mutation" with parameter: {board_id} {command_id} {value}')
-            try:
-                device: AbstractDevice = CONFIG.get('boards')[board_id].actions[command_id]
-                device.set_value(board_id, value)
-                CONFIG.get('boards')[board_id].actions[command_id].state = value
-            except Exception as exception:
-                logger.error(f'Mutation error: command could not be sent because: "{exception}".')
-            emit('patch', (board_id, CONFIG.get('boards')[board_id].serialize(recursive=True)), broadcast=True)
-
-        # ----------------------------------------
-        # WebGUI optional definition
-        # ----------------------------------------.
-        if CONFIG.get('global')['web']['enabled']:
-
-            @self._server.route('/', defaults={'path': ''})
-            @self._server.route('/<string:path>')
-            @self._server.route('/<path:path>')
-            def index(path):
-                # Defaults all what is not a static file to index.html:
-                # ie defer the handling to vue (@see `frontend` folder).
-                if '.' not in path:
-                    path = 'index.html'
-                return send_file(os.path.join(ROOT_DIR, '..', '..', 'frontend', 'dist', path))
+        # @todo socket API.
 
     def run(self):
-        self._socketio.run(
-            self._server,
-            host=CONFIG.get('global')['server']['host'],
-            port=CONFIG.get('global')['server']['port'],
-            debug=CONFIG.get('global')['server']['debug'],
-            use_reloader=False
-        )
+        host = CONFIG.get('global')['server']['host']
+        port = CONFIG.get('global')['server']['port']
+        debug = CONFIG.get('global')['debug']
+        log_level = 'debug' if debug else 'error'
+        uvicorn.run(self.app, host=host, port=port, log_level=log_level)  # @todo allow reload=True
 
     def close(self):
         """ Closes the socketIO connection. """
-        self._socketio.stop()
+        # @todo
 
 
-_WEBSERVER: _WebServerThread
+_server = _ServerThread()
 
 
 def init():
     """ Starts the webserver. """
-    logger.info(' > Loading webserver')
+    logger.info(' > Loading server')
+    if CONFIG.get('global')['ui']['enabled']:
+        frontend.init(_server.app)
+    # if CONFIG.get('global')['api']['enabled']:
+    #     api.init(_server.app)
 
 
 def start():
     """ Starts the webserver. """
-    logger.info(' > Start webserver')
-    # pylint: disable-next=global-statement
-    global _WEBSERVER
-    _WEBSERVER = _WebServerThread()
-    _WEBSERVER.start()
+    start_api = CONFIG.get('global')['api']['enabled']
+    start_ui = CONFIG.get('global')['ui']['enabled']
+    auto_open = start_ui and CONFIG.get('global')['ui']['open']
+
+    logger.info(
+        f' > Start server {"-with api-" if start_api else ""} {"-with gui-" if start_ui else ""} {"(auto-open)" if auto_open else ""}')
+
+    if auto_open:
+        host = CONFIG.get('global')['server']['host']
+        port = CONFIG.get('global')['server']['port']
+        webbrowser.open(f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}/')
+
+    if start_api or start_ui:
+        _server.start()
 
 
 def close():
     """ Stops the webserver. """
     logger.info(' > Close webserver')
-    if _WEBSERVER.is_alive():
-        _WEBSERVER.close()
-        _WEBSERVER.join()
+    if _server.is_alive():
+        _server.close()
+        _server.join()

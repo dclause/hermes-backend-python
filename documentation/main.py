@@ -5,11 +5,11 @@
 """
 from pathlib import Path
 
-from nicegui import ui, Client, app
+from nicegui import ui, Client
 from pygments.formatters.html import HtmlFormatter
 
 from documentation import svg
-from documentation.example import python_window, bash_window, browser_window
+from documentation.example import bash_window, browser_window
 from documentation.star import add_star
 from documentation.style import title, subtitle, link_target, section_heading, features
 from hermes import __name__
@@ -113,7 +113,7 @@ source ./.venv/Scripts/activate
 pip install -r requirements.txt
 pip install -r dev_requirements.txt
 
-python -m hermes --gui
+python -m hermes --ui
 ```''')
 
             with ui.column().classes('w-full max-w-md gap-2'):
@@ -150,5 +150,6 @@ deps-update               Update the dependencies
 dev-deps-update           Update the dependencies
 feedback                  Provide feedback
 ```''')
+
 
 ui.run(title="HERMES - Documentation", favicon='static/favicon.ico')
