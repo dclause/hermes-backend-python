@@ -1,8 +1,9 @@
 debug: 0
-server:
+api:
+  enabled: 0
+  host: 0.0.0.0
+  port: 9999
+ui:
+  enabled: 1
   host: 0.0.0.0
   port: 8080
-api:
-  enabled: 1
-web:
-  enabled: 1

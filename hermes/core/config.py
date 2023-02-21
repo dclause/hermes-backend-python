@@ -35,7 +35,6 @@ class Config(metaclass=MetaSingleton):
         """
         logger.info(' > Loading config')
 
-        # @todo rename: why load storage here ?
         Config.__config = storage.load()
         merge(Config.__config['global'], _get_cmd_config())
 
@@ -107,30 +106,28 @@ def _get_cmd_config() -> MutableMapping:
                         version=f'HERMES version {__version__}')
 
     cmdline_args = vars(parser.parse_args())
-    configuration = {
-        'api': {
-            'enabled': cmdline_args['api'],
-        },
-        'ui': {
-            'enabled': cmdline_args['ui'],
-        }
-    }
+    configuration = {}
 
     # Add ui configuration overrides.
-    if 'open' in cmdline_args:
-        configuration['ui']['open'] = True
-    if 'ui-host' in cmdline_args:
-        configuration['ui']['host'] = cmdline_args['ui-host']
-    if 'ui-port' in cmdline_args:
-        configuration['ui']['port'] = cmdline_args['ui-port']
+    if cmdline_args['ui']:
+        configuration['ui'] = {'enabled': True}
+        if 'open' in cmdline_args:
+            configuration['ui']['open'] = True
+        if 'ui-host' in cmdline_args:
+            configuration['ui']['host'] = cmdline_args['ui-host']
+        if 'ui-port' in cmdline_args:
+            configuration['ui']['port'] = cmdline_args['ui-port']
 
     # Add api configuration overrides.
-    if 'api-host' in cmdline_args:
-        configuration['api']['host'] = cmdline_args['api-host']
-    if 'api-port' in cmdline_args:
-        configuration['api']['port'] = cmdline_args['api-port']
+    if cmdline_args['api']:
+        configuration['api'] = {'enabled': True}
+        if 'api-host' in cmdline_args:
+            configuration['api']['host'] = cmdline_args['api-host']
+        if 'api-port' in cmdline_args:
+            configuration['api']['port'] = cmdline_args['api-port']
 
     if cmdline_args['debug']:
+        configuration['debug'] = True
         logger.loglevel(logger.DEBUG)
 
     logger.debug('> Read configuration from cmdline:')

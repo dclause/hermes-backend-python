@@ -9,9 +9,6 @@ from hermes.core.config import CONFIG
 class App:
     """ The application main class. """
 
-    _server = None
-    _args = None
-
     def __init__(self):
         """ Instantiates the application. """
         print('== Loading HERMES ==')

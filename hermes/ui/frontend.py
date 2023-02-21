@@ -1,13 +1,26 @@
 from fastapi import FastAPI
 from nicegui import ui
 
-from hermes import __name__
+from hermes import __name__, __version__
 from hermes.core import logger
 from hermes.ui import theme
 
 
 def init(server: FastAPI) -> None:
     logger.info(' > Initialize frontend')
+
+    # ----------------------------------------
+    # Web  server route definition
+    # ----------------------------------------
+    # @todo CORS for the server ?
+
+    @server.get("/healthcheck")
+    @server.get("/healthcheck")
+    def healthcheck():
+        return {
+            'status': 'healthy',
+            'version': __version__
+        }
 
     @ui.page('/')
     def index_page() -> None:

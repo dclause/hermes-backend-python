@@ -1,7 +1,8 @@
 """ Implements global helper functions to be reused through the application. """
 import os
+from pathlib import Path
 
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+ROOT_DIR = Path(Path(__file__).parent, '..').absolute() # os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 CORE_DIR = os.path.join(ROOT_DIR, 'core')
 CONFIG_DIR = os.path.join(ROOT_DIR, '../config')
 PROFILE_DIR = os.path.join(ROOT_DIR, 'profiles')

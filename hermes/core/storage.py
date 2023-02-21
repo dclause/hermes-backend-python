@@ -22,7 +22,7 @@ _storage.sort_base_mapping_type_on_output = False
 
 class StorageNamespace(StringEnum):
     """ Defines the existing namespace within the application. """
-    CORE = os.path.join('core', 'configs')  # Any configuration provided by core.
+    CORE = os.path.join('configs')  # Any configuration provided by core.
     MODULE = os.path.join('modules', 'configs')  # Any configuration provided by a module.
     PROFILE = os.path.join('..', 'configs')  # Any configuration from the active profile.
 

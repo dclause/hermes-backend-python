@@ -25,20 +25,8 @@ class _ServerThread(Thread):
         """ Initializes the webserver (socker + http). """
 
         Thread.__init__(self)
-        self.app = FastAPI()
-
-        # ----------------------------------------
-        # Web  server route definition
-        # ----------------------------------------
-        # @todo CORS for the server ?
-
-        @self.app.get("/healthcheck")
-        @self.app.get("/healthcheck")
-        def healthcheck():
-            return {
-                'status': 'healthy',
-                'version': __version__
-            }
+        self.api = FastAPI()
+        self.ui = FastAPI()
 
         # ----------------------------------------
         # SockerIO server route definition
@@ -46,11 +34,17 @@ class _ServerThread(Thread):
         # @todo socket API.
 
     def run(self):
-        host = CONFIG.get('global')['server']['host']
-        port = CONFIG.get('global')['server']['port']
-        debug = CONFIG.get('global')['debug']
-        log_level = 'debug' if debug else 'error'
-        uvicorn.run(self.app, host=host, port=port, log_level=log_level)  # @todo allow reload=True
+        log_level = 'debug' if CONFIG.get('global')['debug'] else 'warning'
+        # uvicorn.run(self.api,
+        #             host=CONFIG.get('global')['api']['host'],
+        #             port=CONFIG.get('global')['api']['port'],
+        #             log_level=log_level,
+        #             reload=False)  # @todo allow reload=True
+        uvicorn.run(self.ui,
+                    host=CONFIG.get('global')['ui']['host'],
+                    port=CONFIG.get('global')['ui']['port'],
+                    log_level=log_level,
+                    reload=False)  # @todo allow reload=True
 
     def close(self):
         """ Closes the socketIO connection. """
@@ -64,7 +58,7 @@ def init():
     """ Starts the webserver. """
     logger.info(' > Loading server')
     if CONFIG.get('global')['ui']['enabled']:
-        frontend.init(_server.app)
+        frontend.init(_server.ui)
     # if CONFIG.get('global')['api']['enabled']:
     #     api.init(_server.app)
 
@@ -75,12 +69,15 @@ def start():
     start_ui = CONFIG.get('global')['ui']['enabled']
     auto_open = start_ui and CONFIG.get('global')['ui']['open']
 
-    logger.info(
-        f' > Start server {"-with api-" if start_api else ""} {"-with gui-" if start_ui else ""} {"(auto-open)" if auto_open else ""}')
+    logger.info(f' > Start server  '
+                f'{"-with API-" if start_api else ""} '
+                f'{"-with UI" if start_ui else ""}'
+                f'{" (auto-open)-" if auto_open else "-"}')
 
+    # Auto open the browser.
     if auto_open:
-        host = CONFIG.get('global')['server']['host']
-        port = CONFIG.get('global')['server']['port']
+        host = CONFIG.get('global')['ui']['host']
+        port = CONFIG.get('global')['ui']['port']
         webbrowser.open(f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}/')
 
     if start_api or start_ui:
