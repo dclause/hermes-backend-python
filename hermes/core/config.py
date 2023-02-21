@@ -70,8 +70,11 @@ def _get_cmd_config() -> MutableMapping:
     # Optional PORT number argument (eg. -p 9999)
     parser.add_argument('-p', '--port', action='store', dest='port', default=9999, help='PORT number for the GUI')
 
-    # Optional open UI argument (eg. --open)
-    parser.add_argument('--open', action='store_true', dest='webGUI', help='Opens the UI in a browser on startup')
+    # Optional open embedded UI argument (eg. --open)
+    parser.add_argument('--gui', action='store_true', dest='gui', help='Opens the UI in a browser on startup')
+
+    # Optional alternate UI argument (eg. --frontend)
+    parser.add_argument('--frontend', action='store_true', dest='frontend', help='Opens the UI in a browser on startup')
 
     # Optional debug argument (eg. --debug)
     parser.add_argument('--debug', action='store_true', dest='debug')
@@ -80,9 +83,14 @@ def _get_cmd_config() -> MutableMapping:
     parser.add_argument('--version', action='version', version=f'RMS version {__version__}')
 
     cmdline_args = vars(parser.parse_args())
+    # @todo server should be rename API
+    # @todo web should be rename frontend: evaluate if useful to actually support it.
     configuration = {
+        'ui': {
+            'enabled': cmdline_args['gui'],
+        },
         'web': {
-            'enabled': cmdline_args['webGUI'],
+            'enabled': cmdline_args['frontend'],
         },
         'server': {
             'port': cmdline_args['port']

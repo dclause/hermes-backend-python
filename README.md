@@ -98,9 +98,10 @@ python3 -m hermes
 $ make
 Available commands:
 help                      Print help for each target
+documentation             Open documentation
 install                   Install everything
 run                       Run the code
-venv                      Source the virtual environment
+env                       Source the virtual environment
 debug                     Debug the code
 clean                     Cleanup
 test                      Run all tests

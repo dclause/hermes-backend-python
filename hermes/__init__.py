@@ -1,5 +1,6 @@
 """ HERMES Application """
 
+__name__ = "HERMES - a Robot Management System (RMS)"
 __author__ = "Dominique CLAUSE"
 __copyright__ = "Copyright 2022, Dominique CLAUSE"
 __credits__ = ["Dominique CLAUSE"]

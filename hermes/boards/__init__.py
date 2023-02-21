@@ -279,4 +279,4 @@ class SerialListenerThread(threading.Thread):
         logger.debug("SerialListenerThread: thread stops.")
 
 
-__all__ = ["AbstractBoard", "BoardException"]
+__ALL__ = ["AbstractBoard", "BoardException"]

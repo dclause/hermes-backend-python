@@ -90,13 +90,11 @@ class SerialProtocol(AbstractProtocol):
             raise EnvironmentError('Unsupported platform')
 
         results = []
-        print(ports)
         for port in ports:
             try:
                 connexion = Serial(port)
                 connexion.close()
                 results.append(port)
             except (OSError, SerialException) as error:
-                print(error)
                 pass
         return results

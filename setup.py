@@ -25,7 +25,7 @@ setup(
     author='Dominique CLAUSE',
     author_email='contact@acino.fr',
     description='HERMES - a Robot Management System (RMS)',
-    scripts=['hermes'],
+    scripts=['hermes', 'documentation'],
 
     install_requires=requirements,
     extras_require={

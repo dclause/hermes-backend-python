@@ -2,6 +2,9 @@
 This webserver is responsible for :
     - expose (mandatory) the socket.io API to help remote UIs to send commands (@see `frontend` directory)
     - expose (optional)  the http server to serve a default UI (@see `frontend` directory)
+
+@todo convert this all from flask to fastAPI.
+@todo remove flask dependency all together.
 """
 import os
 from threading import Thread
@@ -16,7 +19,6 @@ from hermes.core import logger
 from hermes.core.config import CONFIG
 from hermes.devices import AbstractDevice
 from hermes.core.helpers import ROOT_DIR
-
 
 class _WebServerThread(Thread):
     """ Custom thread class to the webserver in the background. """

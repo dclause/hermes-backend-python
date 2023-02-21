@@ -1,6 +1,7 @@
-MODULE := hermes
+APPLICATION := hermes
+DOCUMENTATION := documentation
 ROOT_FOLDER := .
-SRC_FOLDER := $(MODULE)
+SRC_FOLDER := $(APPLICATION)
 TEST_FOLDER := tests
 PYTHON=python
 PIP=pip3
@@ -14,18 +15,21 @@ help: ## Print help for each target
 	@grep '^[[:alnum:]_-]*:.* ##' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS=":.* ## "}; {printf "%-25s %s\n", $$1, $$2};'
 
+doc: ## Open documentation
+	@$(PYTHON) $(DOCUMENTATION)/main.py
+
 install: ## Install everything
-	@make deps-install &&  @make dev-deps-install
+	@make deps-install && @make dev-deps-install
 
 run: ## Run the code
-	@$(PYTHON) -m $(MODULE) --open
+	@$(PYTHON) -m $(APPLICATION) --gui
 
 env: ## Source the virtual environment
 	@$(PYTHON) -m venv .venv
 	@source ./.venv/Scripts/activate
 
 debug: ## Debug the code
-	@$(PYTHON) -m $(MODULE) --open --debug
+	@$(PYTHON) -m $(APPLICATION) --gui --debug
 
 clean: ## Cleanup
 	@rm -f **/*.pyc
@@ -43,7 +47,7 @@ lint: ## Lint the code
 	else echo "SKIPPED. Run '$(PIP) install pylint' first." >&2 ; fi
 
 	$(info Running Flake8 against source and test files...)
-	@if type flake8 >/dev/null 2>&1 ; then flake8 --max-complexity 10 $(MODULE) ; \
+	@if type flake8 >/dev/null 2>&1 ; then flake8 --max-complexity 10 $(APPLICATION) ; \
 	else echo "SKIPPED. Run '$(PIP) install flake8' first." >&2 ; fi
 
 	$(info Running Bandit against source files...)
@@ -51,7 +55,7 @@ lint: ## Lint the code
 	else echo "SKIPPED. Run '$(PIP) install bandit' first." >&2 ; fi
 
 	$(info Running Mypy against source files...)
-	@if type mypy >/dev/null 2>&1 ; then mypy --show-error-codes --ignore-missing-imports $(MODULE) ; \
+	@if type mypy >/dev/null 2>&1 ; then mypy --show-error-codes --ignore-missing-imports $(APPLICATION) ; \
 	else echo "SKIPPED. Run '$(PIP) install mypy' first." >&2 ; fi
 
 deps-install: ## Install the dependencies
