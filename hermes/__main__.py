@@ -33,7 +33,7 @@ class App:
         for (_, board) in CONFIG.get('boards').items():
             board.close()
         server.close()
-
+        logger.info('== Stopped HERMES ==')
 
 if __name__ == "__main__":
     hermes = App()

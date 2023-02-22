@@ -7,20 +7,10 @@ from hermes.ui import theme
 
 
 def init(server: FastAPI) -> None:
-    logger.info(' > Initialize frontend')
 
     # ----------------------------------------
     # Web  server route definition
     # ----------------------------------------
-    # @todo CORS for the server ?
-
-    @server.get("/healthcheck")
-    @server.get("/healthcheck")
-    def healthcheck():
-        return {
-            'status': 'healthy',
-            'version': __version__
-        }
 
     @ui.page('/')
     def index_page() -> None:

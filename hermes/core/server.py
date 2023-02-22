@@ -6,13 +6,17 @@ This webserver is responsible for :
 @todo convert this all from flask to fastAPI.
 @todo remove flask dependency all together.
 """
+import asyncio
 import webbrowser
 from threading import Thread
 
+import mergedeep
 import uvicorn
 from fastapi import FastAPI
-from uvicorn.supervisors import ChangeReload
+from uvicorn import Server
+from uvicorn.supervisors import ChangeReload, Multiprocess
 
+from hermes import __version__
 from hermes.core import logger
 from hermes.core.config import CONFIG
 from hermes.ui import frontend
@@ -21,58 +25,95 @@ from hermes.ui import frontend
 class _ServerThread(Thread):
     """ Custom thread class to the webserver in the background. """
 
-    def __init__(self):
+    def __init__(self, factory: str, config: any):
         """ Initializes the webserver (socker + http). """
-
         Thread.__init__(self)
-        self.api = FastAPI()
-        self.ui = FastAPI()
 
-        # ----------------------------------------
-        # SockerIO server route definition
-        # ----------------------------------------
-        # @todo socket API.
+        self.config = uvicorn.Config(factory,
+                                     factory=True,
+                                     host=config['host'],
+                                     port=config['port'],
+                                     log_level='debug' if config['debug'] else 'warning',
+                                     reload=config['reload'])
+        self.uvicorn_instance = None
 
     def run(self):
-        log_level = 'debug' if CONFIG.get('global')['debug'] else 'info'
+
+        # @todo CORS for the server ?
+
+        # Hack into uvicorn to remove handled signals.
+        # This allows to use uvicorn in threads, but requires to handle gracefully shutdown ourselves. Otherwise, the
+        # auto-reload would have pending threads leaking from the application.
         # uvicorn.server.HANDLED_SIGNALS = []
         uvicorn.supervisors.basereload.HANDLED_SIGNALS = []
-        uvicorn.run('hermes.core.server:init',
-                    host=CONFIG.get('global')['ui']['host'],
-                    port=CONFIG.get('global')['ui']['port'],
-                    log_level=log_level,
-                    reload=True,
-                    reload_dirs=['hermes'],
-                    reload_includes=['*.py']
-                    )  # @todo allow reload=True
-        # config = uvicorn.Config('hermes.core.server:SERVER.ui',
-        #                         host=CONFIG.get('global')['ui']['host'],
-        #                         port=CONFIG.get('global')['ui']['port'],
-        #                         log_level=log_level,
-        #                         reload=True,
-        #                         reload_dirs=['hermes'],
-        #                         reload_includes=['*.py']
-        #                         )  # @todo allow reload=True
-        # server = uvicorn.Server(config=config)
-        # sock = config.bind_socket()
-        # ChangeReload(config, target=server.run, sockets=[sock]).run()
+
+        # ****************************************************************************************
+        # All the following is equivalent of calling  uvicorn.run() directly.
+        # The only reason not to do so is to get an instance of the server running, so we can gracefully close it
+        # in close() method.
+        server = Server(config=self.config)
+        if self.config.should_reload:
+            sock = self.config.bind_socket()
+            self.uvicorn_instance = ChangeReload(self.config, target=server.run, sockets=[sock])
+        elif self.config.workers > 1:
+            sock = self.config.bind_socket()
+            self.uvicorn_instance = Multiprocess(self.config, target=server.run, sockets=[sock])
+        else:
+            self.uvicorn_instance = server
+        self.uvicorn_instance.run()
+        # ****************************************************************************************
 
     def close(self):
         """ Closes the socketIO connection. """
-        # @todo
+        if self.config.should_reload or self.config.workers > 1:
+            self.uvicorn_instance.should_exit.set()
+            self.uvicorn_instance.shutdown()
+        else:
+            # @todo when no reload is set: an error is triggered on close
+            self.uvicorn_instance.should_exit = True
+            self.uvicorn_instance.force_exit = True
+            asyncio.run(self.uvicorn_instance.shutdown())
 
 
-SERVER = _ServerThread()
+_servers = {}
+
 
 def init():
-    """ Starts the webserver. """
+    """ Initializes the servers. """
     logger.info(' > Loading server')
+    for server_type in ['ui', 'api']:
+        config = mergedeep.merge(CONFIG.get('global')[server_type], {'debug': CONFIG.get('global')['debug']})
+        if config['enabled']:
+            _servers[server_type] = _ServerThread(f'hermes.core.server:init_{server_type}', config)
 
-    frontend.init(SERVER.ui)
 
-    return SERVER.ui
-    # if CONFIG.get('global')['api']['enabled']:
-    #     api.init(_server.app)
+def init_ui():
+    """
+    Factory method for the uvicorn API server.
+    @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories
+    """
+    app = FastAPI()
+
+    @app.get("/version")
+    def healthcheck():
+        return {'status': 'healthy', 'version': __version__}
+
+    frontend.init(app)
+    return app
+
+
+def init_api():
+    """
+    Factory method for the uvicorn API server.
+    @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories
+    """
+    app = FastAPI()
+
+    @app.get("/")
+    def healthcheck():
+        return {'status': 'healthy', 'version': __version__}
+
+    return app
 
 
 def start():
@@ -90,15 +131,20 @@ def start():
     if auto_open:
         host = CONFIG.get('global')['ui']['host']
         port = CONFIG.get('global')['ui']['port']
+        # @todo: certificate to use the UI through https.
         webbrowser.open(f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}/')
 
-    if start_api or start_ui:
-        SERVER.start()
+    # Start the servers.
+    for server_type in ['ui', 'api']:
+        if CONFIG.get('global')[server_type]['enabled']:
+            _servers[server_type].start()
 
 
 def close():
     """ Stops the webserver. """
-    logger.info(' > Close webserver')
-    if SERVER.is_alive():
-        SERVER.close()
-        SERVER.join()
+    logger.info(' > Close the servers')
+    for server_type in ['ui', 'api']:
+        if _servers[server_type].is_alive():
+            _servers[server_type].close()
+            _servers[server_type].join()
+            logger.debug(f'    - Server {server_type} is now closed.')
