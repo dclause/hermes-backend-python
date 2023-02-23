@@ -1,6 +1,12 @@
-server:
-  host: localhost
-  port: 9999
-  debug: 0
-web:
+debug: 0
+api:
   enabled: 1
+  reload: 0
+  host: 0.0.0.0
+  port: 9999
+ui:
+  enabled: 1
+  reload: 1
+  host: 0.0.0.0
+  port: 8080
+  open: 0

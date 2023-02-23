@@ -12,6 +12,7 @@ from threading import Thread
 
 import mergedeep
 import uvicorn
+from fastapi import FastAPI
 from uvicorn import Server
 from uvicorn.supervisors import ChangeReload, Multiprocess
 
@@ -23,12 +24,12 @@ from hermes.core.config import CONFIG
 class _ServerThread(Thread):
     """ Custom thread class to the webserver in the background. """
 
-    def __init__(self, factory: str, config: any):
+    def __init__(self, factory: any, config: any):
         """ Initializes the webserver (socker + http). """
         Thread.__init__(self)
 
         self.config = uvicorn.Config(factory,
-                                     factory=True,
+                                     factory=isinstance(factory, str),
                                      host=config['host'],
                                      port=config['port'],
                                      log_level='debug' if config['debug'] else 'warning',
@@ -38,8 +39,6 @@ class _ServerThread(Thread):
         self.uvicorn_instance = None
 
     def run(self):
-
-        # @todo CORS for the server ?
 
         # Hack into uvicorn to remove handled signals.
         # This allows to use uvicorn in threads, but requires to handle gracefully shutdown ourselves. Otherwise, the
@@ -84,7 +83,12 @@ def init():
     for server_type in ['ui', 'api']:
         config = mergedeep.merge(CONFIG.get('global')[server_type], {'debug': CONFIG.get('global')['debug']})
         if config['enabled']:
-            _servers[server_type] = _ServerThread(f'hermes.core.server:init_{server_type}', config)
+            factory = f'hermes.core.server:init_{server_type}'
+            # @todo Can we find a way to have a hot reload API ?
+            if server_type == 'api':
+                config['reload'] = False
+                factory = init_api()
+            _servers[server_type] = _ServerThread(factory, config)
 
 
 def init_ui():
