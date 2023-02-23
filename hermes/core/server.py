@@ -12,14 +12,12 @@ from threading import Thread
 
 import mergedeep
 import uvicorn
-from fastapi import FastAPI
 from uvicorn import Server
 from uvicorn.supervisors import ChangeReload, Multiprocess
 
-from hermes import __version__
+from hermes import api, ui
 from hermes.core import logger
 from hermes.core.config import CONFIG
-from hermes.ui import frontend
 
 
 class _ServerThread(Thread):
@@ -34,7 +32,9 @@ class _ServerThread(Thread):
                                      host=config['host'],
                                      port=config['port'],
                                      log_level='debug' if config['debug'] else 'warning',
-                                     reload=config['reload'])
+                                     reload=config['reload'],
+                                     reload_includes=['*.py', '*.css']
+                                     )
         self.uvicorn_instance = None
 
     def run(self):
@@ -92,14 +92,7 @@ def init_ui():
     Factory method for the uvicorn API server.
     @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories
     """
-    app = FastAPI()
-
-    @app.get("/version")
-    def healthcheck():
-        return {'status': 'healthy', 'version': __version__}
-
-    frontend.init(app)
-    return app
+    return ui.init()
 
 
 def init_api():
@@ -107,13 +100,7 @@ def init_api():
     Factory method for the uvicorn API server.
     @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories
     """
-    app = FastAPI()
-
-    @app.get("/")
-    def healthcheck():
-        return {'status': 'healthy', 'version': __version__}
-
-    return app
+    return api.init()
 
 
 def start():

@@ -2,14 +2,13 @@ html,
 body {
   max-width: 100%;
   overflow-x: hidden;
-  background-color: #f8f8f8;
+  background-color: #D7D7D7;
   font-family: Roboto, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.q-header {
-  height: 50px;
-  background-color: #5898d4d0;
-  backdrop-filter: blur(5px);
+/*Workaround quasar using hidden as !important and tailwind.*/
+.hide {
+  display: none
 }
 
 em:not(.browser-window *) {
@@ -56,6 +55,7 @@ dl.field-list p {
   background-color: #5898d4;
   width: 100%;
 }
+
 
 @media only screen and (min-width: 1024px) {
   html {
