@@ -5,32 +5,6 @@ networks:
     name: HERMES
 
 services:
-  node:
-    build:
-      dockerfile: ./docker/node/Dockerfile
-      args:
-        NODE_VERSION: 17.8.0
-    user: root
-    entrypoint: /bin/bash
-    container_name: "HERMES_node"
-    working_dir: /opt/project
-    environment:
-      - NODE_ENV=development
-      - NPM_CONFIG_LOGLEVEL info
-      - CYPRESS_CACHE_FOLDER=.cypress-cache
-    volumes:
-      - ./frontend:/opt/project
-    ports:
-      - "4000:4000"
-      - "4010:4010"
-      - "4173:4173"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=HERMES"
-      - "traefik.http.routers.HERMES_node.rule=Host(`hermes.localhost`)"
-      - "traefik.http.services.HERMES_node.loadbalancer.server.port=4000"
-    tty: true
-
   python:
     build:
       dockerfile: ./docker/python/Dockerfile

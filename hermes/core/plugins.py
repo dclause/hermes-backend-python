@@ -133,16 +133,15 @@ def init():
     """
     logger.info(" > Plugin discovery")
 
-    plugin_types = ['protocol', 'board', 'device', 'command']
+    plugin_folders = ['protocols', 'boards', 'devices', 'commands']
     # Find all python files within the ROOT_DIR.
     modules = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
     for filepath in modules:
-        for plugin_type in plugin_types:
-            plugin_type = f'{plugin_type}s'
-            # If the file is in one of plugin_types folders, it surely is a plugin, hence load it.
-            if plugin_type in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
+        for plugin_folder in plugin_folders:
+            # If the file is in one of plugin_folders folders, it surely is a plugin, hence load it.
+            if plugin_folder in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
                 modulename = os.path.basename(filepath)[:-3]
                 if 'hermes' + os.path.sep in filepath:
-                    importlib.import_module(f'hermes.{plugin_type}.{modulename}')
+                    importlib.import_module(f'hermes.{plugin_folder}.{modulename}')
                 if 'modules' + os.path.sep in filepath:
-                    importlib.import_module(f'hermes.modules.{plugin_type}.{modulename}')
+                    importlib.import_module(f'hermes.modules.{plugin_folder}.{modulename}')

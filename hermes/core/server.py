@@ -1,10 +1,7 @@
 """
 This webserver is responsible for :
-    - expose (mandatory) the socket.io API to help remote UIs to send commands (@see `frontend` directory)
-    - expose (optional)  the http server to serve a default UI (@see `frontend` directory)
-
-@todo convert this all from flask to fastAPI.
-@todo remove flask dependency all together.
+    - expose (mandatory) the socket.io API to help remote UIs to send commands (@see `https://github.com/dclause/hermes_vuejs` fro an example)
+    - expose (optional)  the server to serve a default GUI (@see `gui` directory)
 """
 import asyncio
 import webbrowser
@@ -12,7 +9,6 @@ from threading import Thread
 
 import mergedeep
 import uvicorn
-from fastapi import FastAPI
 from uvicorn import Server
 from uvicorn.supervisors import ChangeReload, Multiprocess
 
@@ -115,14 +111,14 @@ def start():
 
     logger.info(f' > Start server  '
                 f'{"-with API-" if start_api else ""} '
-                f'{"-with UI" if start_ui else ""}'
+                f'{"-with GUI" if start_ui else ""}'
                 f'{" (auto-open)-" if auto_open else "-"}')
 
     # Auto open the browser.
     if auto_open:
         host = CONFIG.get('global')['ui']['host']
         port = CONFIG.get('global')['ui']['port']
-        # @todo: certificate to use the UI through https.
+        # @todo: certificate to use the GUI through https.
         webbrowser.open(f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}/')
 
     # Start the servers.

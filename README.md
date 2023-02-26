@@ -1,7 +1,6 @@
 [![GitHub release](https://img.shields.io/github/release/dclause/hermes?include_prereleases=&sort=semver&color=blue)](https://github.com/dclause/hermes/releases/)
 [![License](https://img.shields.io/github/license/dclause/hermes)](https://github.com/dclause/hermes/blob/main/LICENSE)
 [![Backend tests](https://img.shields.io/github/workflow/status/dclause/hermes/backend_tests.yml)](https://github.com/dclause/hermes/actions/workflows/backend_tests.yml")
-[![Frontend tests](https://img.shields.io/github/workflow/status/dclause/hermes/frontend_tests.yml)](https://github.com/dclause/hermes/actions/workflows/frontend_tests.yml")
 
 [![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://github.com/dclause/hermes#readme "Go to project documentation")
 
@@ -13,8 +12,9 @@ electronic devices build on one of supported boards.
 It's primary focus is robots or systems with a single (embedded or not) master _head_ (computer, raspberry,
 etc..) sending orders to a set of _slaves_ - sub-systems - (arduino for instance) connected via a supported protocol 
 (serial at the moment).
-It is composed of three main parts:
+The main project structure is:
 
+@todo: rework and rewrite this doc part:
 - `arduino`: an arduino "slave" client - _designed to receive and execute orders from the control script to actuators
   (servos, sensors, etc...)._
 - `backend`: a python control script - _designed to pilot de robot by sending appropriate orders to the appropriate
@@ -88,7 +88,7 @@ pip install -r requirements.txt && pip install -r dev_requirements.txt
 python3 -m hermes
 ```
 
-* Open UI: `python3 -m hermes --open`
+* Open GUI: `python3 -m hermes --open`
 * Run in debug mode: `python3 -m hermes --debug`
 * Help: `python3 -m hermes --help`
 

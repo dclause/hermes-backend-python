@@ -76,17 +76,17 @@ def _get_cmd_config() -> MutableMapping:
     api_group.add_argument('-ar', '--api-reload', action='store_true', dest='api-reload', default=argparse.SUPPRESS,
                            help='API auto-reload when file changes')
 
-    # Optional UI start option + port / host configurations
-    ui_group = parser.add_argument_group('Frontend UI')
-    ui_group.add_argument('--ui', action='store_true', dest='ui', help='Starts the UI server.')
+    # Optional GUI start option + port / host configurations
+    ui_group = parser.add_argument_group('Frontend GUI')
+    ui_group.add_argument('--ui', action='store_true', dest='ui', help='Starts the GUI server.')
     ui_group.add_argument('-uo', '--ui-open', action='store_true', dest='ui-open', default=argparse.SUPPRESS,
-                          help='Open the UI in browser on startup (needs --ui enabled).')
+                          help='Open the GUI in browser on startup (needs --ui enabled).')
     ui_group.add_argument('-ur', '--ui-reload', action='store_true', dest='ui-reload', default=argparse.SUPPRESS,
-                          help='UI auto-reload when file changes')
+                          help='GUI auto-reload when file changes')
     ui_group.add_argument('-uh', '--ui-host', action='store', dest='ui-port', default=argparse.SUPPRESS,
-                          help='Frontend UI host configuration')
+                          help='Frontend GUI host configuration')
     ui_group.add_argument('-up', '--ui-port', action='store', dest='ui-host', default=argparse.SUPPRESS,
-                          help='Frontend UI port configuration')
+                          help='Frontend GUI port configuration')
 
     # Optional debug argument (eg. --debug)
     parser.add_argument('--debug', action='store_true', dest='debug')

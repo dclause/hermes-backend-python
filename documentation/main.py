@@ -79,11 +79,11 @@ async def index_page(client: Client):
             ])
             features('swap_horiz', 'Interaction', [
                 'buttons, switches, sliders, inputs and outputs, ...',
-                'all with nice UI elements'
+                'all with nice GUI elements'
                 'helps you interact with your boards',
             ])
             features('anchor', 'Foundation', [
-                'UI is bridged from Python by [NiceGUI](https://nicegui.io/)',
+                'GUI is bridged from Python by [NiceGUI](https://nicegui.io/)',
                 'it uses a generic [Vue](https://vuejs.org/) tech under hood',
                 'and components from [Quasar](https://quasar.dev/)',
                 'all served with [FastAPI](http://fastapi.tiangolo.com/)',
