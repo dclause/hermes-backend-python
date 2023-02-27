@@ -2,27 +2,27 @@
 # -*- coding: utf-8 -*-
 
 """ HERMES application entry point. """
-from hermes.core import logger, server, plugins, storage
+
 from hermes.core.config import CONFIG
+from hermes.core import logger, server, plugins, storage
+from hermes.core.struct import MetaSingleton
 
 
-class App:
+class App(metaclass=MetaSingleton):
     """ The application main class. """
 
-    def __init__(self):
+    def __init__(self, *args):
         """ Instantiates the application. """
         print('== Loading HERMES ==')
         logger.init()
         plugins.init()
         storage.init()
         CONFIG.init()
-        server.init()
 
     @classmethod
     def start(cls):
         """ Bootstraps the application. """
         logger.info('== Starting HERMES ==')
-        server.start()
         for (_, board) in CONFIG.get('boards').items():
             board.open()
 
@@ -35,11 +35,13 @@ class App:
         server.close()
         logger.info('== Stopped HERMES ==')
 
+
 if __name__ == "__main__":
+    server.start()
     hermes = App()
     try:
-        hermes.start()
         logger.info('== Running HERMES ==')
+        hermes.start()
 
         while True:
             pass

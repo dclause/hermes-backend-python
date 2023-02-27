@@ -14,10 +14,9 @@ from hermes.core.config import CONFIG
 from hermes.devices import AbstractDevice
 
 
-def init():
-    """ Defines and returns the API routes associated with a fastAPI server. """
-    app = FastAPI()
-    SocketManager(app=app, mount_location='/', cors_allowed_origins=[])
+def init(app: FastAPI) -> None:
+    """ Defines and attaches the API routes associated with a fastAPI server. """
+    SocketManager(app=app, mount_location='/api', cors_allowed_origins=[])
     app.add_middleware(
         CORSMiddleware,
         allow_origins=['*'],
@@ -25,10 +24,6 @@ def init():
         allow_credentials=True,
         allow_headers=["*"],
     )
-
-    @app.get("/")
-    def healthcheck():
-        return {'status': 'healthy', 'version': __version__}
 
     @app.sio.on('connect')
     async def connect(cid: str, *args, **kwargs):
@@ -70,5 +65,3 @@ def init():
         except Exception as exception:
             logger.error(f'Socket client {cid}: Mutation error: "{exception}".')
         await app.sio.emit('patch', (board_id, CONFIG.get('boards')[board_id].serialize(recursive=True)))
-
-    return app

@@ -22,14 +22,14 @@ install: ## Install everything
 	@make deps-install && @make dev-deps-install
 
 run: ## Run the code
-	@$(PYTHON) -m $(APPLICATION) --ui
+	@$(PYTHON) -m $(APPLICATION) --gui
 
 env: ## Source the virtual environment
 	@$(PYTHON) -m venv .venv
 	@source ./.venv/Scripts/activate
 
 debug: ## Debug the code
-	@$(PYTHON) -m $(APPLICATION) --ui --debug
+	@$(PYTHON) -m $(APPLICATION) --gui --debug
 
 clean: ## Cleanup
 	@rm -f **/*.pyc
