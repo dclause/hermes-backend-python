@@ -12,7 +12,7 @@ from hermes.core.server import server
 def main():
     """ Main program entry point. """
 
-    print('== Loading HERMES ==')
+    print('\033[96m == Loading HERMES == \033[0m')
     logger.init()
     plugins.init()
     storage.init()
@@ -22,7 +22,7 @@ def main():
 
     try:
 
-        logger.info('== Starting HERMES ==')
+        logger.info('\033[96m == Starting HERMES == \033[0m')
         with server.run_in_thread():
 
             # Auto open the browser.
@@ -42,7 +42,7 @@ def main():
                 pass
 
     except KeyboardInterrupt:
-        logger.info('== Stopping HERMES ==')
+        logger.info('\033[96m == Stopping HERMES == \033[0m')
         for (_, board) in CONFIG.get('boards').items():
             board.close()
 

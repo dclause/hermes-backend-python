@@ -26,12 +26,12 @@ def init(app: FastAPI) -> None:
 
     @socket.on('connect')
     async def connect(cid: str, *args, **kwargs):
-        logger.info(f'Socket client {cid}: new client connected.')
+        logger.debug(f'Socket client {cid}: new client connected.')
         await handshake(cid)
 
     @socket.on('disconnect')
     def disconnect(cid: str, *args, **kwargs):
-        logger.info(f'Socket client {cid}: client disconnected.')
+        logger.debug(f'Socket client {cid}: client disconnected.')
 
     @socket.on('ping')
     def ping(cid: str):

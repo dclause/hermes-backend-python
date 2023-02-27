@@ -10,6 +10,16 @@ from logzero import loglevel, DEBUG, INFO, WARNING, ERROR  # noqa: F401
 
 from hermes.core import cli
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 def init(logpath: str = './logs/backend.log'):
     """
@@ -45,13 +55,13 @@ def info(msg, *args, **kwargs):
 
 def warning(msg, *args, **kwargs):
     """ Forwards DEBUG logs to logzero. """
-    print(f'*** WARNING: {msg.format(*args, **kwargs)} ***')
+    print(f'\033[93m WARNING: {msg.format(*args, **kwargs)} \033[0m')
     logzero.logger.warning(msg, *args, **kwargs)
 
 
 def error(msg, *args, **kwargs):
     """ Forwards DEBUG logs to logzero. """
-    print(f'*** ERROR: {msg % args} ***')
+    print(f'\033[91m ERROR: {msg % args} \033[0m')
     logzero.logger.error(msg, *args, **kwargs)
 
 
