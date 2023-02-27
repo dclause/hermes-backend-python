@@ -9,19 +9,10 @@ import logzero
 from logzero import loglevel, DEBUG, INFO, WARNING, ERROR  # noqa: F401
 
 from hermes.core import cli
+from hermes.core.helpers import ROOT_DIR
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
-def init(logpath: str = './logs/backend.log'):
+def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
     """
     Initializes logzero for the purpose of this project.
 
@@ -32,13 +23,17 @@ def init(logpath: str = './logs/backend.log'):
 
     # Create rotated logfile.
     pathlib.Path(logpath).parent.mkdir(parents=True, exist_ok=True)
-    logzero.logfile(logpath, maxBytes=1000000, loglevel=logzero.DEBUG, disableStderrLogger=True)
+    logzero.logfile(logpath, maxBytes=1000000, disableStderrLogger=True)
+    logzero.logger.debug(' ===================================================== ')
+    logzero.logger.debug('                        RESTART                        ')
+    logzero.logger.debug(' ===================================================== ')
 
     # Custom formatter.
     formatter = logzero.LogFormatter(
         fmt='%(color)s[%(levelname)s - %(asctime)-15s - %(module)s:%(lineno)d]%(end_color)s %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S %p')
     logzero.formatter(formatter)
+    # Log level.
     logzero.loglevel(logzero.DEBUG if cli.args['debug'] else logzero.INFO)
 
 

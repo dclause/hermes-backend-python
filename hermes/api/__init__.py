@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi_socketio import SocketManager
 
 from hermes.core import logger
-from hermes.core.config import CONFIG
+from hermes.core.config import settings
 from hermes.devices import AbstractDevice
 
 
@@ -48,19 +48,19 @@ def init(app: FastAPI) -> None:
         """
         logger.debug(f'Socket client {cid}: ask for handshake.')
         await socket.emit('handshake', (
-            CONFIG.get('global'),
-            CONFIG.get('profile'),
-            {key: board.serialize(recursive=True) for key, board in CONFIG.get('boards').items()},
-            CONFIG.get('groups'),
+            settings.get('global'),
+            settings.get('profile'),
+            {key: board.serialize(recursive=True) for key, board in settings.get('boards').items()},
+            settings.get('groups'),
         ))
 
     @socket.on('action')
     async def mutation(cid: str, board_id: int, command_id: int, value: Any, *args, **kwargs):
         logger.debug(f'Socket client {cid}: Mutation with parameter: {board_id} {command_id} {value}')
         try:
-            device: AbstractDevice = CONFIG.get('boards')[board_id].actions[command_id]
+            device: AbstractDevice = settings.get('boards')[board_id].actions[command_id]
             device.set_value(board_id, value)
-            CONFIG.get('boards')[board_id].actions[command_id].state = value
+            settings.get('boards')[board_id].actions[command_id].state = value
         except Exception as exception:
             logger.error(f'Socket client {cid}: Mutation error: "{exception}".')
-        await socket.emit('patch', (board_id, CONFIG.get('boards')[board_id].serialize(recursive=True)))
+        await socket.emit('patch', (board_id, settings.get('boards')[board_id].serialize(recursive=True)))

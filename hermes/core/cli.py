@@ -10,7 +10,7 @@ def _get_cli_args() -> dict[str, Any]:
     Build configuration object from commandline parameters.
 
     Returns:
-        MutableMapping: A list of configurations
+        A list of configurations
     """
     parser = argparse.ArgumentParser(add_help=False)
 
@@ -27,7 +27,16 @@ def _get_cli_args() -> dict[str, Any]:
                         default=argparse.SUPPRESS,
                         version=f'HERMES version {__version__}')
 
-    return vars(parser.parse_args())
+    _args = vars(parser.parse_args())
+    return {
+        'debug': _args['debug'],
+        'server': {
+            'host': _args['host'],
+            'port': _args['port'],
+            'open': _args['open'],
+            'reload': _args['dev'],
+        }
+    }
 
 
 args = _get_cli_args()

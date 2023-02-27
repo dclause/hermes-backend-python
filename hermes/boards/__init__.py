@@ -7,7 +7,7 @@ server via a `protocol`. (ex: Arduino boards)
 
 Boards can be created from configs file leaving in the config/boards.yml file. Each board must validate the
 schema provided within this package.
-Boards are detected when the package is imported for the first time and globally available via the CONFIG under
+Boards are detected when the package is imported for the first time and globally available via the settings under
 the `boards` key.
 
 @see `Protocol` in the protocol package.

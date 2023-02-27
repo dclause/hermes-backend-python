@@ -40,8 +40,8 @@ def init():
     logger.info(' > Init storage')
 
     # @todo fixme: 'plugins' here only does not fail by convention.
-    for classtype in AbstractPlugin.__subclasses__():
-        for plugin in classtype.plugins:
+    for class_type in AbstractPlugin.__subclasses__():
+        for plugin in class_type.plugins:
             _storage.register_class(plugin)
 
 
@@ -87,7 +87,7 @@ def write(config_type: StorageType, data: Any) -> None:
         data (Any):
             The data to store.
     """
-    filename = os.path.join(ROOT_DIR, StorageNamespace.PROFILE, f'{config_type}.yml')
+    filename = os.path.join(CONFIG_DIR, StorageNamespace.PROFILE, f'{config_type}.yml')
     with open(filename, 'w', encoding='utf-8') as file:
         if config_type is StorageType.GLOBAL:
             _storage.dump(data, file)

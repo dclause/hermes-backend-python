@@ -9,7 +9,7 @@ given "space".
   application.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from mergedeep import merge
 
@@ -17,12 +17,9 @@ from hermes.core import storage, logger, cli
 from hermes.core.struct import MetaSingleton
 
 
-class Config(metaclass=MetaSingleton):
+class _Settings(metaclass=MetaSingleton):
     """ Global config object """
-    __config: Dict[str, Any] = {}
-
-    def __init__(self):
-        self.__config = cli.args
+    data: Dict[str, Any] = {}
 
     @staticmethod
     def init():
@@ -36,27 +33,45 @@ class Config(metaclass=MetaSingleton):
         """
         logger.info(' > Loading config')
 
-        Config.__config = storage.load()
+        _Settings.data = storage.load()
+        merge(_Settings.data, cli.args)
 
         logger.debug('> Total build configuration:')
-        logger.debug(Config.__config)
+        logger.debug(_Settings.data)
 
     @staticmethod
-    def get(name: str) -> dict[str, Any]:
-        """ Gets a configuration object. """
-        if name in Config.__config:
-            return Config.__config[name]
-        raise NameError(f"Configuration of type {name} not accepted in get() method")
+    def get(path: str | List[str] = None) -> dict[str, Any]:
+        """ Gets a configuration value following the given path. """
+        if path is None:
+            return _Settings.data
+        if isinstance(path, str):
+            path = [path]
+
+        current = _Settings.data
+        for key in path:
+            if key not in current:
+                raise NameError(f"No settings for key {key}.")
+            current = current[key]
+        return current
 
     @staticmethod
-    def set(name: str, value: Any) -> None:
-        """ Sets a configuration object. """
-        if name in Config.__config:
-            Config.__config[name] = value
-        else:
-            raise NameError(f"Configuration of type {name} not accepted in set() method")
+    def set(path: str | List[str], value: Any) -> None:
+        """ Sets a configuration value following the given path. """
+        if isinstance(path, str):
+            path = [path]
+        if len(path) == 0:
+            raise NameError('Path cannot be empty.')
+
+        current = _Settings.data
+        for key in path[:-1]:
+            if key not in current:
+                raise NameError(f'No settings for key {key}.')
+            current = current[key]
+
+        key = path[-1]
+        current[key] = value
 
 
-CONFIG = Config()
+settings = _Settings()
 
-__ALL__ = ['CONFIG']
+__ALL__ = ['settings']

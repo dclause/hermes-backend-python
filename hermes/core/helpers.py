@@ -2,12 +2,13 @@
 import os
 from pathlib import Path
 
-ROOT_DIR = Path(Path(__file__).parent, '..').absolute() # os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-CORE_DIR = os.path.join(ROOT_DIR, 'core')
-MODULES_DIR = os.path.join(ROOT_DIR, '../modules')
-CONFIG_DIR = os.path.join(ROOT_DIR, '../config')
-PROFILE_DIR = os.path.join(ROOT_DIR, 'profiles')
-PLUGIN_DIR = os.path.join(ROOT_DIR, 'plugins')
+import hermes
+
+APP_DIR = Path(hermes.__file__).parent.absolute()
+ROOT_DIR = Path(APP_DIR, '..').resolve().absolute()
+MODULES_DIR = Path(APP_DIR, 'modules').resolve().absolute()
+CONFIG_DIR = Path(APP_DIR, 'config').resolve().absolute()
+PROFILE_DIR = Path(APP_DIR, 'profiles').resolve().absolute()
 
 
 def combine_classes(*args):

@@ -12,14 +12,14 @@ The devices can be sent via the 'device' socketIO method.
 
 Devices can be created from configs file leaving in the config/devices.yml file. Each device must validate the
 schema provided within this package.
-Devices are detected when the package is imported for the first time and globally available via the CONFIG under
+Devices are detected when the package is imported for the first time and globally available via the settings under
 the `devices` key
 """
 from abc import abstractmethod
 from typing import Any
 
 from hermes.core import logger
-from hermes.core.config import CONFIG
+from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaSingleton, MetaPluginType
@@ -64,7 +64,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
     def set_value(self, board_id, value: Any):
         """ Sends the command. """
-        board = CONFIG.get('boards')[board_id]
+        board = settings.get('boards')[board_id]
 
         if not board.connected:
             if not board.open():

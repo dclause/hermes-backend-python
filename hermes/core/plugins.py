@@ -21,13 +21,11 @@ import glob
 import importlib
 import itertools
 import os
-import pkgutil
 from enum import Enum
 from typing import Any, TypeVar
 
-import hermes
 from hermes.core import logger
-from hermes.core.helpers import ROOT_DIR
+from hermes.core.helpers import APP_DIR
 
 TypeAbstractPlugin = TypeVar("TypeAbstractPlugin", bound="AbstractPlugin")
 
@@ -135,7 +133,6 @@ def init():
     """
     logger.info(" > Plugin discovery")
 
-
     # for name in pkgutil.walk_packages(hermes.__path__, hermes.__name__):
     #     print(f'Find {name}....')
     #     # importlib.import_module(f'hermes.{plugin_folder}.{modulename}')
@@ -153,10 +150,9 @@ def init():
     #         pass
     # do something with the member named ``member``
 
-
     plugin_folders = ['protocols', 'boards', 'devices', 'commands']
-    # Find all python files within the ROOT_DIR.
-    modules = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
+    # Find all python files within the APP_DIR.
+    modules = glob.glob(os.path.join(APP_DIR, '**', '*.py'), recursive=True)
     for filepath in modules:
         for plugin_folder in plugin_folders:
             # If the file is in one of plugin_folders folders, it surely is a plugin, hence load it.

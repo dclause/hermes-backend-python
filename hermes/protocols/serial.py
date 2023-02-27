@@ -33,10 +33,8 @@ class SerialProtocol(AbstractProtocol):
             self._serial.flush()
         except SerialException as error:
             logger.error(f'Serial connexion: Port {self._serial_port} could not be opened: {error}')
-            logger.info(f'Available ports are {self.get_serial_ports()}')
-            raise ProtocolException(
-                f'Port {self._serial_port} could not be opened'
-            ) from error
+            logger.error(f'Available ports are {self.get_serial_ports()}')
+            raise ProtocolException(f'Port {self._serial_port} could not be opened') from error
 
     def close(self) -> None:
         self._serial.close()
