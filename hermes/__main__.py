@@ -2,48 +2,50 @@
 # -*- coding: utf-8 -*-
 
 """ HERMES application entry point. """
+import webbrowser
 
+from hermes.core import logger, plugins, storage, cli
 from hermes.core.config import CONFIG
-from hermes.core import logger, server, plugins, storage
-from hermes.core.struct import MetaSingleton
+from hermes.core.server import server
 
 
-class App(metaclass=MetaSingleton):
-    """ The application main class. """
+def main():
+    """ Main program entry point. """
 
-    def __init__(self, *args):
-        """ Instantiates the application. """
-        print('== Loading HERMES ==')
-        logger.init()
-        plugins.init()
-        storage.init()
-        CONFIG.init()
+    print('== Loading HERMES ==')
+    logger.init()
+    plugins.init()
+    storage.init()
+    CONFIG.init()
+    config = cli.args  # rework
+    auto_open = config.get('open')
 
-    @classmethod
-    def start(cls):
-        """ Bootstraps the application. """
+    try:
+
         logger.info('== Starting HERMES ==')
-        for (_, board) in CONFIG.get('boards').items():
-            board.open()
+        with server.run_in_thread():
 
-    @classmethod
-    def close(cls):
-        """ Closes the application. """
+            # Auto open the browser.
+            logger.info(f' > Start server {"(auto-open GUI)" if auto_open else ""}')
+            if auto_open:
+                host = config.get('host')
+                port = config.get('port')
+                # @todo: certificate to use the GUI through https.
+                webbrowser.open(f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}/')
+
+            # Start boards.
+            for (_, board) in CONFIG.get('boards').items():
+                board.open()
+
+            # Main loop.
+            while True:
+                pass
+
+    except KeyboardInterrupt:
         logger.info('== Stopping HERMES ==')
         for (_, board) in CONFIG.get('boards').items():
             board.close()
-        server.close()
-        logger.info('== Stopped HERMES ==')
 
 
 if __name__ == "__main__":
-    server.start()
-    hermes = App()
-    try:
-        logger.info('== Running HERMES ==')
-        hermes.start()
-
-        while True:
-            pass
-    except KeyboardInterrupt:
-        hermes.close()
+    main()
