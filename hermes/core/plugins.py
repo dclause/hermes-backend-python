@@ -21,9 +21,11 @@ import glob
 import importlib
 import itertools
 import os
+import pkgutil
 from enum import Enum
 from typing import Any, TypeVar
 
+import hermes
 from hermes.core import logger
 from hermes.core.helpers import ROOT_DIR
 
@@ -132,6 +134,25 @@ def init():
     @todo evaluation if there is a better way.
     """
     logger.info(" > Plugin discovery")
+
+
+    # for name in pkgutil.walk_packages(hermes.__path__, hermes.__name__):
+    #     print(f'Find {name}....')
+    #     # importlib.import_module(f'hermes.{plugin_folder}.{modulename}')
+    #
+    # files = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
+    # plugin_folders = ['protocols', 'boards', 'devices', 'commands', 'pages']
+    # for file in files:
+    #     name = os.path.splitext(os.path.basename(file))[0]
+    #     for plugin_folder in plugin_folders:
+    #
+    #     if plugin_folder in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
+    #     # add package prefix to name, if required
+    #     module = __import__(name)
+    #     for member in dir(module):
+    #         pass
+    # do something with the member named ``member``
+
 
     plugin_folders = ['protocols', 'boards', 'devices', 'commands']
     # Find all python files within the ROOT_DIR.

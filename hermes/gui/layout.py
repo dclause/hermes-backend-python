@@ -4,7 +4,7 @@ from pathlib import Path
 from nicegui import ui
 
 from hermes import __app__, __tagline__
-from hermes.ui import icon
+from hermes.gui import icon
 
 
 @contextmanager

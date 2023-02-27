@@ -8,6 +8,8 @@ import logzero
 # pylint: disable-next=unused-import
 from logzero import loglevel, DEBUG, INFO, WARNING, ERROR  # noqa: F401
 
+from hermes.core import cli
+
 
 def init(logpath: str = './logs/backend.log'):
     """
@@ -27,7 +29,7 @@ def init(logpath: str = './logs/backend.log'):
         fmt='%(color)s[%(levelname)s - %(asctime)-15s - %(module)s:%(lineno)d]%(end_color)s %(message)s',
         datefmt='%m/%d/%Y %H:%M:%S %p')
     logzero.formatter(formatter)
-    logzero.loglevel(logzero.INFO)
+    logzero.loglevel(logzero.DEBUG if cli.args['debug'] else logzero.INFO)
 
 
 def debug(msg, *args, **kwargs):

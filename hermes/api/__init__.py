@@ -8,16 +8,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_socketio import SocketManager
 
-from hermes import __version__
 from hermes.core import logger
 from hermes.core.config import CONFIG
 from hermes.devices import AbstractDevice
 
 
-def init():
-    """ Defines and returns the API routes associated with a fastAPI server. """
-    app = FastAPI()
-    SocketManager(app=app, mount_location='/', cors_allowed_origins=[])
+def init(app: FastAPI) -> None:
+    """ Defines and attaches the API routes associated with a fastAPI server. """
+    socket = SocketManager(app=app, mount_location='/api', cors_allowed_origins=[])
     app.add_middleware(
         CORSMiddleware,
         allow_origins=['*'],
@@ -26,41 +24,37 @@ def init():
         allow_headers=["*"],
     )
 
-    @app.get("/")
-    def healthcheck():
-        return {'status': 'healthy', 'version': __version__}
-
-    @app.sio.on('connect')
+    @socket.on('connect')
     async def connect(cid: str, *args, **kwargs):
         logger.info(f'Socket client {cid}: new client connected.')
         await handshake(cid)
 
-    @app.sio.on('disconnect')
+    @socket.on('disconnect')
     def disconnect(cid: str, *args, **kwargs):
         logger.info(f'Socket client {cid}: client disconnected.')
 
-    @app.sio.on('ping')
-    def ping(cid: str, *args, **kwargs):
+    @socket.on('ping')
+    def ping(cid: str):
         """
         Answer to a ping by a pong.
         This can be used by the clients to check the latency of a ping/pong message exchange with this server.
         """
-        app.sio.emit('pong', to=cid)
+        socket.emit('pong', to=cid)
 
-    @app.sio.on('handshake')
+    @socket.on('handshake')
     async def handshake(cid: str, *args, **kwargs):
         """
         Pushes all current config to the client.
         """
         logger.debug(f'Socket client {cid}: ask for handshake.')
-        await app.sio.emit('handshake', (
+        await socket.emit('handshake', (
             CONFIG.get('global'),
             CONFIG.get('profile'),
             {key: board.serialize(recursive=True) for key, board in CONFIG.get('boards').items()},
             CONFIG.get('groups'),
         ))
 
-    @app.sio.on('action')
+    @socket.on('action')
     async def mutation(cid: str, board_id: int, command_id: int, value: Any, *args, **kwargs):
         logger.debug(f'Socket client {cid}: Mutation with parameter: {board_id} {command_id} {value}')
         try:
@@ -69,6 +63,4 @@ def init():
             CONFIG.get('boards')[board_id].actions[command_id].state = value
         except Exception as exception:
             logger.error(f'Socket client {cid}: Mutation error: "{exception}".')
-        await app.sio.emit('patch', (board_id, CONFIG.get('boards')[board_id].serialize(recursive=True)))
-
-    return app
+        await socket.emit('patch', (board_id, CONFIG.get('boards')[board_id].serialize(recursive=True)))

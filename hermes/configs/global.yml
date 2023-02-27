@@ -4,7 +4,7 @@ api:
   reload: 0
   host: 0.0.0.0
   port: 9999
-ui:
+gui:
   enabled: 1
   reload: 0
   host: 0.0.0.0
