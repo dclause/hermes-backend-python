@@ -1,6 +1,6 @@
 """ Get cli arguments used when starting the project. """
 import argparse
-from typing import MutableMapping, Any
+from typing import Any
 
 from hermes import __version__
 

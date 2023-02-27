@@ -15,10 +15,6 @@ from hermes.gui.pages import AbstractPage
 def init(app: FastAPI) -> None:
     """ Defines and attaches the GUI routes associated with a fastAPI server. """
 
-    @app.on_event('shutdown')
-    def shutdown():
-        print('SHUTDOWN')
-
     @ui.page('/')
     def index_page() -> None:
         with layout.layout():
@@ -27,8 +23,8 @@ def init(app: FastAPI) -> None:
 
                 for _, board in CONFIG.get('boards').items():
                     ui.label().bind_text(board, 'name')
-                    for _, action in board.actions.items():                        ui.label(
-                        action.state).bind_text_from(action, 'state')
+                    for _, action in board.actions.items():
+                        ui.label(action.state).bind_text_from(action, 'state')
 
         # layout.header()
         # with layout.sidebar():

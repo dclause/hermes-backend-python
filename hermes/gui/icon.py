@@ -37,6 +37,6 @@ _STAR_STYLE = '''
 
 
 def svg(name: str, width: int = 50, height: int = 50) -> ui.html:
-    if name is 'start':
+    if name == 'start':
         ui.add_head_html(_STAR_STYLE)
     return ui.html((PATH / f'{name}.svg').read_text()).style(f'width:{width}px;height:{height}px')
