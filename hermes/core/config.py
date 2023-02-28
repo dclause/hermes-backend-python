@@ -17,6 +17,10 @@ from hermes.core import storage, logger, cli
 from hermes.core.struct import MetaSingleton
 
 
+class ConfigException(Exception):
+    """ Base class for plugin related exceptions. """
+
+
 class _Settings(metaclass=MetaSingleton):
     """ Global config object """
     data: Dict[str, Any] = {}
@@ -50,7 +54,7 @@ class _Settings(metaclass=MetaSingleton):
         current = _Settings.data
         for key in path:
             if key not in current:
-                raise NameError(f"No settings for key {key}.")
+                raise ConfigException(f"No settings for key {key}.")
             current = current[key]
         return current
 
@@ -60,12 +64,12 @@ class _Settings(metaclass=MetaSingleton):
         if isinstance(path, str):
             path = [path]
         if len(path) == 0:
-            raise NameError('Path cannot be empty.')
+            raise ConfigException('Path cannot be empty.')
 
         current = _Settings.data
         for key in path[:-1]:
             if key not in current:
-                raise NameError(f'No settings for key {key}.')
+                raise ConfigException(f'No settings for key {key}.')
             current = current[key]
 
         key = path[-1]

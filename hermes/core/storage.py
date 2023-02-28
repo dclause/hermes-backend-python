@@ -12,7 +12,7 @@ import ruamel.yaml
 from mergedeep import merge
 
 from hermes.core import logger
-from hermes.core.helpers import ROOT_DIR
+from hermes.core.helpers import ROOT_DIR, CONFIG_DIR
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import StringEnum
 
@@ -39,10 +39,14 @@ def init():
     """ Init the YAML loader/dumper. """
     logger.info(' > Init storage')
 
-    # @todo fixme: 'plugins' here only does not fail by convention.
-    for class_type in AbstractPlugin.__subclasses__():
-        for plugin in class_type.plugins:
-            _storage.register_class(plugin)
+    # This is needed for storage to know about the storable classes.
+    # and register them.
+    # The classes should first be imported which is the job of plugin handler.
+    # @see plugin.init().
+    for plugin_type in AbstractPlugin.types():
+        if hasattr(plugin_type, 'plugins'):
+            for plugin in plugin_type.plugins:
+                _storage.register_class(plugin)
 
 
 def load() -> dict[str, Any]:

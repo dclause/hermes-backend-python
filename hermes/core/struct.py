@@ -1,6 +1,8 @@
 """ Implements agnostic custom structure types to be reused through the application. """
+import inspect
 from abc import ABCMeta
 from enum import Enum
+from pathlib import Path
 from queue import Queue
 
 
@@ -49,6 +51,7 @@ class MetaPluginType(type, metaclass=ABCMeta):
 
     def __init__(cls, name, bases, namespace):
         super(MetaPluginType, cls).__init__(name, bases, namespace)
+        cls.folder = Path(inspect.getfile(cls.__class__)).parent.name
         if not hasattr(cls, 'plugins'):
             cls.plugins = []
         else:

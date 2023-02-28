@@ -1,5 +1,4 @@
 """ Implements global helper functions to be reused through the application. """
-import os
 from pathlib import Path
 
 import hermes

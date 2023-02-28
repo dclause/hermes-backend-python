@@ -4,7 +4,7 @@ This package contains all definition and GUI specific implementation.
 """
 
 from fastapi import FastAPI
-from nicegui import ui
+from nicegui import ui, globals
 
 from hermes import __app__, __tagline__, __version__
 from hermes.core.config import settings

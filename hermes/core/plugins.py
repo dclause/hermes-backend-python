@@ -17,17 +17,24 @@ abstract plugin class (AbstractDevice, AbstractBoard, etc..). The list of all po
 via `AbstractDevice.plugins`.
 """
 
-import glob
 import importlib
+import importlib.util
 import itertools
-import os
 from enum import Enum
-from typing import Any, TypeVar
+from pathlib import Path
+from typing import Any, TypeVar, Type
 
 from hermes.core import logger
-from hermes.core.helpers import APP_DIR
+from hermes.core.helpers import ROOT_DIR
+
+
+class PluginException(Exception):
+    """ Base class for plugin related exceptions. """
+
 
 TypeAbstractPlugin = TypeVar("TypeAbstractPlugin", bound="AbstractPlugin")
+
+PLUGIN_TYPE_FOLDERS = ['protocols', 'boards', 'devices', 'commands']
 
 
 class AbstractPlugin:
@@ -121,44 +128,26 @@ class AbstractPlugin:
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
         return representer.represent_mapping(tag, data)
 
+    @staticmethod
+    def types() -> list[Type[TypeAbstractPlugin]]:
+        """ Returns all plugin types within the application """
+        return AbstractPlugin.__subclasses__()
+
 
 def init():
     """
     Loads all plugins.
 
     Explores the directory structure and search for all .py files within directories corresponding to plugin types
-    to import it.
-    The plugins could be in the core or the modules directories.
-    @todo evaluation if there is a better way.
+    to import it. The plugins could be in the hermes or the modules directories.
     """
     logger.info(" > Plugin discovery")
 
-    # for name in pkgutil.walk_packages(hermes.__path__, hermes.__name__):
-    #     print(f'Find {name}....')
-    #     # importlib.import_module(f'hermes.{plugin_folder}.{modulename}')
-    #
-    # files = glob.glob(os.path.join(ROOT_DIR, '**', '*.py'), recursive=True)
-    # plugin_folders = ['protocols', 'boards', 'devices', 'commands', 'pages']
-    # for file in files:
-    #     name = os.path.splitext(os.path.basename(file))[0]
-    #     for plugin_folder in plugin_folders:
-    #
-    #     if plugin_folder in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
-    #     # add package prefix to name, if required
-    #     module = __import__(name)
-    #     for member in dir(module):
-    #         pass
-    # do something with the member named ``member``
-
-    plugin_folders = ['protocols', 'boards', 'devices', 'commands']
-    # Find all python files within the APP_DIR.
-    modules = glob.glob(os.path.join(APP_DIR, '**', '*.py'), recursive=True)
-    for filepath in modules:
-        for plugin_folder in plugin_folders:
-            # If the file is in one of plugin_folders folders, it surely is a plugin, hence load it.
-            if plugin_folder in filepath and not filepath.endswith('__init__.py') and os.path.isfile(filepath):
-                modulename = os.path.basename(filepath)[:-3]
-                if 'hermes' + os.path.sep in filepath:
-                    importlib.import_module(f'hermes.{plugin_folder}.{modulename}')
-                if 'modules' + os.path.sep in filepath:
-                    importlib.import_module(f'hermes.modules.{plugin_folder}.{modulename}')
+    # @todo: let modules extend this list.
+    namespaces = ['protocols', 'commands', 'devices', 'boards', 'gui.pages']
+    for scope in ['hermes', 'modules']:
+        for namespace in namespaces:
+            loadable_plugins = Path(ROOT_DIR).glob('/'.join([scope, namespace.replace('.', '/'), '[!__init__]*.py']))
+            for loadable_plugin in loadable_plugins:
+                modulename = loadable_plugin.name[:-3]
+                importlib.import_module(f'{scope}.{namespace}.{modulename}')
