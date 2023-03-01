@@ -4,8 +4,8 @@ DigitalWrite Command: simple command attached to digitalPin.
 code: MessageCode::BOOLEAN_OUTPUT
 """
 
-from hermes.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
+from hermes.devices import AbstractDevice
 
 
 class BooleanOutputDevice(AbstractDevice):

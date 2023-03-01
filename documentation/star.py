@@ -1,5 +1,6 @@
 from nicegui import ui
 from nicegui.element import Element
+
 from documentation import svg
 
 STYLE = '''
@@ -47,7 +48,8 @@ def add_star() -> None:
     ui.add_head_html(STYLE)
     with ui.link(target='https://github.com/dclause/hermes', new_tab=True).classes('star-container'):
         with Element('svg').props('viewBox="0 0 24 24"').classes('star'):
-            Element('path').props('d="M23.555,8.729a1.505,1.505,0,0,0-1.406-.98H16.062a.5.5,0,0,1-.472-.334L13.405,1.222a1.5,1.5,0,0,0-2.81,0l-.005.016L8.41,7.415a.5.5,0,0,1-.471.334H1.85A1.5,1.5,0,0,0,.887,10.4l5.184,4.3a.5.5,0,0,1,.155.543L4.048,21.774a1.5,1.5,0,0,0,2.31,1.684l5.346-3.92a.5.5,0,0,1,.591,0l5.344,3.919a1.5,1.5,0,0,0,2.312-1.683l-2.178-6.535a.5.5,0,0,1,.155-.543l5.194-4.306A1.5,1.5,0,0,0,23.555,8.729Z"')
+            Element('path').props(
+                'd="M23.555,8.729a1.505,1.505,0,0,0-1.406-.98H16.062a.5.5,0,0,1-.472-.334L13.405,1.222a1.5,1.5,0,0,0-2.81,0l-.005.016L8.41,7.415a.5.5,0,0,1-.471.334H1.85A1.5,1.5,0,0,0,.887,10.4l5.184,4.3a.5.5,0,0,1,.155.543L4.048,21.774a1.5,1.5,0,0,0,2.31,1.684l5.346-3.92a.5.5,0,0,1,.591,0l5.344,3.919a1.5,1.5,0,0,0,2.312-1.683l-2.178-6.535a.5.5,0,0,1,.155-.543l5.194-4.306A1.5,1.5,0,0,0,23.555,8.729Z"')
         with ui.tooltip('').classes('bg-[#486991] w-96 p-4'):
             with ui.row().classes('items-center no-wrap'):
                 svg.logo().classes('w-14 stroke-white stroke-[1pt]')

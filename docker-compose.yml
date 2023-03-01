@@ -13,14 +13,14 @@ services:
     container_name: "HERMES_python"
     working_dir: /opt/project
     volumes:
-      - ./backend:/opt/project
+      - .:/opt/project
     ports:
-      - "5000:5000"
+      - "8080:8080"
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=HERMES"
       - "traefik.http.routers.HERMES_python.rule=Host(`hermes.localhost`)"
-      - "traefik.http.services.HERMES_python.loadbalancer.server.port=5000"
+      - "traefik.http.services.HERMES_python.loadbalancer.server.port=8080"
     tty: true
     extra_hosts:
       - "host.docker.internal:host-gateway"

@@ -4,8 +4,8 @@ SERVO Command: Orders a servo to move to given position.
 code: MessageCode::SERVO
 """
 
-from hermes.devices import AbstractDevice
 from hermes.core.dictionary import MessageCode
+from hermes.devices import AbstractDevice
 
 
 class ServoDevice(AbstractDevice):
@@ -27,13 +27,13 @@ class ServoDevice(AbstractDevice):
 
     def _encode_settings(self) -> bytearray:
         return bytearray([self.pin]) + \
-               self._encode_value(self.default) + \
-               self._encode_value(self.tmin) + \
-               self._encode_value(self.tmax) + \
-               self._encode_value(self.min) + \
-               self._encode_value(self.max) + \
-               self._encode_value(self.speed, signed=True) + \
-               self._encode_value(self.acceleration, signed=True)
+            self._encode_value(self.default) + \
+            self._encode_value(self.tmin) + \
+            self._encode_value(self.tmax) + \
+            self._encode_value(self.min) + \
+            self._encode_value(self.max) + \
+            self._encode_value(self.speed, signed=True) + \
+            self._encode_value(self.acceleration, signed=True)
 
     def _encode_value(self, value: int, signed: bool = False) -> bytearray:
         return bytearray(value.to_bytes(2, byteorder='big', signed=signed))

@@ -1,7 +1,6 @@
 import re
 from typing import Optional
 
-
 from nicegui import ui
 
 REGEX_H4 = re.compile(r'<h4.*?>(.*?)</h4>')
@@ -16,6 +15,7 @@ BROWSER_COLOR = '#ffffff'
 
 def remove_prefix(text: str, prefix: str) -> str:
     return text[len(prefix):] if text.startswith(prefix) else text
+
 
 def _window_header(bgcolor: str) -> ui.row():
     return ui.row().classes(f'w-full h-8 p-2 bg-[{bgcolor}]')

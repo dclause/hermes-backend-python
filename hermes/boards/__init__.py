@@ -18,13 +18,13 @@ from queue import Empty
 
 from func_timeout import func_set_timeout, FunctionTimedOut
 
-from hermes.core import logger
 from hermes.commands import CommandFactory, AbstractCommand
-from hermes.devices import AbstractDevice
+from hermes.core import logger
 from hermes.core.dictionary import MessageCode
 from hermes.core.plugins import AbstractPlugin, TypeAbstractPlugin
-from hermes.protocols import AbstractProtocol, ProtocolException
 from hermes.core.struct import ClearableQueue, MetaPluginType
+from hermes.devices import AbstractDevice
+from hermes.protocols import AbstractProtocol, ProtocolException
 
 
 class BoardException(Exception):

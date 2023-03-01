@@ -16,7 +16,8 @@ def _get_cli_args() -> dict[str, Any]:
 
     parser.add_argument('-h', '--host', action='store', dest='host', default='127.0.0.1',
                         help='Host (default 127.0.0.1)')
-    parser.add_argument('-p', '--port', type=int, action='store', dest='port', default=8080, help='Port number (default 8080)')
+    parser.add_argument('-p', '--port', type=int, action='store', dest='port', default=8080,
+                        help='Port number (default 8080)')
     parser.add_argument('--dev', action='store_true', dest='dev', help='Server development mode')
     parser.add_argument('--open', action='store_true', dest='open', help='Open the GUI in browser on startup')
     parser.add_argument('--debug', action='store_true', dest='debug')

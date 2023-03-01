@@ -4,8 +4,8 @@ DEBUG Command: Displays debug data send from slave board.
 code: MessageCode::DEBUG
 """
 
-from hermes.core import logger
 from hermes.commands import AbstractCommand
+from hermes.core import logger
 from hermes.core.dictionary import MessageCode
 from hermes.protocols import AbstractProtocol
 

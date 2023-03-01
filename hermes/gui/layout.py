@@ -56,18 +56,20 @@ def _header(menu_items: dict = None):
                     with ui.column().classes('p-2 gap-2'):
                         ui.label('Star us on GitHub!').classes('text-[180%]')
                         ui.label('And tell others about HERMES.').classes('text-[140%]')
+
+
 @contextmanager
 def _sidebar(menu_items: dict = None):
     """ Custom page frame to share the same styling and behavior across all pages """
     with ui.left_drawer(top_corner=True, bottom_corner=True, fixed=True) \
             .props('no-swipe-open no-swipe-close mini behavior=desktop persistent') \
             .classes(add='q-pa-0', remove='q-pa-md'):
-
         # Logo with link
         with ui.link(target='/').classes('row gap-3 items-center no-wrap q-mr-auto').classes('q-my-md'):
             icon.svg('logo', 50, 50).classes('w-8 stroke-white stroke-2').classes('mx-auto')
 
         ui.separator().classes(remove='w-full').classes('q-mx-sm q-mb-md')
+
 
 @contextmanager
 def layout():
