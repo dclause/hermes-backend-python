@@ -8,9 +8,3 @@ ROOT_DIR = Path(APP_DIR, '..').resolve().absolute()
 MODULES_DIR = Path(APP_DIR, 'modules').resolve().absolute()
 CONFIG_DIR = Path(APP_DIR, 'config').resolve().absolute()
 PROFILE_DIR = Path(APP_DIR, 'profiles').resolve().absolute()
-
-
-def combine_classes(*args):
-    """ Combines classes. """
-    name = "".join(a.__name__ for a in args)
-    return type(name, args, {})

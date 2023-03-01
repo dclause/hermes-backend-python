@@ -147,7 +147,7 @@ def init():
     namespaces = ['protocols', 'commands', 'devices', 'boards', 'gui.pages']
     for scope in ['hermes', 'modules']:
         for namespace in namespaces:
-            loadable_plugins = Path(ROOT_DIR).glob('/'.join([scope, namespace.replace('.', '/'), '[!__init__]*.py']))
+            loadable_plugins = Path(ROOT_DIR).glob('/'.join([scope, namespace.replace('.', '/'), '[!_]*.py']))
             for loadable_plugin in loadable_plugins:
                 modulename = loadable_plugin.name[:-3]
                 importlib.import_module(f'{scope}.{namespace}.{modulename}')
