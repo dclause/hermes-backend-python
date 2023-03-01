@@ -9,7 +9,7 @@ from hermes.gui import icon
 
 @contextmanager
 def _header(menu_items: dict = None):
-    """ Custom page frame to share the same styling and behavior across all pages """
+    """ Header default layout and styling. """
 
     if menu_items is None:
         menu_items = {}
@@ -24,6 +24,7 @@ def _header(menu_items: dict = None):
         warning='#FFC107'
     )
     ui.add_head_html(f"<style>{(Path(__file__).parent / 'static' / 'style.css').read_text()}</style>")
+    ui.add_head_html(f"<style>{(Path(__file__).parent / 'static' / 'quasar-overrides.css').read_text()}</style>")
 
     with ui.header(elevated=True).classes('items-center duration-200 p-1 px-4 no-wrap'):
 
@@ -60,7 +61,8 @@ def _header(menu_items: dict = None):
 
 @contextmanager
 def _sidebar(menu_items: dict = None):
-    """ Custom page frame to share the same styling and behavior across all pages """
+    """ Sidebar default layout and styling. """
+
     with ui.left_drawer(top_corner=True, bottom_corner=True, fixed=True) \
             .props('no-swipe-open no-swipe-close mini behavior=desktop persistent') \
             .classes(add='q-pa-0', remove='q-pa-md'):
@@ -72,8 +74,16 @@ def _sidebar(menu_items: dict = None):
 
 
 @contextmanager
+def _main():
+    """ Main area default layout and styling. """
+    with ui.column().classes('w-full p-5 mx-auto'):
+        yield
+
+
+@contextmanager
 def layout():
     """ Custom page frame to share the same styling and behavior across all pages """
     _header()
     _sidebar()
-    yield
+    with _main():
+        yield

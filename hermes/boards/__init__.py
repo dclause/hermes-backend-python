@@ -149,7 +149,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         self.protocol.send(bytearray([MessageCode.HANDSHAKE, len(all_commands)]))
 
         for (_, command) in all_commands.items():
-            command_data: bytearray = command.to_settings_payload()
+            command_data: bytearray = command.as_playload()
             data = bytearray([MessageCode.PATCH]) + command_data
             logger.debug(f"Handshake PATCH: {data} - {list(data)}")
             self.protocol.send(data)

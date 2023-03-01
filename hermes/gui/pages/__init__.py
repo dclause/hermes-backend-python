@@ -23,12 +23,13 @@ from hermes.core.struct import MetaPluginType
 from hermes.gui import layout
 
 
-def page(path: str, title: Optional[str] = None):
+def page(path: str, title: Optional[str] = None, subtitle: Optional[str] = None):
     """ Decorator to add properties to a AbstractPage subclass implementation. """
 
     def decorator(klass):
         klass.path = path
         klass.title = title
+        klass.subtitle = subtitle
         return klass
 
     return decorator
@@ -38,11 +39,11 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
     """ Manages plugins of type commands. """
 
     path = None
-    title = 'New page'
+    title = None
+    subtitle = None
 
     def __init__(self):
         super().__init__()
-        self.ui_title = None
 
     def create(self):
         """
@@ -52,18 +53,30 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
         """
         self.build()
 
-    def build(self, *args, **kwargs):
+    def build(self) -> None:
         """
         Build the page main layout.
         While this _can_ be overriden but is not meant to.
         """
         with layout.layout():
-            ui.label().classes('text-3xl md:text-5xl font-medium mt-[-12px]').bind_text(self, 'title')
-            self.content(*args, **kwargs)
+            with ui.column().classes('gap-0'):
+                self.render_subtitle()
+                self.render_title()
+            self.content()
 
     @abstractmethod
-    def content(self, *args, **kwargs) -> None:
+    def content(self) -> None:
         """
         Each page type must implement the content method to build the GUI associated with the page.
         @see https://nicegui.io/
         """
+
+    def render_title(self) -> None:
+        """ Renders the title """
+        if self.title:
+            ui.label().classes('text-2xl md:text-4xl font-medium').bind_text(self, 'title')
+
+    def render_subtitle(self) -> None:
+        """ Renders the subtitle """
+        if self.subtitle:
+            ui.label().classes('md:text-lg font-bold').bind_text(self, 'subtitle')

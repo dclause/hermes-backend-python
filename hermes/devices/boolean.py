@@ -19,7 +19,7 @@ class BooleanOutputDevice(AbstractDevice):
     def code(self) -> MessageCode:
         return MessageCode.BOOLEAN_OUTPUT
 
-    def _encode_settings(self) -> bytearray:
+    def _encode_data(self) -> bytearray:
         return bytearray([self.pin, self.default])
 
     def _encode_value(self, value: any) -> bytearray:
@@ -33,7 +33,7 @@ class BooleanInputDevice(AbstractDevice):
     def code(self) -> MessageCode:
         return MessageCode.BOOLEAN_INPUT
 
-    def _encode_settings(self) -> bytearray:
+    def _encode_data(self) -> bytearray:
         return bytearray()
 
     def _encode_value(self, value: any) -> bytearray:

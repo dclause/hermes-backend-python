@@ -9,6 +9,6 @@ from hermes.gui import AbstractPage, pages
 class IndexPage(AbstractPage):
     """ Index page """
 
-    def content(self, *args, **kwargs) -> None:
+    def content(self) -> None:
         with ui.row().classes('absolute-center'):
             ui.label('Welcome to HERMES').classes('text-h4 font-bold text-grey-8')

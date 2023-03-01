@@ -42,7 +42,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         """ Each device type must be a 8bit code from the MessageCode dictionary. """
 
     @abstractmethod
-    def _encode_settings(self) -> bytearray:
+    def _encode_data(self) -> bytearray:
         """ Encodes the settings of the device as a byte array. """
         return bytearray()
 
@@ -51,7 +51,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         """ Encodes the given value as an array of bytes. """
         return bytearray([value])
 
-    def to_settings_payload(self) -> bytearray:
+    def as_playload(self) -> bytearray:
         """
         Returns the representation of the device as a bytearray.
         This is used to:
@@ -59,8 +59,8 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
          - changes the settings of a device
         """
         header = bytearray([self.code, self.id])
-        settings = self._encode_settings()
-        return bytearray([len(settings) + 2]) + header + settings
+        data = self._encode_data()
+        return bytearray([len(data) + 2]) + header + data
 
     def set_value(self, board_id, value: Any):
         """ Sends the command. """

@@ -25,7 +25,7 @@ class ServoDevice(AbstractDevice):
     def code(self) -> MessageCode:
         return MessageCode.SERVO
 
-    def _encode_settings(self) -> bytearray:
+    def _encode_data(self) -> bytearray:
         return bytearray([self.pin]) + \
             self._encode_value(self.default) + \
             self._encode_value(self.tmin) + \
