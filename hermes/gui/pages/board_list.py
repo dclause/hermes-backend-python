@@ -9,7 +9,7 @@ from hermes.gui import AbstractPage, pages
 class BoardListPage(AbstractPage):
     """ Board list page """
 
-    def content(self) -> None:
+    def content(self, *args, **kwargs) -> None:
         for _, board in settings.get('boards').items():
             ui.label().bind_text(board, 'name')
             for _, action in board.actions.items():

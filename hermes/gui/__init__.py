@@ -15,7 +15,7 @@ def init(app: FastAPI) -> None:
     """ Defines and attaches the GUI routes associated with a fastAPI server. """
 
     for page in AbstractPage.plugins:
-        ui.page(page.path)(page().build)
+        ui.page(page.path)(page().create)
 
         # layout.header()
         # with layout.sidebar():
@@ -32,8 +32,5 @@ def init(app: FastAPI) -> None:
         #                 ui.label('This is the first tab')
         #             with ui.tab_panel(name="tool2"):
         #                 ui.label('This is the second tab')
-
-    # for page in AbstractPage.plugins:
-    #     page.create()
 
     ui.run_with(app, title=f'{__app__} - {__tagline__}')

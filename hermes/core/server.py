@@ -73,12 +73,14 @@ class _Server(uvicorn.Server):
             thread.join()
 
 
-server = None  # pylint: disable=invalid-name
+# pylint: disable-next=invalid-name
+server = None
 
 
 def init():
     """ Initializes the server """
-    global server  # pylint: disable=invalid-name,global-statement
+    # pylint: disable-next=invalid-name,global-statement
+    global server
     config = Config(
         'hermes.core.server:reload_factory' if settings.get(['server', 'reload']) else 'hermes.core.server:factory',
         factory=True,

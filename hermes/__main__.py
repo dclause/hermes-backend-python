@@ -26,8 +26,9 @@ def main():
             # @todo: certificate to use the GUI through https.
             host = settings.get(['server', 'host'])
             port = settings.get(['server', 'port'])
+            reload = settings.get(['server', 'reload'])
             addr = f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}'
-            logger.info(f' > Server running on {addr} (Ctrl+C to quit)')
+            logger.info(f' > Server running {"with autoreload" if reload else ""} on {addr} (Ctrl+C to quit)')
 
             # Auto open the browser.
             if settings.get(['server', 'open']):
