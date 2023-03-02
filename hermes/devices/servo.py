@@ -3,7 +3,7 @@ SERVO Command: Orders a servo to move to given position.
 
 code: MessageCode::SERVO
 """
-
+from hermes import gui
 from hermes.core.dictionary import MessageCode
 from hermes.devices import AbstractDevice
 
@@ -24,6 +24,11 @@ class ServoDevice(AbstractDevice):
     @property
     def code(self) -> MessageCode:
         return MessageCode.SERVO
+
+    @classmethod
+    def render_icon(cls) -> str:
+        gui.svg('servo', 30, 40)
+        return ''
 
     def _encode_data(self) -> bytearray:
         return bytearray([self.pin]) + \
