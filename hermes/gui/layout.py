@@ -53,16 +53,16 @@ def _header(menu_items: dict = None):
             # GITHUB LOGO
             with ui.button() \
                     .props('flat round href="https://github.com/dclause/hermes" target="_blank"'):
-                gui.svg('github', 24, 24).classes('fill-white m-2')
+                gui.icon('github', 24, 24).classes('fill-white m-2')
 
             # STAR LOGO
             with ui.button() \
                     .props('flat round href="https://github.com/dclause/hermes" target="_blank"') \
                     .classes('star-container'):
-                gui.svg('star', 24, 24).classes('fill-white m-2')
+                gui.icon('star', 24, 24).classes('fill-white m-2')
                 with ui.tooltip('').classes('bg-[#486991] w-96 p-4'):
                     with ui.row().classes('items-center no-wrap'):
-                        gui.svg('logo').classes('w-14 stroke-white stroke-[1pt]')
+                        gui.icon('logo').classes('w-14 stroke-white stroke-[1pt]')
                         with ui.column().classes('p-2 gap-2'):
                             ui.label('Star us on GitHub!').classes('text-[180%]')
                             ui.label('And tell others about HERMES.').classes('text-[140%]')
@@ -77,7 +77,7 @@ def _sidebar(menu_items: dict = None):
             .classes(add='q-pa-0', remove='q-pa-md'):
         # Logo with link
         with ui.link(target='/').classes('row gap-3 items-center no-wrap q-mr-auto').classes('q-my-md'):
-            gui.svg('logo', 50, 50).classes('w-8 stroke-white stroke-2').classes('mx-auto')
+            gui.icon('logo', 50, 50).classes('w-8 stroke-white stroke-2').classes('mx-auto')
 
         ui.separator().classes(remove='w-full').classes('q-mx-sm q-mb-md')
 

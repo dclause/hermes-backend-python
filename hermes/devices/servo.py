@@ -27,7 +27,7 @@ class ServoDevice(AbstractDevice):
 
     @classmethod
     def render_icon(cls) -> str:
-        gui.svg('servo', 30, 40)
+        gui.icon('servo', 30, 40)
         return ''
 
     def _encode_data(self) -> bytearray:

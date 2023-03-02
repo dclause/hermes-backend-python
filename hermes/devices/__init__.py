@@ -56,7 +56,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     def code(self) -> MessageCode:
         """ Each device type must be a 8bit code from the MessageCode dictionary. """
 
-    def render(self):
+    def render(self, board):
         """
         Renders a device using nicegui.io syntax.
         This method _can_ be overriden but is not meant to.
@@ -64,13 +64,13 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         with gui.container().classes('device-icon'):
             icon = self.render_icon()
             if icon:
-                ui.icon(icon).props('size="30px"')
+                gui.icon(icon).props('size="30px"')
         with gui.container().classes('device-name font-bold'):
             self.render_name()
         with gui.container().classes('device-info text-italic'):
             self.render_info()
         with gui.container().classes('device-action flex-grow'):
-            self.render_action()
+            self.render_action(board)
 
     @classmethod
     def render_icon(cls) -> str:
@@ -93,7 +93,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         """
 
     @classmethod
-    def render_action(cls):
+    def render_action(cls, board):
         """
         Renders an actionable input to bind with the board action.
         """
