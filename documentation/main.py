@@ -152,4 +152,4 @@ feedback                  Provide feedback
 ```''')
 
 
-ui.run(title="HERMES - Documentation", favicon='static/favicon.ico')
+ui.run(title="HERMES - Documentation", favicon='static/favicon.ico', port=8090)

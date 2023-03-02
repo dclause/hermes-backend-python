@@ -9,6 +9,9 @@ from nicegui import ui
 from hermes import __app__, __tagline__
 from hermes.gui import layout
 from hermes.gui.pages import AbstractPage
+from .components.container import Container as container
+from .components.icon import svg
+from .components.tag import Tag as tag
 
 
 def init(app: FastAPI) -> None:

@@ -42,9 +42,6 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
     title = None
     subtitle = None
 
-    def __init__(self):
-        super().__init__()
-
     def create(self):
         """
         Creates the page as of nicegui method definition.
@@ -59,9 +56,9 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
         While this _can_ be overriden but is not meant to.
         """
         with layout.layout():
-            with ui.column().classes('gap-0'):
-                self.render_subtitle()
+            with ui.column().classes(remove='gap-4'):
                 self.render_title()
+                self.render_subtitle()
             self.content()
 
     @abstractmethod
@@ -74,9 +71,9 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
     def render_title(self) -> None:
         """ Renders the title """
         if self.title:
-            ui.label().classes('text-2xl md:text-4xl font-medium').bind_text(self, 'title')
+            ui.label().classes('text-2xl md:text-4xl').bind_text(self, 'title')
 
     def render_subtitle(self) -> None:
         """ Renders the subtitle """
         if self.subtitle:
-            ui.label().classes('md:text-lg font-bold').bind_text(self, 'subtitle')
+            ui.label().classes('font-light text-overline text-uppercase').bind_text(self, 'subtitle')

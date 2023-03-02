@@ -18,6 +18,9 @@ the `devices` key
 from abc import abstractmethod
 from typing import Any
 
+from nicegui import ui
+
+from hermes import gui
 from hermes.core import logger
 from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
@@ -30,16 +33,71 @@ class DeviceException(Exception):
 
 
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
-    """ Manages plugins of type devices. """
+    """
+    Manages plugins of type devices.
 
-    def __init__(self):
+    The properties of a device are :
+    *id*            the device ID
+    *name*          the device name
+    *controller*    the device controller type (ie the class name of the device plugin type instance)
+    *default*       the device default value
+    ...
+    any other properties brought by a board type plugin.
+    (@see ServoDevice for example)
+    """
+
+    def __init__(self, default: Any = None):
         super().__init__()
-        self.default: Any = None
+        self.default: Any = default
+        self.value = default
 
     @property
     @abstractmethod
     def code(self) -> MessageCode:
         """ Each device type must be a 8bit code from the MessageCode dictionary. """
+
+    def render(self):
+        """
+        Renders a device using nicegui.io syntax.
+        This method _can_ be overriden but is not meant to.
+        """
+        with gui.container().classes('device-icon'):
+            icon = self.render_icon()
+            if icon:
+                ui.icon(icon).props('size="30px"')
+        with gui.container().classes('device-name font-bold'):
+            self.render_name()
+        with gui.container().classes('device-info text-italic'):
+            self.render_info()
+        with gui.container().classes('device-action flex-grow'):
+            self.render_action()
+
+    @classmethod
+    def render_icon(cls) -> str:
+        """
+        Renders the board icon (@see https://fonts.google.com/icons).
+        """
+        return 'brightness_high'
+
+    def render_name(self):
+        """
+        Renders the board name.
+        """
+        ui.label().bind_text(self, 'name')
+
+    @classmethod
+    def render_info(cls):
+        """
+        Renders extra info.
+        Should typically be either a very short text (pin number for instance) or an 'info' icon with an hover tooltip.
+        """
+
+    @classmethod
+    def render_action(cls):
+        """
+        Renders an actionable input to bind with the board action.
+        """
+        ui.label('No action here.').classes('text-italic')
 
     @abstractmethod
     def _encode_data(self) -> bytearray:

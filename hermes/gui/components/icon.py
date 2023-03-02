@@ -2,7 +2,9 @@ from pathlib import Path
 
 from nicegui import ui
 
-PATH = Path(__file__).parent / 'static'
+from hermes.core.helpers import APP_DIR
+
+PATH = Path(APP_DIR, 'gui', 'static', 'icons')
 
 _STAR_STYLE = '''
 <style>
@@ -39,4 +41,4 @@ _STAR_STYLE = '''
 def svg(name: str, width: int = 50, height: int = 50) -> ui.html:
     if name == 'start':
         ui.add_head_html(_STAR_STYLE)
-    return ui.html((PATH / f'{name}.svg').read_text()).style(f'width:{width}px;height:{height}px')
+    return ui.html(Path(PATH, f'{name}.svg').read_text(encoding="utf-8")).style(f'width:{width}px;height:{height}px')

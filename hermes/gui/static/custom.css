@@ -1,0 +1,15 @@
+.board-device > div {
+    margin-inline: 0.5rem;
+}
+
+.board-device .device-name {
+    width: 7rem;
+}
+
+.board-device .device-info {
+    width: 4rem;
+}
+
+.board-device .device-menu {
+    margin-left: auto;
+}

@@ -32,7 +32,24 @@ class BoardException(Exception):
 
 
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
-    """ Handles the serial communication with an external board. """
+    """
+    Handles the serial communication with an external board.
+
+    The properties of a boards are :
+    *id*            the board ID
+    *name*          the board name
+    *controller*    the board controller type (ie the class name of the board plugin type instance)
+    *protocol*      the board protocol used for communication
+        (@see AbstractProtocol in hermes.protocols for sub-properties)
+    *actions*       a list of actuators devices (brings action to the board - led, servo, etc.)
+        (@see AbstractDevice in hermes.devices for sub-properties)
+    *inputs*        a list of sensors devices (outputs data from the board - PIR, button, etc.)
+        (@see AbstractDevice in hermes.devices for sub-properties)
+
+    ...
+    any other properties brought by a board type plugin.
+    (@see ArduinoBoard for example)
+    """
 
     def __init__(self, protocol: AbstractProtocol):
         super().__init__()
