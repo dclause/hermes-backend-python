@@ -8,7 +8,6 @@ given "space".
  - Finally the upmost specific configuration is the one given as parameters of the commandline when starting the
   application.
 """
-
 from typing import Any, Dict, List
 
 from mergedeep import merge

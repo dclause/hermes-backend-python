@@ -122,7 +122,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
     def set_value(self, board_id, value: Any):
         """ Sends the command. """
-        board = settings.get('boards')[board_id]
+        board = settings.get(['boards', board_id])
 
         if not board.connected:
             if not board.open():

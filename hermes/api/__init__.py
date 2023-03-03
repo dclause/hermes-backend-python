@@ -12,22 +12,33 @@ from hermes.core import logger
 from hermes.core.config import settings
 from hermes.devices import AbstractDevice
 
-_SOCKET = None
+_SOCKET: SocketManager
 
 
-async def mutation(board_id: int, command_id: int, value: Any):
+async def action(cid: str, board_id: int, command_id: int, value: Any) -> None:
+    """
+    Perform an action on the given board.
+
+    :param str cid:         the client id requesting the action.
+    :param int board_id:    the board id to perform the action on.
+    :param int command_id:  the command id to perform the action on.
+    :param any value:       the value to change to.
+    """
+    logger.debug(f'Client {cid}: Mutation with parameter: {board_id} {command_id} {value}')
     try:
-        device: AbstractDevice = settings.get('boards')[board_id].actions[command_id]
+        device: AbstractDevice = settings.get(['boards', board_id, 'actions', command_id])
         device.set_value(board_id, value)
+        # @todo implement and use set()
         settings.get('boards')[board_id].actions[command_id].state = value
+        await _SOCKET.emit('action', (board_id, command_id, value), skip_sid=cid)
     except Exception as exception:
-        logger.error(f'Mutation error: "{exception}".')
-        raise exception
-    await _SOCKET.emit('patch', (board_id, settings.get('boards')[board_id].serialize(recursive=True)))
+        logger.error(f'API ERROR: Client {cid}: Mutation error: "{exception}".')
 
 
 def init(app: FastAPI) -> None:
     """ Defines and attaches the API routes associated with a fastAPI server. """
+
+    # pylint: disable-next=global-statement
     global _SOCKET
 
     _SOCKET = SocketManager(app=app, mount_location='/api', cors_allowed_origins=[])
@@ -70,9 +81,5 @@ def init(app: FastAPI) -> None:
         ))
 
     @_SOCKET.on('action')
-    async def _mutation(cid: str, board_id: int, command_id: int, value: Any, *args, **kwargs):
-        logger.debug(f'Socket client {cid}: Mutation with parameter: {board_id} {command_id} {value}')
-        try:
-            await mutation(board_id, command_id, value)
-        except Exception as exception:
-            logger.error(f'Mutation error for client {cid}.')
+    async def _action(cid: str, board_id: int, command_id: int, value: Any, *args, **kwargs):
+        await action(cid, board_id, command_id, value)

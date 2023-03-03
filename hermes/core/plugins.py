@@ -61,6 +61,18 @@ class AbstractPlugin:
         """ Stringify the plugin: Only used for debug purpose. """
         return f'{self.controller} {self.name}({self.id})'
 
+    def __iter__(self, *args, **kwargs):  # real signature unknown
+        """ Implement iter(self). """
+        return [a for a in dir(self) if not a.startswith('__') and not callable(getattr(self, a))]
+
+    def __contains__(self, x, *args, **kwargs):  # real signature unknown
+        """ True if the dictionary has the specified key, else False. """
+        return x in dir(self)
+
+    def __getitem__(self, y):  # real signature unknown; restored from __doc__
+        """ x.__getitem__(y) <==> x[y] """
+        return getattr(self, y)
+
     def serialize(self, recursive=False) -> dict[str, Any]:
         """
         Convert the instance to a filter dict representation.

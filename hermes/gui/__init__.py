@@ -13,6 +13,8 @@ from .components.container import Container as container
 from .components.icon import Icon as icon
 from .components.tag import Tag as tag
 
+CLIENT_ID = __app__
+
 
 def init(app: FastAPI) -> None:
     """ Defines and attaches the GUI routes associated with a fastAPI server. """

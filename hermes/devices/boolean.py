@@ -6,7 +6,7 @@ code: MessageCode::BOOLEAN_OUTPUT
 
 from nicegui import ui, background_tasks
 
-from hermes import api
+from hermes import api, gui
 from hermes.core.dictionary import MessageCode
 from hermes.devices import AbstractDevice
 
@@ -34,7 +34,7 @@ class BooleanOutputDevice(AbstractDevice):
 
     # pylint: disable-next=arguments-differ
     def render_action(self, board):
-        ui.switch(on_change=lambda: background_tasks.create(api.mutation(board.id, self.id, self.value))) \
+        ui.switch(on_change=lambda: background_tasks.create(api.action(gui.CLIENT_ID, board.id, self.id, self.value))) \
             .props('dense keep-color color="primary" size="xl"') \
             .bind_value(self, 'value')
 
@@ -45,9 +45,6 @@ class BooleanInputDevice(AbstractDevice):
     @property
     def code(self) -> MessageCode:
         return MessageCode.BOOLEAN_INPUT
-
-    def render(self) -> None:
-        pass
 
     def _encode_data(self) -> bytearray:
         return bytearray()
