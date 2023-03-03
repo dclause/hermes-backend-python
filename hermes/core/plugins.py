@@ -89,6 +89,11 @@ class AbstractPlugin:
                 del obj[attr]
                 continue
 
+            # Remove any gui attributes.
+            if attr.startswith("gui_"):
+                del obj[attr]
+                continue
+
             if recursive and isinstance(obj[attr], dict):
                 listing = {element.id: element.serialize() for (key, element) in obj[attr].items()}
                 obj[attr] = listing

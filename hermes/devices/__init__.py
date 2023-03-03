@@ -18,9 +18,9 @@ the `devices` key
 from abc import abstractmethod
 from typing import Any
 
-from nicegui import ui
+from nicegui import ui, background_tasks
 
-from hermes import gui
+from hermes import gui, api
 from hermes.core import logger
 from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
@@ -48,6 +48,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
     def __init__(self, default: Any = None):
         super().__init__()
+        self.gui_actions = None
         self.default: Any = default
         self.value = default
 
@@ -69,8 +70,9 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
             self.render_name()
         with gui.container().classes('device-info text-italic'):
             self.render_info()
-        with gui.container().classes('device-action flex-grow'):
+        with gui.container().classes('device-action flex-grow') as actions:
             self.render_action(board)
+        self.gui_actions = actions
 
     @classmethod
     def render_icon(cls) -> str:
@@ -98,6 +100,9 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         Renders an actionable input to bind with the board action.
         """
         ui.label('No action here.').classes('text-italic')
+
+    def render_on_change(self, board_id: int):
+        background_tasks.create(api.action(gui.CLIENT_ID, board_id, self.id, self.value))
 
     @abstractmethod
     def _encode_data(self) -> bytearray:

@@ -7,6 +7,7 @@ from typing import Any
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_socketio import SocketManager
+from nicegui import ui
 
 from hermes.core import logger
 from hermes.core.config import settings
@@ -30,6 +31,9 @@ async def action(cid: str, board_id: int, command_id: int, value: Any) -> None:
         device.set_value(board_id, value)
         # @todo implement and use set()
         settings.get('boards')[board_id].actions[command_id].state = value
+        # @todo remove value and use state everywhere (or the contrary) ?
+        settings.get('boards')[board_id].actions[command_id].value = value
+        ui.update(settings.get(['boards', board_id, 'actions', command_id]).gui_actions)
         await _SOCKET.emit('action', (board_id, command_id, value), skip_sid=cid)
     except Exception as exception:
         logger.error(f'API ERROR: Client {cid}: Mutation error: "{exception}".')
