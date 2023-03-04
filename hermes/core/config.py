@@ -13,10 +13,11 @@ from typing import Any, Dict, List
 from mergedeep import merge
 
 from hermes.core import storage, logger, cli
+from hermes.core.helpers import HermesException
 from hermes.core.struct import MetaSingleton
 
 
-class ConfigException(Exception):
+class ConfigException(HermesException):
     """ Base class for plugin related exceptions. """
 
 

@@ -15,8 +15,8 @@ from fastapi import FastAPI
 from uvicorn import Config
 from uvicorn.supervisors import ChangeReload
 
-from hermes import gui, __version__, api
-from hermes.core import logger, plugins, storage
+from hermes import gui, __version__
+from hermes.core import api, logger, plugins, storage
 from hermes.core.config import settings
 
 

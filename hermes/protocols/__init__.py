@@ -8,11 +8,12 @@ to be embedded in a board (see AbstractBoard) and must implement the AbstractPro
 
 from abc import abstractmethod
 
+from hermes.core.helpers import HermesException
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
 
-class ProtocolException(Exception):
+class ProtocolException(HermesException):
     """ Base class for protocol related exceptions. """
 
 

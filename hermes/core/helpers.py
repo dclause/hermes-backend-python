@@ -8,3 +8,7 @@ ROOT_DIR = Path(APP_DIR, '..').resolve().absolute()
 MODULES_DIR = Path(APP_DIR, 'modules').resolve().absolute()
 CONFIG_DIR = Path(APP_DIR, 'config').resolve().absolute()
 PROFILE_DIR = Path(APP_DIR, 'profiles').resolve().absolute()
+
+
+class HermesException(Exception):
+    """ Generic exception through the application. """

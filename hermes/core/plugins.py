@@ -25,10 +25,10 @@ from pathlib import Path
 from typing import Any, TypeVar, Type
 
 from hermes.core import logger
-from hermes.core.helpers import ROOT_DIR
+from hermes.core.helpers import ROOT_DIR, HermesException
 
 
-class PluginException(Exception):
+class PluginException(HermesException):
     """ Base class for plugin related exceptions. """
 
 

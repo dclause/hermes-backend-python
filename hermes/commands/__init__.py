@@ -18,11 +18,12 @@ from typing import Any
 
 from hermes.core import logger
 from hermes.core.dictionary import MessageCode
+from hermes.core.helpers import HermesException
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaSingleton, MetaPluginType
 
 
-class CommandException(Exception):
+class CommandException(HermesException):
     """ Base class for command related exceptions. """
 
 

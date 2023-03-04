@@ -11,6 +11,7 @@ from nicegui import ui
 
 from hermes.core import logger
 from hermes.core.config import settings
+from hermes.core.helpers import HermesException
 from hermes.devices import AbstractDevice
 
 _SOCKET: SocketManager
@@ -31,11 +32,9 @@ async def action(cid: str, board_id: int, device_id: int, value: Any) -> None:
         device.set_value(board_id, value)
         # @todo implement and use set()
         settings.get('boards')[board_id].actions[device_id].state = value
-        # @todo remove value and use state everywhere (or the contrary) ?
-        settings.get('boards')[board_id].actions[device_id].value = value
         ui.update(settings.get(['boards', board_id, 'actions', device_id]).gui_actions)
         await _SOCKET.emit('action', (board_id, device_id, value), skip_sid=cid)
-    except Exception as exception:
+    except HermesException as exception:
         logger.error(f'API ERROR: Client {cid}: Mutation error: "{exception}".')
 
 

@@ -24,11 +24,12 @@ from hermes import gui
 from hermes.core import logger
 from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
+from hermes.core.helpers import HermesException
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaSingleton, MetaPluginType
 
 
-class DeviceException(Exception):
+class DeviceException(HermesException):
     """ Base class for device related exceptions. """
 
 
@@ -87,8 +88,10 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         """
         ui.label().bind_text(self, 'name')
 
+    # noinspection PyMethodParameters
     @classmethod
-    def render_info(cls):
+    # pylint: disable-next=unused-argument,bad-classmethod-argument
+    def render_info(self):
         """
         Renders extra info.
         Should typically be either a very short text (pin number for instance) or an 'info' icon with a tooltip.

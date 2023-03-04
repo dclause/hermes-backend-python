@@ -20,17 +20,18 @@ from typing import Any
 from func_timeout import func_set_timeout, FunctionTimedOut
 from nicegui import background_tasks
 
-from hermes import api, gui
-from hermes.commands import CommandFactory, AbstractCommand
-from hermes.core import logger
+from hermes import gui
+from hermes.commands import CommandFactory
+from hermes.core import logger, api
 from hermes.core.dictionary import MessageCode
+from hermes.core.helpers import HermesException
 from hermes.core.plugins import AbstractPlugin, TypeAbstractPlugin
 from hermes.core.struct import ClearableQueue, MetaPluginType
 from hermes.devices import AbstractDevice
 from hermes.protocols import AbstractProtocol, ProtocolException
 
 
-class BoardException(Exception):
+class BoardException(HermesException):
     """ Base class for board related exceptions. """
 
 
@@ -159,9 +160,9 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         # Handshake: send all devices to board via PATCH.
         logger.debug(f'Handshake for board `{self.name}`.')
 
-        # Actions and Inputs are both actions and needs to be transmitted to the board,
+        # Actions and Inputs are both devices and needs to be transmitted to the board,
         # so it learns about its possibilities.
-        all_commands: dict[int, AbstractCommand] = self.actions.copy()
+        all_commands: dict[int, AbstractDevice] = self.actions.copy()
         all_commands.update(self.inputs)
 
         # NOTE: We cannot use the standard way to send command via the command send() method here.
@@ -182,7 +183,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
                 command = CommandFactory().get_by_code(command_code)
                 command.receive(self.protocol)
                 command.process()
-            except Exception:
+            except HermesException:
                 continue
 
     def send(self, data: bytearray):
@@ -294,7 +295,7 @@ class SerialListenerThread(threading.Thread):
             try:
                 command_code: MessageCode = MessageCode(self.protocol.read_byte())
                 logger.debug(f'SerialListenerThread: receive command code {command_code}')
-            except Exception:
+            except HermesException:
                 time.sleep(_RATE)
                 continue
 
