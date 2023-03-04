@@ -23,3 +23,6 @@ def init(app: FastAPI) -> None:
         ui.page(page.path)(page().create)
 
     ui.run_with(app, title=f'{__app__} - {__tagline__}')
+
+
+__ALL__ = ['CLIENT_ID', 'init']

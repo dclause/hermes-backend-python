@@ -15,9 +15,12 @@ the `boards` key.
 import threading
 import time
 from queue import Empty
+from typing import Any
 
 from func_timeout import func_set_timeout, FunctionTimedOut
+from nicegui import background_tasks
 
+from hermes import api, gui
 from hermes.commands import CommandFactory, AbstractCommand
 from hermes.core import logger
 from hermes.core.dictionary import MessageCode
@@ -191,10 +194,21 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         """
         self._command_queue.put(data)
 
+    @func_set_timeout(5)
+    def gui_mutator(self, device_id: int, state: Any):
+        """
+        GUI Helper:  For board's devices to mutate their state via UI inputs.
+        @see hermes.gui.pages.BoardPage
+        :param device_id: device ID
+        :param state: new state value
+        """
+        background_tasks.create(api.action(gui.CLIENT_ID, self.id, device_id, state))
+
 
 _RATE = 0
 
 
+# @todo move threads out of the board in the protocol.
 class SerialSenderThread(threading.Thread):
     """
     Thread that send orders to the arduino
@@ -296,4 +310,4 @@ class SerialListenerThread(threading.Thread):
         logger.debug("SerialListenerThread: thread stops.")
 
 
-__ALL__ = ["AbstractBoard", "BoardException"]
+__ALL__ = ['BoardException', 'AbstractBoard']

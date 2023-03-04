@@ -3,9 +3,11 @@ SERVO Command: Orders a servo to move to given position.
 
 code: MessageCode::SERVO
 """
-from nicegui import ui, background_tasks
+from typing import Callable
 
-from hermes import gui, api
+from nicegui import ui
+
+from hermes import gui
 from hermes.core.dictionary import MessageCode
 from hermes.devices import AbstractDevice
 
@@ -36,14 +38,19 @@ class ServoDevice(AbstractDevice):
         ui.label(f'(pin: {self.pin})')
 
     # pylint: disable-next=arguments-differ
-    def render_action(self, board):
-        ui.slider(min=self.min,
-                  max=self.max,
-                  value=self.value) \
-            .on('change',
-                # @todo: move this to a helper
-                lambda value: background_tasks.create(api.action(gui.CLIENT_ID, board.id, self.id, value['args']))) \
-            .props('label').bind_value(self, 'value')
+    def render_action(self, mutator: Callable):
+        # with ui.column():
+        ui.slider(min=self.min, max=self.max, value=self.state) \
+            .on('change', lambda value: mutator(self.id, value)) \
+            .props('label') \
+            .bind_value(self, 'state')
+        # ui.number(value=self.state, on_change=lambda value: mutator(self.id, value)) \
+        #     .bind_value(self, 'state')
+
+    # .on('change', lambda value: self._on_change_callback(mutator, value['args'])) \
+    # def _on_change_callback(self, mutator: Callable, value: int):
+    #     self.state = value
+    #     mutator(self.id, value)
 
     def _encode_data(self) -> bytearray:
         return bytearray([self.pin]) + \

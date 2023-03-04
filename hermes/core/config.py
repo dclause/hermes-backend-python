@@ -76,5 +76,3 @@ class _Settings(metaclass=MetaSingleton):
 
 
 settings = _Settings()
-
-__ALL__ = ['settings']

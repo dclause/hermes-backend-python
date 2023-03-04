@@ -98,4 +98,4 @@ class CommandFactory(metaclass=MetaSingleton):
         return command
 
 
-__ALL__ = ["AbstractCommand", "MessageCode", "CommandFactory", "CommandException"]
+__ALL__ = ['AbstractCommand', 'CommandFactory', 'CommandException']

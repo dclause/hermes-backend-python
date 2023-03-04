@@ -3,10 +3,10 @@ DigitalWrite Command: simple command attached to digitalPin.
 
 code: MessageCode::BOOLEAN_OUTPUT
 """
+from typing import Callable
 
-from nicegui import ui, background_tasks
+from nicegui import ui
 
-from hermes import api, gui
 from hermes.core.dictionary import MessageCode
 from hermes.devices import AbstractDevice
 
@@ -33,10 +33,10 @@ class BooleanOutputDevice(AbstractDevice):
         ui.label(f'(pin: {self.pin})')
 
     # pylint: disable-next=arguments-differ
-    def render_action(self, board):
-        ui.switch(on_change=lambda: background_tasks.create(api.action(gui.CLIENT_ID, board.id, self.id, self.value))) \
+    def render_action(self, mutator: Callable):
+        ui.switch(on_change=lambda: mutator(self.id, self.state)) \
             .props('dense keep-color color="primary" size="xl"') \
-            .bind_value(self, 'value')
+            .bind_value(self, 'state')
 
 
 class BooleanInputDevice(AbstractDevice):

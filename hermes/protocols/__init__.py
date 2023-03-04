@@ -74,4 +74,4 @@ class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
         """
 
 
-__ALL__ = ["AbstractProtocol", "ProtocolException"]
+__ALL__ = ['AbstractProtocol', 'ProtocolException']

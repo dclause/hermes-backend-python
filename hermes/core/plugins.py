@@ -73,7 +73,7 @@ class AbstractPlugin:
         """ x.__getitem__(y) <==> x[y] """
         return getattr(self, y)
 
-    def serialize(self, recursive=False) -> dict[str, Any]:
+    def serialize(self, recursive=True) -> dict[str, Any]:
         """
         Convert the instance to a filter dict representation.
         Private attributes are excluded and Plugin referenced are converted to their IDs.
@@ -109,41 +109,34 @@ class AbstractPlugin:
 
     @classmethod
     def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:
-        """ Converts a representation node to a Python object. """
+        """ Converts a representation YAML node to a Python object. """
 
-        # Builds a state object from the yaml data.
-        state = constructor.construct_mapping(node, deep=True)
+        # Extracts the data from the yaml data.
+        mapping = constructor.construct_mapping(node, deep=True)
 
-        # Filters the state object with values necessary for the plugin constructor.
+        # Analyzes the plugin constructor to determine the needed constructor parameters.
         arguments = cls.__init__.__code__.co_varnames[1:cls.__init__.__code__.co_argcount]
-        initial_state = {}
-        for key in arguments:
-            if key in state:
-                initial_state[key] = state[key]
 
-        # Instantiates the plugin and update it.
-        plugin = cls(**initial_state)
+        # Extracts necessary constructor arguments from the mapping.
+        init_args = {key: mapping[key] for key in arguments if key in mapping}
 
-        if 'default' in state:
-            state['state'] = state['default']
+        # Instantiates the plugin.
+        plugin = cls(**init_args)
+
+        # Sets the plugin values to the required values such as extracted from the YAML files.
         if hasattr(plugin, '__setstate__'):
-            plugin.__setstate__(state)
+            plugin.__setstate__(mapping)
         else:
-            plugin.__dict__.update(state)
+            plugin.__dict__.update(mapping)
 
         return plugin
 
     @classmethod
-    def to_yaml(cls, representer, data) -> Any:
+    def to_yaml(cls, representer, instance) -> Any:
         """ Converts a Python object to a representation node. """
-
-        if isinstance(data, AbstractPlugin):
-            data = data.serialize()
-            if any(key in dict for key in ['value', 'type', 'container']):
-                del data['value']
-
+        # Note: The yaml_tag used is by convention the classe name.
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
-        return representer.represent_mapping(tag, data)
+        return representer.represent_mapping(tag, instance.serialize())
 
     @staticmethod
     def types() -> list[Type[TypeAbstractPlugin]]:

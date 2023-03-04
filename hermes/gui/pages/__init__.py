@@ -77,3 +77,6 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
         """ Renders the subtitle """
         if self.subtitle:
             ui.label().classes('font-light text-overline text-uppercase').bind_text(self, 'subtitle')
+
+
+__ALL__ = ['page', 'AbstractPage']

@@ -16,11 +16,11 @@ Devices are detected when the package is imported for the first time and globall
 the `devices` key
 """
 from abc import abstractmethod
-from typing import Any
+from typing import Any, Callable
 
-from nicegui import ui, background_tasks
+from nicegui import ui
 
-from hermes import gui, api
+from hermes import gui
 from hermes.core import logger
 from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
@@ -50,14 +50,14 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         super().__init__()
         self.gui_actions = None
         self.default: Any = default
-        self.value = default
+        self.state = default
 
     @property
     @abstractmethod
     def code(self) -> MessageCode:
         """ Each device type must be a 8bit code from the MessageCode dictionary. """
 
-    def render(self, board):
+    def render(self, mutator: Callable):
         """
         Renders a device using nicegui.io syntax.
         This method _can_ be overriden but is not meant to.
@@ -71,7 +71,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         with gui.container().classes('device-info text-italic'):
             self.render_info()
         with gui.container().classes('device-action flex-grow') as actions:
-            self.render_action(board)
+            self.render_action(mutator)
         self.gui_actions = actions
 
     @classmethod
@@ -91,18 +91,17 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     def render_info(cls):
         """
         Renders extra info.
-        Should typically be either a very short text (pin number for instance) or an 'info' icon with an hover tooltip.
+        Should typically be either a very short text (pin number for instance) or an 'info' icon with a tooltip.
         """
 
+    # noinspection PyMethodParameters
     @classmethod
-    def render_action(cls, board):
+    # pylint: disable-next=unused-argument,bad-classmethod-argument
+    def render_action(self, mutator: Callable):  # no PY-2665
         """
         Renders an actionable input to bind with the board action.
         """
         ui.label('No action here.').classes('text-italic')
-
-    def render_on_change(self, board_id: int):
-        background_tasks.create(api.action(gui.CLIENT_ID, board_id, self.id, self.value))
 
     @abstractmethod
     def _encode_data(self) -> bytearray:
@@ -190,4 +189,4 @@ class DeviceFactory(metaclass=MetaSingleton):
         return device
 
 
-__ALL__ = ["AbstractDevice", "DeviceFactory"]
+__ALL__ = ['AbstractDevice', 'DeviceFactory', 'DeviceException']

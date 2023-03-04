@@ -43,7 +43,7 @@ class BoardPage(AbstractPage):
                 with ui.tab_panel(name='actions'):
                     for _, action in self.board.actions.items():
                         with gui.container().classes('flex items-center no-wrap p-2 board-device'):
-                            action.render(self.board)
+                            action.render(self.board.gui_mutator)
                             with gui.container().classes('device-menu'):
                                 ui.button().props('round flat icon="more_vert"')
                         ui.separator()
