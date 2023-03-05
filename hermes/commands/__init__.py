@@ -60,7 +60,7 @@ class CommandFactory(metaclass=MetaSingleton):
         for command in AbstractCommand.plugins:
             self.__commands[command().code] = command()
 
-    def get_by_code(self, code: MessageCode) -> AbstractCommand | None:
+    def get_by_code(self, code: MessageCode) -> AbstractCommand:
         """ Instantiates a AbstractCommand based on a given MessageCode
 
         Args:
@@ -79,7 +79,7 @@ class CommandFactory(metaclass=MetaSingleton):
             raise CommandException(f'Command with code `{code}` do not exists.')
         return command
 
-    def get_by_name(self, name: str) -> AbstractCommand | None:
+    def get_by_name(self, name: str) -> AbstractCommand:
         """ Instantiates a AbstractCommand based on a given name
 
         Args

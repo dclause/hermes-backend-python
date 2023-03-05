@@ -124,10 +124,7 @@ class AbstractPlugin:
         plugin = cls(**init_args)
 
         # Sets the plugin values to the required values such as extracted from the YAML files.
-        if hasattr(plugin, '__setstate__'):
-            plugin.__setstate__(mapping)
-        else:
-            plugin.__dict__.update(mapping)
+        plugin.__dict__.update(mapping)
 
         return plugin
 

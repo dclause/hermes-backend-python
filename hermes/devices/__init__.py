@@ -112,7 +112,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         return bytearray()
 
     @abstractmethod
-    def _encode_value(self, value: any) -> bytearray:
+    def _encode_value(self, value: Any) -> bytearray:
         """ Encodes the given value as an array of bytes. """
         return bytearray([value])
 

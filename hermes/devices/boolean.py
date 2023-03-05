@@ -3,7 +3,7 @@ DigitalWrite Command: simple command attached to digitalPin.
 
 code: MessageCode::BOOLEAN_OUTPUT
 """
-from typing import Callable
+from typing import Callable, Any
 
 from nicegui import ui
 
@@ -25,14 +25,12 @@ class BooleanOutputDevice(AbstractDevice):
     def _encode_data(self) -> bytearray:
         return bytearray([self.pin, self.default])
 
-    def _encode_value(self, value: any) -> bytearray:
+    def _encode_value(self, value: Any) -> bytearray:
         return bytearray([value])
 
-    # pylint: disable-next=arguments-differ
     def render_info(self):
         ui.label(f'(pin: {self.pin})')
 
-    # pylint: disable-next=arguments-differ
     def render_action(self, mutator: Callable):
         ui.switch(on_change=lambda: mutator(self.id, self.state)) \
             .props('dense keep-color color="primary" size="xl"') \
@@ -49,5 +47,5 @@ class BooleanInputDevice(AbstractDevice):
     def _encode_data(self) -> bytearray:
         return bytearray()
 
-    def _encode_value(self, value: any) -> bytearray:
+    def _encode_value(self, value: Any) -> bytearray:
         return bytearray()

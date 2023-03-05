@@ -27,7 +27,7 @@ def main():
             host = settings.get(['server', 'host'])
             port = settings.get(['server', 'port'])
             reload = settings.get(['server', 'reload'])
-            addr = f'http://{host if host != "0.0.0.0" else "127.0.0.1"}:{port}'
+            addr = f'http://{host}:{port}'
             logger.info(f' > Server running {"with autoreload" if reload else ""} on {addr} (Ctrl+C to quit)')
 
             # Auto open the browser.

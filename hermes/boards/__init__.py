@@ -162,16 +162,17 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
         # Actions and Inputs are both devices and needs to be transmitted to the board,
         # so it learns about its possibilities.
-        all_commands: dict[int, AbstractDevice] = self.actions.copy()
-        all_commands.update(self.inputs)
+        devices: dict[int, AbstractDevice] = self.actions.copy()
+        devices.update(self.inputs)
 
         # NOTE: We cannot use the standard way to send command via the command send() method here.
         # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
-        self.protocol.send(bytearray([MessageCode.HANDSHAKE, len(all_commands)]))
+        self.protocol.send(bytearray([MessageCode.HANDSHAKE, len(devices)]))
 
-        for (_, command) in all_commands.items():
-            command_data: bytearray = command.as_playload()
-            data = bytearray([MessageCode.PATCH]) + command_data
+        # Send all commands the device can do.
+        for (_, device) in devices.items():
+            data: bytearray = device.as_playload()
+            data = bytearray([MessageCode.PATCH]) + data
             logger.debug(f"Handshake PATCH: {data} - {list(data)}")
             self.protocol.send(data)
 
