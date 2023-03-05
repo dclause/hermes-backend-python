@@ -1,4 +1,4 @@
-""" Get cli arguments used when starting the project. """
+"""Get cli arguments used when starting the project."""
 import argparse
 from typing import Any
 

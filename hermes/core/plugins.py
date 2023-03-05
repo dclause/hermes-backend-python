@@ -12,7 +12,7 @@ located at either of these locations:
 - hermes.core.xxx.foobar.py
 - hermes.module.xxx.foobar.py
 
-Loading those plugins will - with the help of @see MetaPluginType - populate the plugin list via the corresponding
+Loading those plugins will - with the help of @see :class:`MetaPluginType` - populate the plugin list via the corresponding
 abstract plugin class (AbstractDevice, AbstractBoard, etc..). The list of all possible devices for instance can be found
 via `AbstractDevice.plugins`.
 """
@@ -22,17 +22,17 @@ import importlib.util
 import itertools
 from enum import Enum
 from pathlib import Path
-from typing import Any, Type, TypeVar
+from typing import Any, TypeVar
 
 from hermes.core import logger
-from hermes.core.helpers import ROOT_DIR, HermesException
+from hermes.core.helpers import ROOT_DIR, HermesError
 
 
-class PluginException(HermesException):
-    """ Base class for plugin related exceptions. """
+class PluginError(HermesError):
+    """Base class for plugin related exceptions."""
 
 
-TypeAbstractPlugin = TypeVar("TypeAbstractPlugin", bound="AbstractPlugin")
+TypeAbstractPlugin = TypeVar('TypeAbstractPlugin', bound='AbstractPlugin')
 
 PLUGIN_TYPE_FOLDERS = ['protocols', 'boards', 'devices', 'commands']
 
@@ -42,7 +42,7 @@ class AbstractPlugin:
     A serializable plugin base class.
 
     Such a class is :
-        - a plugin: it can be auto-discovered as it is loaded (@see plugins.py)
+        - a plugin: it can be auto-discovered as it is loaded (@see :file:`plugins.py`)
         - serializable: the implementation of a plugin of this type can be loader / saved in YAML file (@see plugins.py)
         - auto-incremented ID: it has a unique ID auto-incremented (if not provided) when instantiated.
         - named: it has a human-readable name
@@ -52,25 +52,25 @@ class AbstractPlugin:
     # by increment from the last existing ID in the system.
     _id_iter = itertools.count(1)
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         self.id = next(self._id_iter)
         self.name: str = self.__class__.__name__
         self.controller: str = self.__class__.__name__
 
     def __str__(self):
-        """ Stringify the plugin: Only used for debug purpose. """
+        """Stringify the plugin: Only used for debug purpose."""
         return f'{self.controller} {self.name}({self.id})'
 
     def __iter__(self, *args, **kwargs):  # real signature unknown
-        """ Implement iter(self). """
+        """Implement iter(self)."""
         return [a for a in dir(self) if not a.startswith('__') and not callable(getattr(self, a))]
 
     def __contains__(self, attr, *args, **kwargs):  # real signature unknown
-        """ Check if attr is an attribute or method of the class. """
+        """Check if attr is an attribute or method of the class."""
         return attr in dir(self)
 
     def __getitem__(self, y):  # real signature unknown; restored from __doc__
-        """ Allow syntax equivalence x[y]. """
+        """Allow syntax equivalence x[y]."""
         return getattr(self, y)
 
     def serialize(self, recursive=True) -> dict[str, Any]:
@@ -85,12 +85,12 @@ class AbstractPlugin:
         for attr in vars(self):
 
             # Remove the private attributes to prevent them being serialized.
-            if attr.startswith("_") and not attr.startswith("__"):
+            if attr.startswith('_') and not attr.startswith('__'):
                 del obj[attr]
                 continue
 
             # Remove any gui attributes.
-            if attr.startswith("gui_"):
+            if attr.startswith('gui_'):
                 del obj[attr]
                 continue
 
@@ -109,7 +109,7 @@ class AbstractPlugin:
 
     @classmethod
     def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:
-        """ Convert a representation YAML node to a Python object. """
+        """Convert a representation YAML node to a Python object."""
 
         # Extracts the data from the yaml data.
         mapping = constructor.construct_mapping(node, deep=True)
@@ -118,10 +118,10 @@ class AbstractPlugin:
         arguments = cls.__init__.__code__.co_varnames[1:cls.__init__.__code__.co_argcount]
 
         # Extracts necessary constructor arguments from the mapping.
-        init_args = {key: mapping[key] for key in arguments if key in mapping}
+        initial_args = {key: mapping[key] for key in arguments if key in mapping}
 
         # Instantiates the plugin.
-        plugin = cls(**init_args)
+        plugin = cls(**initial_args)
 
         # Sets the plugin values to the required values such as extracted from the YAML files.
         plugin.__dict__.update(mapping)
@@ -130,14 +130,14 @@ class AbstractPlugin:
 
     @classmethod
     def to_yaml(cls, representer, instance) -> Any:
-        """ Convert a Python object to a representation node. """
+        """Convert a Python object to a representation node."""
         # Note: The yaml_tag used is by convention the classe name.
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
         return representer.represent_mapping(tag, instance.serialize())
 
     @staticmethod
-    def types() -> list[Type[TypeAbstractPlugin]]:
-        """ Return all plugin types within the application. """
+    def types() -> list[type[TypeAbstractPlugin]]:
+        """Return all plugin types within the application."""
         return AbstractPlugin.__subclasses__()
 
 
@@ -148,7 +148,7 @@ def init():
     Explores the directory structure and search for all .py files within directories corresponding to plugin types
     to import it. The plugins could be in the hermes or the modules directories.
     """
-    logger.info(" > Plugin discovery")
+    logger.info(' > Plugin discovery')
 
     # @todo: let modules extend this list.
     namespaces = ['protocols', 'commands', 'devices', 'boards', 'gui.pages']

@@ -8,9 +8,9 @@ from hermes.devices.boolean import BooleanOutputDevice
 
 
 class LedDevice(BooleanOutputDevice):
-    """ LED class. """
+    """LED class."""
 
     @classmethod
-    def render_icon(cls) -> str:
+    def render_icon(cls) -> str:  # noqa: D102
         gui.icon('led', 30, 30)
         return ''

@@ -14,7 +14,6 @@ Example:
 ``
 """
 from abc import abstractmethod
-from typing import Optional
 
 from nicegui import ui
 
@@ -23,8 +22,8 @@ from hermes.core.struct import MetaPluginType
 from hermes.gui import layout
 
 
-def page(path: str, title: Optional[str] = None, subtitle: Optional[str] = None):
-    """ Decorator to add properties to a AbstractPage subclass implementation. """
+def page(path: str, title: str | None = None, subtitle: str | None = None):
+    """Add properties to a AbstractPage subclass implementation."""
 
     def decorator(klass):
         klass.path = path
@@ -36,15 +35,16 @@ def page(path: str, title: Optional[str] = None, subtitle: Optional[str] = None)
 
 
 class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
-    """ Manages plugins of type commands. """
+    """Manage plugins of type commands."""
 
     path = None
     title = None
     subtitle = None
 
-    def create(self):
+    def create(self) -> None:
+        # @todo def create(self, *arg, **kwarg) -> None:
         """
-        Creates the page as of nicegui method definition.
+        Create the page as of nicegui method definition.
         @see https://nicegui.io/reference#page
         @see https://nicegui.io/reference#pages_with_path_parameters.
         """
@@ -62,19 +62,19 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
             self.content()
 
     @abstractmethod
-    def content(self) -> None:
+    def content(self, *args, **kwargs) -> None:
         """
         Each page type must implement the content method to build the GUI associated with the page.
         @see https://nicegui.io/.
         """
 
     def render_title(self) -> None:
-        """ Renders the title. """
+        """Render the title."""
         if self.title:
             ui.label().classes('text-2xl md:text-4xl').bind_text(self, 'title')
 
     def render_subtitle(self) -> None:
-        """ Renders the subtitle. """
+        """Render the subtitle."""
         if self.subtitle:
             ui.label().classes('font-light text-overline text-uppercase').bind_text(self, 'subtitle')
 

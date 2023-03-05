@@ -1,4 +1,4 @@
-""" Defines semantic message byte values. """
+"""Defines semantic message byte values."""
 
 from enum import IntEnum
 

@@ -8,9 +8,8 @@ from hermes.core.dictionary import MessageCode
 
 
 class AckCommand(AbstractCommand):
-    """ ACK command. """
+    """ACK command."""
 
     @property
-    @override
-    def code(self) -> MessageCode:
+    def code(self) -> MessageCode:  # noqa: D102
         return MessageCode.ACK

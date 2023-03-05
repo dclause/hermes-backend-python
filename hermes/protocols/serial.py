@@ -9,11 +9,12 @@ import sys
 from serial import Serial, SerialException
 
 from hermes.core import logger
-from hermes.protocols import AbstractProtocol, ProtocolException
+from hermes.core.helpers import HermesError
+from hermes.protocols import AbstractProtocol, ProtocolError
 
 
 class SerialProtocol(AbstractProtocol):
-    """ Implements an :class:AbstractProtocol class using the serial port. """
+    """Implements an :class:AbstractProtocol class using the serial port."""
 
     def __init__(self, port, baudrate=115200, timeout=0):
         super().__init__()
@@ -22,7 +23,7 @@ class SerialProtocol(AbstractProtocol):
         self._timeout: int = timeout
         self._serial: Serial = Serial()
 
-    def open(self) -> None:
+    def open(self) -> None:  # noqa: D102
         try:
             self._serial = Serial(
                 port=self._serial_port,
@@ -32,52 +33,46 @@ class SerialProtocol(AbstractProtocol):
             )
             self._serial.flush()
         except SerialException as error:
-            logger.error(f'Serial connexion: Port {self._serial_port} could not be opened: {error}')
-            logger.error(f'Available ports are {self.get_serial_ports()}')
-            raise ProtocolException(f'Port {self._serial_port} could not be opened') from error
+            logger.exception(f'Available ports are {self.get_serial_ports()}')
+            raise ProtocolError(f'Port {self._serial_port} could not be opened: {error}') from error
 
-    def close(self) -> None:
+    def close(self) -> None:  # noqa: D102
         self._serial.close()
 
-    def is_open(self) -> bool:
+    def is_open(self) -> bool:  # noqa: D102
         return self._serial.isOpen()
 
-    def read_byte(self) -> int:
+    def read_byte(self) -> int:  # noqa: D102
         bytes_array = None
         while not bytes_array:
             bytes_array = bytearray(self._serial.read(1))
         logger.debug(f'Serial protocol: Received command code {str(bytes_array[0])}')
         return bytes_array[0]
 
-    def send(self, data: bytearray) -> None:
+    def send(self, data: bytearray) -> None:  # noqa: D102
         logger.debug(f'Serial protocol: Send command {data} - {list(data)}')
         try:
             self._serial.write(data)
         except SerialException:
-            logger.error(f'Serial protocol: Error sending command {data} - {list(data)}')
+            HermesError(f'Serial protocol: Error sending command {data} - {list(data)}')
 
-    def read_line(self) -> str:
-        response = ""
+    def read_line(self) -> str:  # noqa: D102
+        response = ''
         while True:
             bytes_array = bytearray(self._serial.read(1))
             if bytes_array:
                 response += chr(bytes_array[0])
-            if "\r\n" in response:
+            if '\r\n' in response:
                 break
         return response.rstrip()
 
     @staticmethod
     def get_serial_ports() -> list[str]:
         """
-        Lists serial ports.
+        List serial ports.
 
-        Returns
-        -------
-            list[str]: A list of available serial ports.
-
-        Raises
-        ------
-            EnvironmentError: The code is running on an unknown platform.
+        :return list[str]: A list of available serial ports.
+        :raise EnvironmentError: The code is running on an unknown platform.
         """
         if sys.platform.startswith('win'):
             ports = [f'COM{(i + 1)}' for i in range(256)]
@@ -87,7 +82,7 @@ class SerialProtocol(AbstractProtocol):
         elif sys.platform.startswith('darwin'):
             ports = glob.glob('/dev/tty.*')
         else:
-            raise EnvironmentError('Unsupported platform')
+            raise OSError('Unsupported platform')
 
         results = []
         for port in ports:

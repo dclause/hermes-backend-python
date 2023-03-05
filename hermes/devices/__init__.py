@@ -7,8 +7,8 @@ A device is a physical piece of electronic wired to a Board (ex: led, servo, etc
 
 A device state is mutable via devices (@see Device definition in devices package).
 The devices can be sent via the 'device' socketIO method.
-@see Server definition in server.py.
-@see Device definition in devices package.
+@see :class:`Server` definition in server.py.
+@see :class:`Device` definition in devices package.
 
 Devices can be created from configs file leaving in the config/devices.yml file. Each device must validate the
 schema provided within this package.
@@ -16,7 +16,8 @@ Devices are detected when the package is imported for the first time and globall
 the `devices` key
 """
 from abc import abstractmethod
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from nicegui import ui
 
@@ -24,13 +25,13 @@ from hermes import gui
 from hermes.core import logger
 from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
-from hermes.core.helpers import HermesException
+from hermes.core.helpers import HermesError
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType, MetaSingleton
 
 
-class DeviceException(HermesException):
-    """ Base class for device related exceptions. """
+class DeviceError(HermesError):
+    """Base class for device related exceptions."""
 
 
 class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
@@ -56,11 +57,11 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     @property
     @abstractmethod
     def code(self) -> MessageCode:
-        """ Each device type must be a 8bit code from the MessageCode dictionary. """
+        """Each device type must be a 8bit code from the MessageCode dictionary."""
 
     def render(self, mutator: Callable):
         """
-        Renders a device using nicegui.io syntax.
+        Render a device using nicegui.io syntax.
         This method _can_ be overriden but is not meant to.
         """
         with gui.container().classes('device-icon'):
@@ -77,42 +78,38 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
     @classmethod
     def render_icon(cls) -> str:
-        """Renders the board icon (@see https://fonts.google.com/icons)."""
+        """Render the board icon (@see https://fonts.google.com/icons)."""
         return 'brightness_high'
 
     def render_name(self):
-        """Renders the board name."""
+        """Render the board name."""
         ui.label().bind_text(self, 'name')
 
-    # noinspection PyMethodParameters
     @classmethod
-    # pylint: disable-next=unused-argument,bad-classmethod-argument
-    def render_info(self):
+    def render_info(self):  # noqa: N804
         """
-        Renders extra info.
+        Render extra info.
         Should typically be either a very short text (pin number for instance) or an 'info' icon with a tooltip.
         """
 
-    # noinspection PyMethodParameters
     @classmethod
-    # pylint: disable-next=unused-argument,bad-classmethod-argument
-    def render_action(self, mutator: Callable):  # no PY-2665
-        """Renders an actionable input to bind with the board action."""
+    def render_action(self, mutator: Callable):  # noqa: N804
+        """Render an actionable input to bind with the board action."""
         ui.label('No action here.').classes('text-italic')
 
     @abstractmethod
     def _encode_data(self) -> bytearray:
-        """ Encodes the settings of the device as a byte array. """
+        """Encode the settings of the device as a byte array."""
         return bytearray()
 
     @abstractmethod
     def _encode_value(self, value: Any) -> bytearray:
-        """ Encodes the given value as an array of bytes. """
+        """Encode the given value as an array of bytes."""
         return bytearray([value])
 
     def as_playload(self) -> bytearray:
         """
-        Returns the representation of the device as a bytearray.
+        Return the representation of the device as a bytearray.
         This is used to:
          - describes the device to the physical board during the handshake process.
          - changes the settings of a device.
@@ -122,12 +119,11 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         return bytearray([len(data) + 2]) + header + data
 
     def set_value(self, board_id, value: Any):
-        """ Sends the command. """
+        """Send the command."""
         board = settings.get(['boards', board_id])
 
-        if not board.connected:
-            if not board.open():
-                raise DeviceException(f'Board {board.id} ({board.name}) is not connected.')
+        if not board.connected and not board.open():
+            raise DeviceError(f'Board {board.id} ({board.name}) is not connected.')
 
         header = bytearray([MessageCode.MUTATION, self.id])
         data = self._encode_value(value)
@@ -138,7 +134,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
 
 class DeviceFactory(metaclass=MetaSingleton):
-    """ Device factory class: instantiates a Device of a given type. """
+    """Device factory class: instantiates a Device of a given type."""
 
     def __init__(self):
         self.__devices: dict[MessageCode, AbstractDevice] = {}
@@ -149,51 +145,39 @@ class DeviceFactory(metaclass=MetaSingleton):
 
     def get_by_code(self, code: MessageCode) -> AbstractDevice | None:
         """
-        Instantiates a AbstractDevice based on a given MessageCode.
+        Instantiate a AbstractDevice based on a given MessageCode.
 
-        Args:
-        ----
-            code (MessageCode): The MessageCode of the Device to instantiate.
+        :param MessageCode code: The MessageCode of the Device to instantiate.
 
-        Returns:
-        -------
-            AbstractDevice | None
-        Raises:
-            DeviceException: the device code does not exist.
+        :return AbstractDevice | None:
 
-        See Also:
-        --------
-            :class:`MessageCode`
+        :raise DeviceError: the device code does not exist.
+
+        **See also:** :class:`MessageCode`
         """
         device = self.__devices.get(code)
         if device is None:
             logger.error(f'Device {code} do not exists.')
-            raise DeviceException(f'Device with code `{code}` do not exists.')
+            raise DeviceError(f'Device with code `{code}` do not exists.')
         return device
 
     def get_by_name(self, name: str) -> AbstractDevice | None:
         """
-        Instantiates a AbstractDevice based on a given name.
+        Instantiate a AbstractDevice based on a given name.
 
-        Args:
-        ----
-            name (str): The name of the Device to instantiate.
+        :param str name: The name of the Device to instantiate.
 
-        Returns:
-        -------
-            AbstractDevice or None
-        Raises:
-            DeviceException: the device name does not exist.
+        :return AbstractDevice or None:
 
-        See Also:
-        --------
-            :class:`MessageCode`
+        :raise DeviceError: the device name does not exist.
+
+        **See Also:** :class:`MessageCode`
         """
         device = next((device for device in self.__devices.values() if device.name == name), None)
         if device is None:
             logger.error(f'Device {name} do not exists.')
-            raise DeviceException(f'Device with name `{name}` do not exists.')
+            raise DeviceError(f'Device with name `{name}` do not exists.')
         return device
 
 
-__ALL__ = ['AbstractDevice', 'DeviceFactory', 'DeviceException']
+__ALL__ = ['AbstractDevice', 'DeviceFactory', 'DeviceError']

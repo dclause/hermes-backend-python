@@ -26,15 +26,15 @@ from hermes import gui
 from hermes.commands import CommandFactory
 from hermes.core import api, logger
 from hermes.core.dictionary import MessageCode
-from hermes.core.helpers import HermesException
+from hermes.core.helpers import HermesError
 from hermes.core.plugins import AbstractPlugin, TypeAbstractPlugin
 from hermes.core.struct import ClearableQueue, MetaPluginType
 from hermes.devices import AbstractDevice
-from hermes.protocols import AbstractProtocol, ProtocolException
+from hermes.protocols import AbstractProtocol, ProtocolError
 
 
-class BoardException(HermesException):
-    """ Base class for board related exceptions. """
+class BoardError(HermesError):
+    """Base class for board related exceptions."""
 
 
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
@@ -42,19 +42,13 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     Handles the serial communication with an external board.
 
     The properties of a boards are :
-    *id*            the board ID
-    *name*          the board name
-    *controller*    the board controller type (ie the class name of the board plugin type instance)
-    *protocol*      the board protocol used for communication
-        (@see AbstractProtocol in hermes.protocols for sub-properties)
-    *actions*       a list of actuators devices (brings action to the board - led, servo, etc.)
-        (@see AbstractDevice in hermes.devices for sub-properties)
-    *inputs*        a list of sensors devices (outputs data from the board - PIR, button, etc.)
-        (@see AbstractDevice in hermes.devices for sub-properties)
-
-    ...
-    any other properties brought by a board type plugin.
-    (@see ArduinoBoard for example)
+     - *id*:            the board ID
+     - *name*:          the board name
+     - *controller*:    the board controller type (ie the class name of the board plugin type instance)
+     - *protocol*:      the board protocol used for communication - see :class:`AbstractProtocol`
+     - *actions*:       a list of actuators (led, servo, etc.) - see :class:`AbstractDevice`
+     - *inputs*:        a list of sensors (PIR, button, etc.) - see :class:`AbstractDevice`
+     - ...:             any other properties brought by a board type plugin. - see :class:`ArduinoBoard`
     """
 
     def __init__(self, protocol: AbstractProtocol):
@@ -93,16 +87,15 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     def open(self) -> bool:
         """
         Open the connexion from board to backend using the internal protocol.
-
         :return bool:
-        :raise ProtocolException: Raised if the connexion could not be opened.
+        :raise ProtocolError: Raised if the connexion could not be opened.
         """
-        # ###
+
         # Open serial port (for communication with Arduino)
         try:
             self.protocol.open()
-        except ProtocolException:
-            logger.error(f'Board {self.name}: Connexion could not be opened.')
+        except ProtocolError:
+            ProtocolError(self.name)
             return not self.close()
 
         # Wait to give time for the arduino to receive the message and open connection properly.
@@ -110,16 +103,14 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         # is the one requiring the more wait time, hence those arbitrary 2 seconds.
         time.sleep(2)
 
-        # ###
         # Run the Handshake process.
         try:
             logger.debug(f'Board {self.name} - Try handshake')
             self.handshake()
         except FunctionTimedOut as error:
-            logger.error(f'Board {self.name} - Handshake error: {error}')
+            HermesError(f'Board {self.name} - Handshake error: {error}')
             return not self.close()
 
-        # ###
         # Starts the send/receive threads.
         for thread in self._threads:
             thread.start()
@@ -128,15 +119,8 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         logger.info(f' > Board {self.name} - CONNECTED')
         return self.connected
 
-    @classmethod
-    def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:
-        board = super().from_yaml(constructor, node)
-        board.actions = {actionPlugin.id: actionPlugin for actionPlugin in board.actions}
-        board.inputs = {inputPlugin.id: inputPlugin for inputPlugin in board.inputs}
-        return board
-
     def close(self) -> bool:
-        """ Close the connexion. """
+        """Close the connexion."""
         self.protocol.close()
 
         # Ends the multithreading.
@@ -152,7 +136,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 
     @func_set_timeout(5)
     def handshake(self) -> None:
-        """ Perform handshake between the board and the application. """
+        """Perform handshake between the board and the application."""
 
         # Handshake: send all devices to board via PATCH.
         logger.debug(f'Handshake for board `{self.name}`.')
@@ -170,7 +154,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         for (_, device) in devices.items():
             data: bytearray = device.as_playload()
             data = bytearray([MessageCode.PATCH]) + data
-            logger.debug(f"Handshake PATCH: {data} - {list(data)}")
+            logger.debug(f'Handshake PATCH: {data} - {list(data)}')
             self.protocol.send(data)
 
         # Blocking wait ACK.
@@ -181,7 +165,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
                 command = CommandFactory().get_by_code(command_code)
                 command.receive(self.protocol)
                 command.process()
-            except HermesException:
+            except HermesError:
                 continue
 
     def send(self, data: bytearray):
@@ -203,6 +187,13 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         :param state: new state value.
         """
         background_tasks.create(api.action(gui.CLIENT_ID, self.id, device_id, state))
+
+    @classmethod
+    def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:  # noqa: D102
+        board = super().from_yaml(constructor, node)
+        board.actions = {actionPlugin.id: actionPlugin for actionPlugin in board.actions}
+        board.inputs = {inputPlugin.id: inputPlugin for inputPlugin in board.inputs}
+        return board
 
 
 _RATE = 0
@@ -238,7 +229,7 @@ class SerialSenderThread(threading.Thread):
         self.n_received_semaphore = n_received_semaphore
         self.serial_lock = serial_lock
 
-    def run(self):
+    def run(self):  # noqa: D102
         while not self.exit_event.is_set():
             self.n_received_semaphore.acquire()
 
@@ -257,7 +248,7 @@ class SerialSenderThread(threading.Thread):
                 self.protocol.send(data)
 
             time.sleep(_RATE)
-        logger.debug("SerialSenderThread: thread stops.")
+        logger.debug('SerialSenderThread: thread stops.')
 
 
 class SerialListenerThread(threading.Thread):
@@ -268,12 +259,10 @@ class SerialListenerThread(threading.Thread):
     If the MessageCode is an ACK, the thread releases one lock to the n_received_semaphore semaphore to clear the way
     for the CommandSenderThread.
 
-    Args:
-    ----
-        protocol (AbstractProtocol)
-        exit_event (threading.Event object)
-        n_received_semaphore (threading.Semaphore)
-        serial_lock (threading.Lock)
+    :param AbstractProtocol protocol:
+    :param threading.Event object exit_event:
+    :param threading.Semaphore n_received_semaphore:
+    :param threading.Lock serial_lock:
     """
 
     def __init__(
@@ -290,14 +279,14 @@ class SerialListenerThread(threading.Thread):
         self.n_received_semaphore = n_received_semaphore
         self.serial_lock = serial_lock
 
-    def run(self):
-        logger.debug("SerialListenerThread: thread started.")
+    def run(self):  # noqa: D102
+        logger.debug('SerialListenerThread: thread started.')
 
         while not self.exit_event.is_set():
             try:
                 command_code: MessageCode = MessageCode(self.protocol.read_byte())
                 logger.debug(f'SerialListenerThread: receive command code {command_code}')
-            except HermesException:
+            except HermesError:
                 time.sleep(_RATE)
                 continue
 
@@ -310,7 +299,7 @@ class SerialListenerThread(threading.Thread):
                 if command_code == MessageCode.ACK:
                     self.n_received_semaphore.release()
             time.sleep(_RATE)
-        logger.debug("SerialListenerThread: thread stops.")
+        logger.debug('SerialListenerThread: thread stops.')
 
 
-__ALL__ = ['BoardException', 'AbstractBoard']
+__ALL__ = ['BoardError', 'AbstractBoard']

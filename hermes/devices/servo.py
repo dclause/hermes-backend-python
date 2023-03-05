@@ -3,7 +3,7 @@ SERVO Command: Orders a servo to move to given position.
 
 code: MessageCode::SERVO
 """
-from typing import Callable
+from collections.abc import Callable
 
 from nicegui import ui
 
@@ -13,7 +13,7 @@ from hermes.devices import AbstractDevice
 
 
 class ServoDevice(AbstractDevice):
-    """ Sends a Servo command. """
+    """Sends a Servo command."""
 
     def __init__(self):
         super().__init__(0)
@@ -26,19 +26,18 @@ class ServoDevice(AbstractDevice):
         self.acceleration: int = -1
 
     @property
-    def code(self) -> MessageCode:
+    def code(self) -> MessageCode:  # noqa: D102
         return MessageCode.SERVO
 
     @classmethod
-    def render_icon(cls) -> str:
+    def render_icon(cls) -> str:  # noqa: D102
         gui.icon('servo', 30, 40)
         return ''
 
-    def render_info(self):
+    def render_info(self):  # noqa: D102
         ui.label(f'(pin: {self.pin})')
 
-    # pylint: disable-next=arguments-differ
-    def render_action(self, mutator: Callable):
+    def render_action(self, mutator: Callable):  # noqa: D102
         # with ui.column():
         ui.slider(min=self.min, max=self.max, value=self.state) \
             .on('change', lambda value: mutator(self.id, value)) \

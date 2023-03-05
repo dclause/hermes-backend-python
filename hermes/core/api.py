@@ -11,7 +11,7 @@ from nicegui import ui
 
 from hermes.core import logger
 from hermes.core.config import settings
-from hermes.core.helpers import HermesException
+from hermes.core.helpers import HermesError
 from hermes.devices import AbstractDevice
 
 _SOCKET: SocketManager
@@ -34,23 +34,22 @@ async def action(cid: str, board_id: int, device_id: int, value: Any) -> None:
         settings.get('boards')[board_id].actions[device_id].state = value
         ui.update(settings.get(['boards', board_id, 'actions', device_id]).gui_actions)
         await _SOCKET.emit('action', (board_id, device_id, value), skip_sid=cid)
-    except HermesException as exception:
-        logger.error(f'API ERROR: Client {cid}: Mutation error: "{exception}".')
+    except HermesError:
+        # HermesError(f'API ERROR: Client {cid}: Mutation error: "{exception}".')
+        pass
 
 
 def init(app: FastAPI) -> None:
-    """ Defines and attaches the API routes associated with a fastAPI server. """
-
-    # pylint: disable-next=global-statement
-    global _SOCKET
+    """Define and attach the API routes associated with a fastAPI server."""
+    global _SOCKET  # noqa: PLW0603
 
     _SOCKET = SocketManager(app=app, mount_location='/api', cors_allowed_origins=[])
     app.add_middleware(
         CORSMiddleware,
         allow_origins=['*'],
-        allow_methods=["*"],
+        allow_methods=['*'],
         allow_credentials=True,
-        allow_headers=["*"],
+        allow_headers=['*'],
     )
 
     @_SOCKET.on('connect')

@@ -3,4 +3,3 @@ pytest-cov==4.0.0
 pur==7.1.0
 mypy==1.0.1
 ruff==0.0.254
-pyment==0.3.3

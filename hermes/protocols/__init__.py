@@ -8,78 +8,58 @@ to be embedded in a board (see AbstractBoard) and must implement the AbstractPro
 
 from abc import abstractmethod
 
-from hermes.core.helpers import HermesException
+from hermes.core.helpers import HermesError
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 
 
-class ProtocolException(HermesException):
-    """ Base class for protocol related exceptions. """
+class ProtocolError(HermesError):
+    """Base class for protocol related exceptions."""
+
+    def __init__(self, name: str):
+        super().__init__(f'Board {name}: Connexion could not be opened.')
 
 
 class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
-    """ Abstract class representing a Connexion protocol connexion of some kind."""
+    """Abstract class representing a Connexion protocol connexion of some kind."""
 
     @abstractmethod
     def open(self) -> None:
         """
-        Opens the connexion.
-
-        Returns
-        -------
-            self
-
-        Raises
-        ------
-             ConnexionException
+        Open the connexion.
+        :raise ProtocolError: the connexion cannot be established.
         """
 
     @abstractmethod
     def close(self) -> None:
-        """ Closes the connexion. """
+        """Close the connexion."""
 
     @abstractmethod
     def is_open(self) -> bool:
-        """ Checks if the connexion is active. """
+        """Check if the connexion is active."""
 
     @abstractmethod
     def read_byte(self) -> int:
         """
-        Reads a single byte.
-
-        Warnings:
-        --------
-            This method is blocking.
-
-        Returns:
-        -------
-            int: The 8bit next byte in queue.
+        Read a single byte - in a blocking way.
+        :return int: The 8bit next byte in queue.
         """
 
     @abstractmethod
     def send(self, data: bytearray) -> None:
         """
-        Sends data.
-
-        Args:
-        ----
-            data (bytearray) An array of byte to send.
+        Send given data.
+        :param bytearray data:  An array of byte to send.
         """
 
     @abstractmethod
     # @func_set_timeout(1)
     def read_line(self) -> str:
         """
-        Reads the input data until the next EOF is received.
-
-        Warnings:
-        --------
-            This method timeouts after 1sec.
-
-        Returns:
-        -------
-            str: The data.
+        Read the input data until the next EOF is received.
+        This method timeouts after 1sec.
+        :return str: the data.
         """
 
 
-__ALL__ = ['AbstractProtocol', 'ProtocolException']
+__ALL__ = ['AbstractProtocol', 'ProtocolError']

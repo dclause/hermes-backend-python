@@ -1,14 +1,13 @@
-""" Logger specific functions. """
+"""Logger specific functions."""
 
 import inspect
 import pathlib
 import time
 
 import logzero
-from logzero import DEBUG, ERROR, INFO, WARNING, loglevel  # noqa: F401
 
 from hermes.core import cli
-from hermes.core.helpers import ROOT_DIR
+from hermes.core.helpers import ROOT_DIR, HermesError
 
 
 def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
@@ -17,7 +16,7 @@ def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
 
     :param str logpath: The path the logfile. Defaults to ./logs/backend.log
     """
-    print(" > Init logger")
+    print(' > Init logger')
 
     # Create rotated logfile.
     pathlib.Path(logpath).parent.mkdir(parents=True, exist_ok=True)
@@ -36,30 +35,36 @@ def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
 
 
 def debug(msg, *args, **kwargs):
-    """ Forward DEBUG logs to logzero. """
+    """Forward DEBUG logs to logzero."""
     logzero.logger.debug(msg, *args, **kwargs)
 
 
 def info(msg, *args, **kwargs):
-    """ Forward DEBUG logs to logzero. """
+    """Forward INFO logs to logzero."""
     print(msg.format(*args, **kwargs))
     logzero.logger.info(msg, *args, **kwargs)
 
 
 def warning(msg, *args, **kwargs):
-    """ Forward DEBUG logs to logzero. """
+    """Forward WARNING logs to logzero."""
     print(f'\033[93m WARNING: {msg.format(*args, **kwargs)} \033[0m')
     logzero.logger.warning(msg, *args, **kwargs)
 
 
 def error(msg, *args, **kwargs):
-    """ Forward DEBUG logs to logzero. """
+    """Forward ERROR logs to logzero."""
     print(f'\033[91m ERROR: {msg % args} \033[0m')
     logzero.logger.error(msg, *args, **kwargs)
 
 
+def exception(msg, *args, **kwargs):
+    """Forward ERROR logs to logzero."""
+    print(f'\033[91m EXCEPTION: {msg % args} \033[0m')
+    logzero.logger.error(msg, *args, **kwargs)
+
+
 def log(level, msg, *args, **kwargs):
-    """ Forward logs to appropriate function. """
+    """Forward logs to appropriate function."""
     match level:
         case logzero.DEBUG:
             return debug(msg, *args, **kwargs)
@@ -69,28 +74,27 @@ def log(level, msg, *args, **kwargs):
             return warning(msg, *args, **kwargs)
         case logzero.ERROR:
             return error(msg, *args, **kwargs)
-    raise Exception(f'ErrorLevel not exists ({level})')
+    raise HermesError(f'ErrorLevel not exists ({level})')
 
 
 def logthis(*args):
     """
     Log decorator for a function: the call to this function will be logged and its performance measured.
 
-    Examples
-    --------
+    **Example**
         Use a decorator on a function to log that function.
-        ```
-        @logthis
-        def _decorated(self):
-            pass
-        ````
+            ```
+            @logthis
+            def _decorated(self):
+                pass
+            ```
 
         By default, log is done with debug level, but it can be specified:
-        ```
-        @logthis(logger.WARNING)
-        def _decorated(self):
-            pass
-        ````
+            ```
+            @logthis(logger.WARNING)
+            def _decorated(self):
+                pass
+            ```
     """
 
     def _log(function):
@@ -110,8 +114,8 @@ def logthis(*args):
             """Return a string containing function name and list of all argument names/values."""
             func_args = inspect.signature(func).bind(*func_args, **kwargs)
             func_args.apply_defaults()
-            func_args_str = ", ".join(f"{arg}={val}" for arg, val in func_args.arguments.items())
-            return f"{func.__name__}({func_args_str})"
+            func_args_str = ', '.join(f'{arg}={val}' for arg, val in func_args.arguments.items())
+            return f'{func.__name__}({func_args_str})'
 
         return inner
 

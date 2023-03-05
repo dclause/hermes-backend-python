@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
-""" HERMES application entry point. """
+"""
+HERMES application entry point.
+@todo Remove all 'noqa D102' once:
+    https://github.com/charliermarsh/ruff/issues/2413
+    https://github.com/ott-jax/ott/pull/269.
+"""
+
 import webbrowser
 
 from hermes.core import logger, plugins, server, storage
@@ -9,7 +14,7 @@ from hermes.core.config import settings
 
 
 def main():
-    """ Bootstraps and run the application. """
+    """Bootstraps and run the application."""
 
     print('\033[96m == Loading HERMES == \033[0m')
     logger.init()
@@ -48,7 +53,7 @@ def main():
             board.close()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 
 __ALL__ = []
