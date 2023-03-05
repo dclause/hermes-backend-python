@@ -4,6 +4,7 @@ SERVO Command: Orders a servo to move to given position.
 code: MessageCode::SERVO
 """
 from collections.abc import Callable
+from typing import Any
 
 from nicegui import ui
 
@@ -15,7 +16,7 @@ from hermes.devices import AbstractDevice
 class ServoDevice(AbstractDevice):
     """Sends a Servo command."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(0)
         self.pin: int = 0
         self.tmin: int = 0
@@ -29,27 +30,21 @@ class ServoDevice(AbstractDevice):
     def code(self) -> MessageCode:  # noqa: D102
         return MessageCode.SERVO
 
-    @classmethod
-    def render_icon(cls) -> str:  # noqa: D102
+    def render_icon(self) -> str:  # noqa: D102
         gui.icon('servo', 30, 40)
         return ''
 
-    def render_info(self):  # noqa: D102
+    def render_info(self) -> None:  # noqa: D102
         ui.label(f'(pin: {self.pin})')
 
-    def render_action(self, mutator: Callable):  # noqa: D102
+    def render_action(self, mutator: Callable[[int, Any], None]) -> None:  # noqa: D102
         # with ui.column():
         ui.slider(min=self.min, max=self.max, value=self.state) \
-            .on('change', lambda value: mutator(self.id, value)) \
+            .on('change', lambda value: mutator(self.id, value['args'])) \
             .props('label') \
             .bind_value(self, 'state')
         # ui.number(value=self.state, on_change=lambda value: mutator(self.id, value)) \
         #     .bind_value(self, 'state')
-
-    # .on('change', lambda value: self._on_change_callback(mutator, value['args'])) \
-    # def _on_change_callback(self, mutator: Callable, value: int):
-    #     self.state = value
-    #     mutator(self.id, value)
 
     def _encode_data(self) -> bytearray:
         return bytearray([self.pin]) + \

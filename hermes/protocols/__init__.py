@@ -8,7 +8,7 @@ to be embedded in a board (see AbstractBoard) and must implement the AbstractPro
 
 from abc import abstractmethod
 
-from hermes.core.helpers import HermesError
+from hermes.core.logger import HermesError
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType
 

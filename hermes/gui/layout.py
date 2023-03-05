@@ -1,15 +1,16 @@
 """Provide various default layout to guarantee a consistent design across pages."""
 
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any
 
 from nicegui import ui
 
 from hermes import __app__, __tagline__, gui
 
 
-@contextmanager
-def _header(menu_items: dict = None):
+def _header(menu_items: dict[str, Any] | None = None) -> None:
     """Header default layout and styling."""
 
     if menu_items is None:
@@ -69,8 +70,7 @@ def _header(menu_items: dict = None):
                         ui.label('And tell others about HERMES.').classes('text-[140%]')
 
 
-@contextmanager
-def _sidebar():
+def _sidebar() -> None:
     """Sidebar default layout and styling."""
 
     with ui.left_drawer(top_corner=True, bottom_corner=True, fixed=True) \
@@ -84,14 +84,14 @@ def _sidebar():
 
 
 @contextmanager
-def _main():
+def _main() -> Generator[None, None, None]:
     """Content area default layout and styling."""
     with ui.column().classes('full-width full-height p-4 mx-auto', remove='gap-4'):
         yield
 
 
 @contextmanager
-def layout():
+def layout() -> Generator[None, None, None]:
     """Page layout: share the same styling and behavior across all pages."""
     _header()
     _sidebar()

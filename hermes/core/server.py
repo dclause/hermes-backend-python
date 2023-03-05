@@ -7,7 +7,9 @@ The server section is responsible for :
 import contextlib
 import threading
 import time
+from collections.abc import Generator
 from socket import socket
+from typing import Any
 
 import uvicorn
 from fastapi import FastAPI
@@ -18,29 +20,24 @@ from hermes import __version__, gui
 from hermes.core import api, logger, plugins, storage
 from hermes.core.config import settings
 
-server = None
+server: Any
 
 
-class _ChangeReloadServer(ChangeReload):
+class _ChangeReloadServer(ChangeReload):  # type: ignore[valid-type, misc]
     """Overrides the default uvicorn server to run in a separated thread context."""
 
-    def __init__(
-            self,
-            _server: uvicorn.Server,
-            _config: Config,
-            _sockets: list[socket],
-    ) -> None:
+    def __init__(self, _server: uvicorn.Server, _config: Config, _sockets: list[socket]) -> None:
         super().__init__(_config, _server.run, _sockets)
-        uvicorn.supervisors.basereload.HANDLED_SIGNALS = []
+        uvicorn.supervisors.basereload.HANDLED_SIGNALS = []  # type: ignore[assignment]
         self._server = _server
         self.started = False
 
-    def run(self):
+    def run(self) -> None:
         self.started = True
         super().run()
 
     @contextlib.contextmanager
-    def run_in_thread(self):
+    def run_in_thread(self) -> Generator[None, None, None]:
         """To be called instead of uvicorn.run() to run the server in a dedicated thread."""
         thread = threading.Thread(target=self.run)
         thread.start()
@@ -57,11 +54,11 @@ class _ChangeReloadServer(ChangeReload):
 class _Server(uvicorn.Server):
     """Overrides the default uvicorn server to run in a separated thread context."""
 
-    def install_signal_handlers(self):
+    def install_signal_handlers(self) -> None:
         pass
 
     @contextlib.contextmanager
-    def run_in_thread(self, sockets=None):
+    def run_in_thread(self, sockets: list[socket] | None = None) -> Generator[None, None, None]:
         """To be called instead of uvicorn.run() to run the server in a dedicated thread."""
         thread = threading.Thread(target=self.run, args=(sockets,))
         thread.start()
@@ -74,17 +71,17 @@ class _Server(uvicorn.Server):
             thread.join()
 
 
-def init():
+def init() -> None:
     """Initialize the server."""
     global server  # noqa: PLW0603
 
     config = Config(
         'hermes.core.server:reload_factory' if settings.get(['server', 'reload']) else 'hermes.core.server:factory',
         factory=True,
-        host=settings.get(['server', 'host']),
-        port=settings.get(['server', 'port']),
+        host=settings.get(['server', 'host']),  # type: ignore[arg-type]
+        port=settings.get(['server', 'port']),  # type: ignore[arg-type]
         log_level='warning',
-        reload=settings.get(['server', 'reload']),
+        reload=settings.get(['server', 'reload']),  # type: ignore[arg-type]
         reload_includes=['*.py', '*.css'] if settings.get(['server', 'reload']) else None)
 
     server = _Server(config=config)  # noqa: PLW0603
@@ -101,7 +98,7 @@ def factory() -> FastAPI:
     app = FastAPI()
 
     @app.get('/version')
-    def healthcheck():
+    def healthcheck() -> dict[str, str]:
         return {'status': 'healthy', 'version': __version__}
 
     api.init(app)

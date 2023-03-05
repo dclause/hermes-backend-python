@@ -13,21 +13,23 @@ the `boards` key.
 
 @see `Protocol` in the protocol package.
 """
+from __future__ import annotations
 
 import threading
 import time
 from queue import Empty
-from typing import Any
+from typing import Any, cast
 
 from func_timeout import FunctionTimedOut, func_set_timeout
 from nicegui import background_tasks
+from ruamel.yaml.constructor import BaseConstructor
 
 from hermes import gui
 from hermes.commands import CommandFactory
 from hermes.core import api, logger
 from hermes.core.dictionary import MessageCode
-from hermes.core.helpers import HermesError
-from hermes.core.plugins import AbstractPlugin, TypeAbstractPlugin
+from hermes.core.logger import HermesError
+from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import ClearableQueue, MetaPluginType
 from hermes.devices import AbstractDevice
 from hermes.protocols import AbstractProtocol, ProtocolError
@@ -134,7 +136,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         logger.info(f' > Board {self.name} - DISCONNECTED')
         return not self.connected
 
-    @func_set_timeout(5)
+    @func_set_timeout(5)  # type: ignore[misc]
     def handshake(self) -> None:
         """Perform handshake between the board and the application."""
 
@@ -168,7 +170,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
             except HermesError:
                 continue
 
-    def send(self, data: bytearray):
+    def send(self, data: bytearray) -> None:
         """
         Send the given data (via the internal protocol).
 
@@ -176,8 +178,8 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         """
         self._command_queue.put(data)
 
-    @func_set_timeout(5)
-    def gui_mutator(self, device_id: int, state: Any):
+    @func_set_timeout(5)  # type: ignore[misc]
+    def gui_mutator(self, device_id: int, state: Any) -> None:
         """
         GUI Helper:  For board's devices to mutate their state via UI inputs.
 
@@ -189,11 +191,11 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         background_tasks.create(api.action(gui.CLIENT_ID, self.id, device_id, state))
 
     @classmethod
-    def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:  # noqa: D102
-        board = super().from_yaml(constructor, node)
+    def from_yaml(cls, constructor: BaseConstructor, node: Any) -> AbstractBoard:  # noqa: D102 # type: ignore[override]
+        board: Any = super().from_yaml(constructor, node)
         board.actions = {actionPlugin.id: actionPlugin for actionPlugin in board.actions}
         board.inputs = {inputPlugin.id: inputPlugin for inputPlugin in board.inputs}
-        return board
+        return cast(AbstractBoard, board)
 
 
 _RATE = 0
@@ -220,7 +222,7 @@ class SerialSenderThread(threading.Thread):
             exit_event: threading.Event,
             n_received_semaphore: threading.Semaphore,
             serial_lock: threading.Lock,
-    ):
+    ) -> None:
         threading.Thread.__init__(self)
         self.deamon = True
         self.protocol = protocol
@@ -229,7 +231,7 @@ class SerialSenderThread(threading.Thread):
         self.n_received_semaphore = n_received_semaphore
         self.serial_lock = serial_lock
 
-    def run(self):  # noqa: D102
+    def run(self) -> None:  # noqa: D102
         while not self.exit_event.is_set():
             self.n_received_semaphore.acquire()
 
@@ -279,7 +281,7 @@ class SerialListenerThread(threading.Thread):
         self.n_received_semaphore = n_received_semaphore
         self.serial_lock = serial_lock
 
-    def run(self):  # noqa: D102
+    def run(self) -> None:  # noqa: D102
         logger.debug('SerialListenerThread: thread started.')
 
         while not self.exit_event.is_set():

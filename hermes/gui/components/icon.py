@@ -7,11 +7,10 @@ from nicegui.elements.mixins.content_element import ContentElement
 from hermes.core.helpers import APP_DIR
 
 
-class Icon(ContentElement):
+class Icon(ContentElement):  # type: ignore[misc]
     """Displays some text, wrapped in custom tag."""
 
-    def __init__(self, name: str, width: int = 50, height: int = 50,
-                 path: Path = None) -> None:
+    def __init__(self, name: str, width: int = 50, height: int = 50, path: Path | None = None) -> None:
 
         if path is None:
             path = Path(APP_DIR, 'gui', 'static', 'icons')

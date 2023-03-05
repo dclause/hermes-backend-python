@@ -13,7 +13,7 @@ from typing import Any
 from mergedeep import merge
 
 from hermes.core import cli, logger, storage
-from hermes.core.helpers import HermesError
+from hermes.core.logger import HermesError
 from hermes.core.struct import MetaSingleton
 
 
@@ -31,7 +31,7 @@ class ConfigKeyError(ConfigError):
 class ConfigOverrideError(ConfigKeyError):
     """Do not override settings object."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('Path cannot be empty: no settings override.')
 
 
@@ -41,7 +41,7 @@ class _Settings(metaclass=MetaSingleton):
     data: dict[str, Any] = {}
 
     @staticmethod
-    def init():
+    def init() -> None:
         """
         Initialize global config objects.
 
@@ -59,7 +59,7 @@ class _Settings(metaclass=MetaSingleton):
         logger.debug(_Settings.data)
 
     @staticmethod
-    def get(path: str | list[str] = None) -> dict[str, Any]:
+    def get(path: str | list[Any] | None = None) -> dict[Any, Any]:
         """Get a configuration value following the given path."""
 
         if path is None:

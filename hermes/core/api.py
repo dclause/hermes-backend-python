@@ -11,8 +11,7 @@ from nicegui import ui
 
 from hermes.core import logger
 from hermes.core.config import settings
-from hermes.core.helpers import HermesError
-from hermes.devices import AbstractDevice
+from hermes.core.logger import HermesError
 
 _SOCKET: SocketManager
 
@@ -28,14 +27,14 @@ async def action(cid: str, board_id: int, device_id: int, value: Any) -> None:
     """
     logger.debug(f'Client {cid}: Mutation with parameter: {board_id} {device_id} {value}')
     try:
-        device: AbstractDevice = settings.get(['boards', board_id, 'actions', device_id])
+        device: Any = settings.get(['boards', board_id, 'actions', device_id])
         device.set_value(board_id, value)
         # @todo implement and use set()
         settings.get('boards')[board_id].actions[device_id].state = value
-        ui.update(settings.get(['boards', board_id, 'actions', device_id]).gui_actions)
+        ui.update(device.gui_actions)
         await _SOCKET.emit('action', (board_id, device_id, value), skip_sid=cid)
-    except HermesError:
-        # HermesError(f'API ERROR: Client {cid}: Mutation error: "{exception}".')
+    except HermesError as error:
+        HermesError(f'API ERROR: Client {cid}: Mutation error: "{error}".')
         pass
 
 
@@ -52,25 +51,25 @@ def init(app: FastAPI) -> None:
         allow_headers=['*'],
     )
 
-    @_SOCKET.on('connect')
-    async def connect(cid: str, *args, **kwargs):
+    @_SOCKET.on('connect')  # type: ignore[misc]
+    async def connect(cid: str, *args: Any, **kwargs: Any) -> None:
         logger.debug(f'Socket client {cid}: new client connected.')
         await handshake(cid)
 
-    @_SOCKET.on('disconnect')
-    def disconnect(cid: str, *args, **kwargs):
+    @_SOCKET.on('disconnect')  # type: ignore[misc]
+    def disconnect(cid: str, *args: Any, **kwargs: Any) -> None:
         logger.debug(f'Socket client {cid}: client disconnected.')
 
-    @_SOCKET.on('ping')
-    def ping(cid: str):
+    @_SOCKET.on('ping')  # type: ignore[misc]
+    def ping(cid: str) -> None:
         """
         Answer to a ping by a pong.
         This can be used by the clients to check the latency of a ping/pong message exchange with this server.
         """
         _SOCKET.emit('pong', to=cid)
 
-    @_SOCKET.on('handshake')
-    async def handshake(cid: str, *args, **kwargs):
+    @_SOCKET.on('handshake')  # type: ignore[misc]
+    async def handshake(cid: str, *args: Any, **kwargs: Any) -> None:
         """Pushes all current config to the client."""
         logger.debug(f'Socket client {cid}: ask for handshake.')
         await _SOCKET.emit('handshake', (
@@ -80,8 +79,8 @@ def init(app: FastAPI) -> None:
             settings.get('groups'),
         ))
 
-    @_SOCKET.on('action')
-    async def _action(cid: str, board_id: int, command_id: int, value: Any, *args, **kwargs):
+    @_SOCKET.on('action')  # type: ignore[misc]
+    async def _action(cid: str, board_id: int, command_id: int, value: Any, *args: Any, **kwargs: Any) -> None:
         await action(cid, board_id, command_id, value)
 
 

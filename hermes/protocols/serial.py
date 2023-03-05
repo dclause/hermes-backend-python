@@ -9,16 +9,16 @@ import sys
 from serial import Serial, SerialException
 
 from hermes.core import logger
-from hermes.core.helpers import HermesError
+from hermes.core.logger import HermesError
 from hermes.protocols import AbstractProtocol, ProtocolError
 
 
 class SerialProtocol(AbstractProtocol):
     """Implements an :class:AbstractProtocol class using the serial port."""
 
-    def __init__(self, port, baudrate=115200, timeout=0):
+    def __init__(self, port: str, baudrate: int = 115200, timeout: int = 0) -> None:
         super().__init__()
-        self._serial_port: bool = port
+        self._serial_port: str = port
         self._baudrate: int = baudrate
         self._timeout: int = timeout
         self._serial: Serial = Serial()
@@ -40,7 +40,7 @@ class SerialProtocol(AbstractProtocol):
         self._serial.close()
 
     def is_open(self) -> bool:  # noqa: D102
-        return self._serial.isOpen()
+        return bool(self._serial.isOpen())
 
     def read_byte(self) -> int:  # noqa: D102
         bytes_array = None

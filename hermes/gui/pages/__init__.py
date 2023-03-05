@@ -13,7 +13,10 @@ Example:
             ui.label('Foo bar is displayed')
 ``
 """
+from __future__ import annotations
+
 from abc import abstractmethod
+from typing import Any
 
 from nicegui import ui
 
@@ -22,10 +25,10 @@ from hermes.core.struct import MetaPluginType
 from hermes.gui import layout
 
 
-def page(path: str, title: str | None = None, subtitle: str | None = None):
+def page(path: str, title: str | None = None, subtitle: str | None = None) -> Any:
     """Add properties to a AbstractPage subclass implementation."""
 
-    def decorator(klass):
+    def decorator(klass: Any) -> Any:
         klass.path = path
         klass.title = title
         klass.subtitle = subtitle
@@ -37,12 +40,14 @@ def page(path: str, title: str | None = None, subtitle: str | None = None):
 class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
     """Manage plugins of type commands."""
 
-    path = None
-    title = None
-    subtitle = None
+    def __init__(self) -> None:
+        super().__init__()
+        self.path: str | None = None
+        self.title: str | None = None
+        self.subtitle: str | None = None
 
     def create(self) -> None:
-        # @todo def create(self, *arg, **kwarg) -> None:
+        # @todo def create(self, *arg, **kwarg) -> None: issue to nicegui.io
         """
         Create the page as of nicegui method definition.
         @see https://nicegui.io/reference#page
@@ -62,7 +67,7 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
             self.content()
 
     @abstractmethod
-    def content(self, *args, **kwargs) -> None:
+    def content(self, *args: Any, **kwargs: Any) -> None:
         """
         Each page type must implement the content method to build the GUI associated with the page.
         @see https://nicegui.io/.

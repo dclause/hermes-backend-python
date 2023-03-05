@@ -1,7 +1,10 @@
 """Board page."""
+from typing import cast
+
 from nicegui import ui
 
 from hermes import gui
+from hermes.boards import AbstractBoard
 from hermes.core.config import settings
 from hermes.gui import AbstractPage, pages
 
@@ -10,17 +13,21 @@ from hermes.gui import AbstractPage, pages
 class BoardPage(AbstractPage):
     """Board list page."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self.board = None
+        self.board: AbstractBoard | None = None
 
-    def create(self, bid: int) -> None:  # noinspection # noqa D102 # @todo 
-        self.board = settings.get(['boards', bid])
-        self.title = self.board.name
-        self.subtitle = f'{self.board.controller} <em class="pl-1 font-medium">{self.board.model}</em>'
-        super().build()
+    def create(self, bid: int) -> None:  # type: ignore[override] # noqa D102 # @todo
+        self.board = cast(AbstractBoard, settings.get(['boards', bid]))
+        if self.board:
+            self.title = self.board.name
+            self.subtitle = self.board.controller
+        self.build()
 
     def content(self) -> None:  # noqa: D102
+        if not self.board:
+            return
+
         with ui.tabs() \
                 .props('inline-label indicator-color="primary"') \
                 .classes('text-uppercase text-sm') as tabs:

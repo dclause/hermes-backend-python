@@ -15,6 +15,8 @@ schema provided within this package.
 Devices are detected when the package is imported for the first time and globally available via the settings under
 the `devices` key
 """
+from __future__ import annotations
+
 from abc import abstractmethod
 from collections.abc import Callable
 from typing import Any
@@ -25,7 +27,7 @@ from hermes import gui
 from hermes.core import logger
 from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
-from hermes.core.helpers import HermesError
+from hermes.core.logger import HermesError
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType, MetaSingleton
 
@@ -59,7 +61,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     def code(self) -> MessageCode:
         """Each device type must be a 8bit code from the MessageCode dictionary."""
 
-    def render(self, mutator: Callable):
+    def render(self, mutator: Callable[[int, Any], None]) -> None:
         """
         Render a device using nicegui.io syntax.
         This method _can_ be overriden but is not meant to.
@@ -76,24 +78,21 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
             self.render_action(mutator)
         self.gui_actions = actions
 
-    @classmethod
-    def render_icon(cls) -> str:
+    def render_icon(self) -> str:
         """Render the board icon (@see https://fonts.google.com/icons)."""
         return 'brightness_high'
 
-    def render_name(self):
+    def render_name(self) -> None:
         """Render the board name."""
         ui.label().bind_text(self, 'name')
 
-    @classmethod
-    def render_info(self):  # noqa: N804
+    def render_info(self) -> None:
         """
         Render extra info.
         Should typically be either a very short text (pin number for instance) or an 'info' icon with a tooltip.
         """
 
-    @classmethod
-    def render_action(self, mutator: Callable):  # noqa: N804
+    def render_action(self, mutator: Callable[[int, Any], None]) -> None:
         """Render an actionable input to bind with the board action."""
         ui.label('No action here.').classes('text-italic')
 
@@ -118,9 +117,9 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         data = self._encode_data()
         return bytearray([len(data) + 2]) + header + data
 
-    def set_value(self, board_id, value: Any):
+    def set_value(self, board_id: int, value: Any) -> None:
         """Send the command."""
-        board = settings.get(['boards', board_id])
+        board: Any = settings.get(['boards', board_id])
 
         if not board.connected and not board.open():
             raise DeviceError(f'Board {board.id} ({board.name}) is not connected.')
@@ -129,21 +128,21 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         data = self._encode_value(value)
         board.send(header + data)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Device {self.name}'
 
 
 class DeviceFactory(metaclass=MetaSingleton):
     """Device factory class: instantiates a Device of a given type."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__devices: dict[MessageCode, AbstractDevice] = {}
 
         # Self registers all AbstractDevice defined plugins.
         for device in AbstractDevice.plugins:
             self.__devices[device().code] = device()
 
-    def get_by_code(self, code: MessageCode) -> AbstractDevice | None:
+    def get_by_code(self, code: MessageCode) -> AbstractDevice:
         """
         Instantiate a AbstractDevice based on a given MessageCode.
 
@@ -161,7 +160,7 @@ class DeviceFactory(metaclass=MetaSingleton):
             raise DeviceError(f'Device with code `{code}` do not exists.')
         return device
 
-    def get_by_name(self, name: str) -> AbstractDevice | None:
+    def get_by_name(self, name: str) -> AbstractDevice:
         """
         Instantiate a AbstractDevice based on a given name.
 

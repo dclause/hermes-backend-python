@@ -1,15 +1,18 @@
 """Implements agnostic custom structure types to be reused through the application."""
+from __future__ import annotations
+
 import inspect
 from abc import ABCMeta
 from enum import Enum
 from pathlib import Path
 from queue import Queue
+from typing import Any
 
 
-class ClearableQueue(Queue):
+class ClearableQueue(Queue[Any]):
     """A custom queue subclass that provides a :meth:`clear` method."""
 
-    def clear(self):
+    def clear(self) -> None:
         """Clear all items from the queue."""
 
         with self.mutex:
@@ -23,10 +26,10 @@ class ClearableQueue(Queue):
             self.not_full.notify_all()
 
 
-class ReadOnlyDict(dict):
+class ReadOnlyDict(dict[Any, Any]):
     """A dictionary subclass where items cannot be updated."""
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: Any, value: Any) -> None:
         if key not in self:
             dict.__setitem__(self, key, value)
         else:
@@ -36,11 +39,11 @@ class ReadOnlyDict(dict):
 class MetaSingleton(type):
     """A meta type for Singleton classes."""
 
-    def __init__(cls, *args):
+    def __init__(cls, *args: Any):
         type.__init__(cls, *args)
         cls.__instance = None
 
-    def __call__(cls, *args, **kwargs):  # noqa: D102
+    def __call__(cls, *args: Any, **kwargs: Any) -> None:  # noqa: D102
         if not cls.__instance:
             cls.__instance = type.__call__(cls, *args, **kwargs)
         return cls.__instance
@@ -49,11 +52,11 @@ class MetaSingleton(type):
 class MetaPluginType(type, metaclass=ABCMeta):
     """A type for Plugin type classes."""
 
-    def __init__(cls, name, bases, namespace):
+    def __init__(cls, name: str, bases: Any, namespace: Any) -> None:
         super().__init__(name, bases, namespace)
         cls.folder = Path(inspect.getfile(cls.__class__)).parent.name
         if not hasattr(cls, 'plugins'):
-            cls.plugins = []
+            cls.plugins: list[type] = []
         else:
             cls.plugins.append(cls)
 

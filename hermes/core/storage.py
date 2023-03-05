@@ -16,7 +16,7 @@ from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import StringEnum
 
 _storage = ruamel.yaml.YAML(typ='safe')
-_storage.sort_base_mapping_type_on_output = False
+_storage.sort_base_mapping_type_on_output = False  # type: ignore[assignment]
 
 
 class StorageType(StringEnum):
@@ -28,7 +28,7 @@ class StorageType(StringEnum):
     DEVICE = 'devices'  # Configurations relative to devices connected to the boards (led, servo, ...)
 
 
-def init():
+def init() -> None:
     """Init the YAML loader/dumper."""
     logger.info(' > Init storage')
 
@@ -89,7 +89,7 @@ def write(config_type: StorageType, data: Any) -> None:
 
 
 # @todo evaluate when storage will write configs.
-def dump(data) -> Any:
+def dump(data: Any) -> Any:
     """
     Dump the given data dump.
 

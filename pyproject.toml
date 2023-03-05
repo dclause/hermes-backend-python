@@ -44,5 +44,14 @@ ignore = [
 [tool.ruff.flake8-quotes]
 inline-quotes = "single"
 
+[tool.ruff.pylint]
+max-args = 6
+
 [tool.mypy]
 strict = true
+show_error_codes = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "hermes.gui"
+implicit_reexport = true

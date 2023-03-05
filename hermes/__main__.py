@@ -13,7 +13,7 @@ from hermes.core import logger, plugins, server, storage
 from hermes.core.config import settings
 
 
-def main():
+def main() -> None:
     """Bootstraps and run the application."""
 
     print('\033[96m == Loading HERMES == \033[0m')
@@ -56,4 +56,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-__ALL__ = []
+__ALL__: list[str] = []

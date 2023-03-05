@@ -18,9 +18,10 @@ from typing import Any
 
 from hermes.core import logger
 from hermes.core.dictionary import MessageCode
-from hermes.core.helpers import HermesError
+from hermes.core.logger import HermesError
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import MetaPluginType, MetaSingleton
+from hermes.protocols import AbstractProtocol
 
 
 class CommandError(HermesError):
@@ -30,7 +31,7 @@ class CommandError(HermesError):
 class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     """Manages plugins of type commands."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.default: Any = None
         self.value: Any = None
@@ -40,20 +41,20 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     def code(self) -> MessageCode:
         """Each command type must be a 8bit code from the MessageCode dictionary."""
 
-    def receive(self, connexion):
+    def receive(self, protocol: AbstractProtocol) -> None:
         """Read the additional data sent with the command."""
 
-    def process(self):
+    def process(self) -> None:
         """Process the command."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Command {self.name}'
 
 
 class CommandFactory(metaclass=MetaSingleton):
     """Command factory class: instantiates a Command of a given type."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__commands: dict[MessageCode, AbstractCommand] = {}
 
         # Self registers all AbstractCommand defined plugins.

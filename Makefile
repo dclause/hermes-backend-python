@@ -59,7 +59,7 @@ test: ## Run all tests
 
 lint: ## Lint the code
 	$(info Running Mypy against source files...)
-	-@if type $(VENV)/mypy >/dev/null 2>&1 ; then $(VENV)/mypy --show-error-codes --ignore-missing-imports $(APPLICATION) ; \
+	-@if type $(VENV)/mypy >/dev/null 2>&1 ; then $(VENV)/mypy --show-error-codes $(APPLICATION) ; \
 	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
 
 	$(info Running Ruff against source files...)

@@ -3,14 +3,24 @@
 import inspect
 import pathlib
 import time
+from typing import Any
 
 import logzero
 
 from hermes.core import cli
-from hermes.core.helpers import ROOT_DIR, HermesError
+from hermes.core.helpers import ROOT_DIR
 
 
-def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
+class HermesError(Exception):
+    """Generic exception through the application."""
+
+    def __init__(self, message: str | None = None) -> None:
+        super().__init__(message)
+        if message:
+            error(message)
+
+
+def init(logpath: str = f'{ROOT_DIR}/logs/backend.log') -> None:
     """
     Initialize logzero for the purpose of this project.
 
@@ -34,36 +44,36 @@ def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
     logzero.loglevel(logzero.DEBUG if cli.args['debug'] else logzero.INFO)
 
 
-def debug(msg, *args, **kwargs):
+def debug(msg: Any, *args: Any, **kwargs: Any) -> None:
     """Forward DEBUG logs to logzero."""
     logzero.logger.debug(msg, *args, **kwargs)
 
 
-def info(msg, *args, **kwargs):
+def info(msg: Any, *args: Any, **kwargs: Any) -> None:
     """Forward INFO logs to logzero."""
     print(msg.format(*args, **kwargs))
     logzero.logger.info(msg, *args, **kwargs)
 
 
-def warning(msg, *args, **kwargs):
+def warning(msg: Any, *args: Any, **kwargs: Any) -> None:
     """Forward WARNING logs to logzero."""
     print(f'\033[93m WARNING: {msg.format(*args, **kwargs)} \033[0m')
     logzero.logger.warning(msg, *args, **kwargs)
 
 
-def error(msg, *args, **kwargs):
+def error(msg: str, *args: Any, **kwargs: Any) -> None:
     """Forward ERROR logs to logzero."""
     print(f'\033[91m ERROR: {msg % args} \033[0m')
     logzero.logger.error(msg, *args, **kwargs)
 
 
-def exception(msg, *args, **kwargs):
+def exception(msg: Any, *args: Any, **kwargs: Any) -> None:
     """Forward ERROR logs to logzero."""
     print(f'\033[91m EXCEPTION: {msg % args} \033[0m')
     logzero.logger.error(msg, *args, **kwargs)
 
 
-def log(level, msg, *args, **kwargs):
+def log(level: int, msg: Any, *args: Any, **kwargs: Any) -> None:
     """Forward logs to appropriate function."""
     match level:
         case logzero.DEBUG:
@@ -77,7 +87,8 @@ def log(level, msg, *args, **kwargs):
     raise HermesError(f'ErrorLevel not exists ({level})')
 
 
-def logthis(*args):
+# @todo should we keep this ?
+def logthis(*args: Any) -> Any:
     """
     Log decorator for a function: the call to this function will be logged and its performance measured.
 
@@ -97,8 +108,8 @@ def logthis(*args):
             ```
     """
 
-    def _log(function):
-        def inner(*inner_args, **kwargs):
+    def _log(function: Any) -> Any:
+        def inner(*inner_args: Any, **kwargs: Any) -> None:
             """Inner method."""
             func_args_as_string = get_function_call_args(function, *inner_args, **kwargs)
             log(_loglevel, '> Start function %s', func_args_as_string)
@@ -110,11 +121,11 @@ def logthis(*args):
                 round((time_after - time_before) * 1000, 1),
                 )
 
-        def get_function_call_args(func, *func_args, **kwargs):
+        def get_function_call_args(func: Any, *func_args: Any, **kwargs: Any) -> str:
             """Return a string containing function name and list of all argument names/values."""
-            func_args = inspect.signature(func).bind(*func_args, **kwargs)
-            func_args.apply_defaults()
-            func_args_str = ', '.join(f'{arg}={val}' for arg, val in func_args.arguments.items())
+            func_args_bounds: inspect.BoundArguments = inspect.signature(func).bind(*func_args, **kwargs)
+            func_args_bounds.apply_defaults()
+            func_args_str = ', '.join(f'{arg}={val}' for arg, val in func_args_bounds.arguments.items())
             return f'{func.__name__}({func_args_str})'
 
         return inner
