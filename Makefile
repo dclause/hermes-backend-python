@@ -57,20 +57,12 @@ test: ## Run all tests
 	@make clean
 
 lint: ## Lint the code
-	$(info Running Pylint against source and test files...)
-	-@if type $(VENV)/pylint >/dev/null 2>&1 ; then $(VENV)/pylint --rcfile=setup.cfg **/*.py ; \
-	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
-
-	$(info Running Flake8 against source and test files...)
-	-@if type $(VENV)/flake8 >/dev/null 2>&1 ; then $(VENV)/flake8 --max-complexity 10 $(APPLICATION) ; \
-	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
-
-	$(info Running Bandit against source files...)
-	-@if type $(VENV)/bandit >/dev/null 2>&1 ; then $(VENV)/bandit -r --ini setup.cfg ; \
-	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
-
 	$(info Running Mypy against source files...)
 	-@if type $(VENV)/mypy >/dev/null 2>&1 ; then $(VENV)/mypy --show-error-codes --ignore-missing-imports $(APPLICATION) ; \
+	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
+
+	$(info Running Ruff against source files...)
+	-@if type $(VENV)/ruff >/dev/null 2>&1 ; then $(VENV)/ruff check $(APPLICATION) ; \
 	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
 
 	@make clean
