@@ -12,7 +12,7 @@ import ruamel.yaml
 from mergedeep import merge
 
 from hermes.core import logger
-from hermes.core.helpers import ROOT_DIR, CONFIG_DIR
+from hermes.core.helpers import CONFIG_DIR, ROOT_DIR
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import StringEnum
 
@@ -22,6 +22,7 @@ _storage.sort_base_mapping_type_on_output = False
 
 class StorageNamespace(StringEnum):
     """ Defines the existing namespace within the application. """
+
     CORE = os.path.join('configs')  # Any configuration provided by core.
     MODULE = os.path.join('modules', 'configs')  # Any configuration provided by a module.
     PROFILE = os.path.join('..', 'configs')  # Any configuration from the active profile.
@@ -29,6 +30,7 @@ class StorageNamespace(StringEnum):
 
 class StorageType(StringEnum):
     """ Defines the existing configuration types within the application. """
+
     GLOBAL = 'global'  # Configurations relative to the application itself (port, host, ...)
     PROFILE = 'profile'  # Configurations relative to the application itself (port, host, ...)
     BOARD = 'boards'  # Configurations relative to boards within the robot (arduino, ...)
@@ -53,7 +55,7 @@ def load() -> dict[str, Any]:
     """
     Load all available configurations and merge/concatenate it accordingly
     Returns:
-       List(str, Any): A list of configurations
+       List(str, Any): A list of configurations.
     """
     config: dict[str, Any] = {}
     for namespace in StorageNamespace:
@@ -86,6 +88,7 @@ def write(config_type: StorageType, data: Any) -> None:
     Stores the given config data to the active profile.
 
     Args:
+    ----
         config_type (StorageType):
             The configuration type.
         data (Any):
@@ -104,6 +107,7 @@ def dump(data) -> Any:
     Returns the given data dump.
 
     Args:
+    ----
         data (Any):
             The data to dump.
     """

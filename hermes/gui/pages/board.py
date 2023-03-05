@@ -8,7 +8,7 @@ from hermes.gui import AbstractPage, pages
 
 @pages.page(path='/board/{bid}')
 class BoardPage(AbstractPage):
-    """ Board list page """
+    """ Board list page. """
 
     # pylint: disable-next=arguments-differ
 
@@ -17,9 +17,7 @@ class BoardPage(AbstractPage):
         self.board = None
 
     def create(self, bid: int):
-        """
-        :param bid: The board ID (from URL)
-        """
+        """:param bid: The board ID (from URL)"""
         self.board = settings.get(['boards', bid])
         self.title = self.board.name
         self.subtitle = f'{self.board.controller} <em class="pl-1 font-medium">{self.board.model}</em>'

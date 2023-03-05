@@ -25,10 +25,12 @@ class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
         """
         Opens the connexion.
 
-        Returns:
+        Returns
+        -------
             self
 
-        Raises:
+        Raises
+        ------
              ConnexionException
         """
 
@@ -46,9 +48,11 @@ class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
         Reads a single byte.
 
         Warnings:
+        --------
             This method is blocking.
 
         Returns:
+        -------
             int: The 8bit next byte in queue.
         """
 
@@ -58,6 +62,7 @@ class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
         Sends data.
 
         Args:
+        ----
             data (bytearray) An array of byte to send.
         """
 
@@ -68,9 +73,11 @@ class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):
         Reads the input data until the next EOF is received.
 
         Warnings:
+        --------
             This method timeouts after 1sec.
 
         Returns:
+        -------
             str: The data.
         """
 

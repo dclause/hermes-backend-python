@@ -7,7 +7,7 @@ from hermes.gui import AbstractPage, pages
 
 @pages.page(path='/', title=None)
 class IndexPage(AbstractPage):
-    """ Index page """
+    """ Index page. """
 
     def content(self) -> None:
         with ui.row().classes('absolute-center'):

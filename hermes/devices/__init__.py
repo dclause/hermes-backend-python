@@ -26,7 +26,7 @@ from hermes.core.config import settings
 from hermes.core.dictionary import MessageCode
 from hermes.core.helpers import HermesException
 from hermes.core.plugins import AbstractPlugin
-from hermes.core.struct import MetaSingleton, MetaPluginType
+from hermes.core.struct import MetaPluginType, MetaSingleton
 
 
 class DeviceException(HermesException):
@@ -77,15 +77,11 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
     @classmethod
     def render_icon(cls) -> str:
-        """
-        Renders the board icon (@see https://fonts.google.com/icons).
-        """
+        """Renders the board icon (@see https://fonts.google.com/icons)."""
         return 'brightness_high'
 
     def render_name(self):
-        """
-        Renders the board name.
-        """
+        """Renders the board name."""
         ui.label().bind_text(self, 'name')
 
     # noinspection PyMethodParameters
@@ -101,9 +97,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
     @classmethod
     # pylint: disable-next=unused-argument,bad-classmethod-argument
     def render_action(self, mutator: Callable):  # no PY-2665
-        """
-        Renders an actionable input to bind with the board action.
-        """
+        """Renders an actionable input to bind with the board action."""
         ui.label('No action here.').classes('text-italic')
 
     @abstractmethod
@@ -121,7 +115,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
         Returns the representation of the device as a bytearray.
         This is used to:
          - describes the device to the physical board during the handshake process.
-         - changes the settings of a device
+         - changes the settings of a device.
         """
         header = bytearray([self.code, self.id])
         data = self._encode_data()
@@ -144,7 +138,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
 
 class DeviceFactory(metaclass=MetaSingleton):
-    """ Device factory class: instantiates a Device of a given type """
+    """ Device factory class: instantiates a Device of a given type. """
 
     def __init__(self):
         self.__devices: dict[MessageCode, AbstractDevice] = {}
@@ -154,16 +148,21 @@ class DeviceFactory(metaclass=MetaSingleton):
             self.__devices[device().code] = device()
 
     def get_by_code(self, code: MessageCode) -> AbstractDevice | None:
-        """ Instantiates a AbstractDevice based on a given MessageCode
+        """
+        Instantiates a AbstractDevice based on a given MessageCode.
 
         Args:
+        ----
             code (MessageCode): The MessageCode of the Device to instantiate.
+
         Returns:
+        -------
             AbstractDevice | None
         Raises:
             DeviceException: the device code does not exist.
 
         See Also:
+        --------
             :class:`MessageCode`
         """
         device = self.__devices.get(code)
@@ -173,19 +172,24 @@ class DeviceFactory(metaclass=MetaSingleton):
         return device
 
     def get_by_name(self, name: str) -> AbstractDevice | None:
-        """ Instantiates a AbstractDevice based on a given name
+        """
+        Instantiates a AbstractDevice based on a given name.
 
-        Args
+        Args:
+        ----
             name (str): The name of the Device to instantiate.
-        Returns
+
+        Returns:
+        -------
             AbstractDevice or None
         Raises:
             DeviceException: the device name does not exist.
 
         See Also:
+        --------
             :class:`MessageCode`
         """
-        device = next((device for device in self.__devices.values() if getattr(device, 'name') == name), None)
+        device = next((device for device in self.__devices.values() if device.name == name), None)
         if device is None:
             logger.error(f'Device {name} do not exists.')
             raise DeviceException(f'Device with name `{name}` do not exists.')

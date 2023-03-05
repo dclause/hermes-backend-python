@@ -25,5 +25,5 @@ class DebugCommand(AbstractCommand):
         self._data = connexion.read_line()
 
     def process(self):
-        """ Processes the command """
-        logger.info(f'## DEBUG ROBOT: {self._data} ##', )
+        """ Processes the command. """
+        logger.info(f'## DEBUG ROBOT: {self._data} ##')

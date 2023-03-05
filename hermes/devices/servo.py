@@ -13,7 +13,7 @@ from hermes.devices import AbstractDevice
 
 
 class ServoDevice(AbstractDevice):
-    """ Sends a Servo command """
+    """ Sends a Servo command. """
 
     def __init__(self):
         super().__init__(0)

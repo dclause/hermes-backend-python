@@ -7,7 +7,7 @@ from hermes.gui import AbstractPage, pages
 
 @pages.page(path='/boards', title='My boards', subtitle='test a subtitle')
 class BoardListPage(AbstractPage):
-    """ Board list page """
+    """ Board list page. """
 
     def content(self) -> None:
         for _, board in settings.get('boards').items():

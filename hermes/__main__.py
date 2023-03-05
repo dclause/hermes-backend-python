@@ -4,12 +4,12 @@
 """ HERMES application entry point. """
 import webbrowser
 
-from hermes.core import logger, plugins, storage, server
+from hermes.core import logger, plugins, server, storage
 from hermes.core.config import settings
 
 
 def main():
-    """ Main program entry point. """
+    """ Bootstraps and run the application. """
 
     print('\033[96m == Loading HERMES == \033[0m')
     logger.init()

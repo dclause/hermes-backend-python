@@ -28,7 +28,7 @@ class SerialProtocol(AbstractProtocol):
                 port=self._serial_port,
                 baudrate=self._baudrate,
                 timeout=self._timeout,
-                writeTimeout=self._timeout
+                writeTimeout=self._timeout,
             )
             self._serial.flush()
         except SerialException as error:
@@ -71,10 +71,12 @@ class SerialProtocol(AbstractProtocol):
         """
         Lists serial ports.
 
-        Returns:
+        Returns
+        -------
             list[str]: A list of available serial ports.
 
-        Raises:
+        Raises
+        ------
             EnvironmentError: The code is running on an unknown platform.
         """
         if sys.platform.startswith('win'):
@@ -93,6 +95,6 @@ class SerialProtocol(AbstractProtocol):
                 connexion = Serial(port)
                 connexion.close()
                 results.append(port)
-            except (OSError, SerialException) as error:
+            except (OSError, SerialException):
                 pass
         return results

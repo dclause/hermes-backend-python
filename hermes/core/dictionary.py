@@ -15,6 +15,7 @@ class MessageCode(IntEnum):
     Messages are (tried to) grouped by logical packages and assign arbitrarily a number.
 
     Warnings:
+    --------
         Every number from 0 to 255 can be used for exchanges.
 
         A few numbers can be generated as "noise" in the serial pipe and should be thus avoided.
@@ -30,9 +31,11 @@ class MessageCode(IntEnum):
         (@see messagecode.py in the scripts folder on the root mono-repo)
 
     Notes:
+    -----
         Command code are maps to actual commands via the CommandFactory class.
 
     See Also:
+    --------
         :file: scripts/messagecode.py
         :class:`CommandFactory`
     """

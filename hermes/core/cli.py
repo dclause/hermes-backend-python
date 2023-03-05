@@ -9,7 +9,8 @@ def _get_cli_args() -> dict[str, Any]:
     """
     Build configuration object from commandline parameters.
 
-    Returns:
+    Returns
+    -------
         A list of configurations
     """
     parser = argparse.ArgumentParser(add_help=False)
@@ -36,7 +37,7 @@ def _get_cli_args() -> dict[str, Any]:
             'port': _args['port'],
             'open': _args['open'],
             'reload': _args['dev'],
-        }
+        },
     }
 
 

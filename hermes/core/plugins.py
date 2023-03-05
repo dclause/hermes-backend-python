@@ -22,7 +22,7 @@ import importlib.util
 import itertools
 from enum import Enum
 from pathlib import Path
-from typing import Any, TypeVar, Type
+from typing import Any, Type, TypeVar
 
 from hermes.core import logger
 from hermes.core.helpers import ROOT_DIR, HermesException
@@ -65,21 +65,21 @@ class AbstractPlugin:
         """ Implement iter(self). """
         return [a for a in dir(self) if not a.startswith('__') and not callable(getattr(self, a))]
 
-    def __contains__(self, x, *args, **kwargs):  # real signature unknown
-        """ True if the dictionary has the specified key, else False. """
-        return x in dir(self)
+    def __contains__(self, attr, *args, **kwargs):  # real signature unknown
+        """ Check if attr is an attribute or method of the class. """
+        return attr in dir(self)
 
     def __getitem__(self, y):  # real signature unknown; restored from __doc__
-        """ x.__getitem__(y) <==> x[y] """
+        """ Allow syntax equivalence x[y]. """
         return getattr(self, y)
 
     def serialize(self, recursive=True) -> dict[str, Any]:
         """
         Convert the instance to a filter dict representation.
+
         Private attributes are excluded and Plugin referenced are converted to their IDs.
 
-        Returns:
-            dict[str, Any]: a dictionary where the keys are the class public attributes.
+        :return dict[str, Any]: a dictionary where the keys are the class public attributes.
         """
         obj = vars(self).copy()
         for attr in vars(self):
@@ -109,7 +109,7 @@ class AbstractPlugin:
 
     @classmethod
     def from_yaml(cls, constructor, node) -> TypeAbstractPlugin:
-        """ Converts a representation YAML node to a Python object. """
+        """ Convert a representation YAML node to a Python object. """
 
         # Extracts the data from the yaml data.
         mapping = constructor.construct_mapping(node, deep=True)
@@ -130,20 +130,20 @@ class AbstractPlugin:
 
     @classmethod
     def to_yaml(cls, representer, instance) -> Any:
-        """ Converts a Python object to a representation node. """
+        """ Convert a Python object to a representation node. """
         # Note: The yaml_tag used is by convention the classe name.
         tag = getattr(cls, 'yaml_tag', '!' + cls.__name__)
         return representer.represent_mapping(tag, instance.serialize())
 
     @staticmethod
     def types() -> list[Type[TypeAbstractPlugin]]:
-        """ Returns all plugin types within the application """
+        """ Return all plugin types within the application. """
         return AbstractPlugin.__subclasses__()
 
 
 def init():
     """
-    Loads all plugins.
+    Load all plugins.
 
     Explores the directory structure and search for all .py files within directories corresponding to plugin types
     to import it. The plugins could be in the hermes or the modules directories.

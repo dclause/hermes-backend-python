@@ -20,7 +20,7 @@ from hermes.core import logger
 from hermes.core.dictionary import MessageCode
 from hermes.core.helpers import HermesException
 from hermes.core.plugins import AbstractPlugin
-from hermes.core.struct import MetaSingleton, MetaPluginType
+from hermes.core.struct import MetaPluginType, MetaSingleton
 
 
 class CommandException(HermesException):
@@ -41,17 +41,17 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
         """ Each command type must be a 8bit code from the MessageCode dictionary. """
 
     def receive(self, connexion):
-        """ Reads the additional data sent with the command. """
+        """ Read the additional data sent with the command. """
 
     def process(self):
-        """ Processes the command """
+        """ Process the command. """
 
     def __str__(self):
         return f'Command {self.name}'
 
 
 class CommandFactory(metaclass=MetaSingleton):
-    """ Command factory class: instantiates a Command of a given type """
+    """ Command factory class: instantiates a Command of a given type. """
 
     def __init__(self):
         self.__commands: dict[MessageCode, AbstractCommand] = {}
@@ -61,16 +61,21 @@ class CommandFactory(metaclass=MetaSingleton):
             self.__commands[command().code] = command()
 
     def get_by_code(self, code: MessageCode) -> AbstractCommand:
-        """ Instantiates a AbstractCommand based on a given MessageCode
+        """
+        Instantiates a AbstractCommand based on a given MessageCode.
 
         Args:
+        ----
             code (MessageCode): The MessageCode of the Command to instantiate.
+
         Returns:
+        -------
             AbstractCommand | None
         Raises:
             CommandException: the command code does not exist.
 
         See Also:
+        --------
             :class:`MessageCode`
         """
         command = self.__commands.get(code)
@@ -80,19 +85,24 @@ class CommandFactory(metaclass=MetaSingleton):
         return command
 
     def get_by_name(self, name: str) -> AbstractCommand:
-        """ Instantiates a AbstractCommand based on a given name
+        """
+        Instantiates a AbstractCommand based on a given name.
 
-        Args
+        Args:
+        ----
             name (str): The name of the Command to instantiate.
-        Returns
+
+        Returns:
+        -------
             AbstractCommand or None
         Raises:
             CommandException: the command name does not exist.
 
         See Also:
+        --------
             :class:`MessageCode`
         """
-        command = next((command for command in self.__commands.values() if getattr(command, 'name') == name), None)
+        command = next((command for command in self.__commands.values() if command.name == name), None)
         if command is None:
             logger.error(f'Command {name} do not exists.')
             raise CommandException(f'Command with name `{name}` do not exists.')

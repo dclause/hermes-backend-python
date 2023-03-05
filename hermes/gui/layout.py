@@ -91,7 +91,7 @@ def _main():
 
 @contextmanager
 def layout():
-    """ Custom page frame to share the same styling and behavior across all pages """
+    """ Custom page frame to share the same styling and behavior across all pages. """
     _header()
     _sidebar()
     with _main():

@@ -3,7 +3,7 @@ DigitalWrite Command: simple command attached to digitalPin.
 
 code: MessageCode::BOOLEAN_OUTPUT
 """
-from typing import Callable, Any
+from typing import Any, Callable
 
 from nicegui import ui
 

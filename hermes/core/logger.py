@@ -5,8 +5,7 @@ import pathlib
 import time
 
 import logzero
-# pylint: disable-next=unused-import
-from logzero import loglevel, DEBUG, INFO, WARNING, ERROR  # noqa: F401
+from logzero import DEBUG, ERROR, INFO, WARNING, loglevel  # noqa: F401
 
 from hermes.core import cli
 from hermes.core.helpers import ROOT_DIR
@@ -14,10 +13,9 @@ from hermes.core.helpers import ROOT_DIR
 
 def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
     """
-    Initializes logzero for the purpose of this project.
+    Initialize logzero for the purpose of this project.
 
-    Args:
-        logpath (str): The path the logfile. Defaults to ./logs/backend.log
+    :param str logpath: The path the logfile. Defaults to ./logs/backend.log
     """
     print(" > Init logger")
 
@@ -38,30 +36,30 @@ def init(logpath: str = f'{ROOT_DIR}/logs/backend.log'):
 
 
 def debug(msg, *args, **kwargs):
-    """ Forwards DEBUG logs to logzero. """
+    """ Forward DEBUG logs to logzero. """
     logzero.logger.debug(msg, *args, **kwargs)
 
 
 def info(msg, *args, **kwargs):
-    """ Forwards DEBUG logs to logzero. """
+    """ Forward DEBUG logs to logzero. """
     print(msg.format(*args, **kwargs))
     logzero.logger.info(msg, *args, **kwargs)
 
 
 def warning(msg, *args, **kwargs):
-    """ Forwards DEBUG logs to logzero. """
+    """ Forward DEBUG logs to logzero. """
     print(f'\033[93m WARNING: {msg.format(*args, **kwargs)} \033[0m')
     logzero.logger.warning(msg, *args, **kwargs)
 
 
 def error(msg, *args, **kwargs):
-    """ Forwards DEBUG logs to logzero. """
+    """ Forward DEBUG logs to logzero. """
     print(f'\033[91m ERROR: {msg % args} \033[0m')
     logzero.logger.error(msg, *args, **kwargs)
 
 
 def log(level, msg, *args, **kwargs):
-    """ Forwards logs to appropriate function. """
+    """ Forward logs to appropriate function. """
     match level:
         case logzero.DEBUG:
             return debug(msg, *args, **kwargs)
@@ -76,10 +74,10 @@ def log(level, msg, *args, **kwargs):
 
 def logthis(*args):
     """
-    Log decorator for a function.
-    Using this decorator, the call to this function will be logged and its performance measured.
+    Log decorator for a function: the call to this function will be logged and its performance measured.
 
     Examples
+    --------
         Use a decorator on a function to log that function.
         ```
         @logthis
@@ -99,13 +97,13 @@ def logthis(*args):
         def inner(*inner_args, **kwargs):
             """Inner method."""
             func_args_as_string = get_function_call_args(function, *inner_args, **kwargs)
-            log(loglevel, '> Start function %s', func_args_as_string)
+            log(_loglevel, '> Start function %s', func_args_as_string)
             time_before = time.time()
             function(*inner_args, **kwargs)
             time_after = time.time()
-            log(loglevel, '> Function %s done (time: %s ms)',
+            log(_loglevel, '> Function %s done (time: %s ms)',
                 function.__name__,
-                round((time_after - time_before) * 1000, 1)
+                round((time_after - time_before) * 1000, 1),
                 )
 
         def get_function_call_args(func, *func_args, **kwargs):
@@ -119,9 +117,9 @@ def logthis(*args):
 
     # If no argument passed, first args of decorator in the decorated function.
     if len(args) == 1 and callable(args[0]):
-        loglevel = logzero.DEBUG
+        _loglevel = logzero.DEBUG
         return _log(args[0])
 
     # If argument passed, first args is the given argument.
-    loglevel = args[0]
+    _loglevel = args[0]
     return _log

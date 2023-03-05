@@ -50,6 +50,7 @@ clean: ## Cleanup
 	@rm -f **/*.pyc
 	@rm -rf **/__pycache__
 	@rm -rf *.pyc __pycache__ .pytest_cache .mypy_cache .coverage coverage.xml
+	@$(VENV)/ruff clean
 
 test: ## Run all tests
 	@type $(VENV)/pytest >/dev/null 2>&1 || (echo "Run 'make install' first." >&2 ; exit 1)

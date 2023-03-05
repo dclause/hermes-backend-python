@@ -12,7 +12,7 @@ from typing import Any, Dict, List
 
 from mergedeep import merge
 
-from hermes.core import storage, logger, cli
+from hermes.core import cli, logger, storage
 from hermes.core.helpers import HermesException
 from hermes.core.struct import MetaSingleton
 
@@ -22,7 +22,8 @@ class ConfigException(HermesException):
 
 
 class _Settings(metaclass=MetaSingleton):
-    """ Global config object """
+    """ Global config object. """
+
     data: Dict[str, Any] = {}
 
     @staticmethod

@@ -2,7 +2,7 @@
 The server section is responsible for :
     - serves a default GUI (@see `gui` directory)
     - exposes the socket.io API to help remote UIs to send commands
-        @see `https://github.com/dclause/hermes_vuejs` for an example
+        @see `https://github.com/dclause/hermes_vuejs` for an example.
 """
 import contextlib
 import threading
@@ -15,7 +15,7 @@ from fastapi import FastAPI
 from uvicorn import Config
 from uvicorn.supervisors import ChangeReload
 
-from hermes import gui, __version__
+from hermes import __version__, gui
 from hermes.core import api, logger, plugins, storage
 from hermes.core.config import settings
 
@@ -78,7 +78,7 @@ server = None
 
 
 def init():
-    """ Initializes the server """
+    """ Initializes the server. """
     # pylint: disable-next=invalid-name,global-statement
     global server
     config = Config(
@@ -99,7 +99,7 @@ def init():
 def factory() -> FastAPI:
     """
     Factory method for server.
-    @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories
+    @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories.
     """
     app = FastAPI()
 
@@ -116,7 +116,7 @@ def reload_factory() -> FastAPI:
     """
     Reloadable factory for server.
     Uses the standard factory but also reuses the hermes init() application bootstrap.
-    @see factory()
+    @see factory().
     """
     logger.init()
     plugins.init()

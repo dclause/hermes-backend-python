@@ -1,4 +1,4 @@
-""" HERMES Application """
+""" HERMES Application. """
 
 __app__ = "HERMES"
 __tagline__ = "a Robot Management System (RMS)"

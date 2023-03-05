@@ -72,9 +72,7 @@ def init(app: FastAPI) -> None:
 
     @_SOCKET.on('handshake')
     async def handshake(cid: str, *args, **kwargs):
-        """
-        Pushes all current config to the client.
-        """
+        """Pushes all current config to the client."""
         logger.debug(f'Socket client {cid}: ask for handshake.')
         await _SOCKET.emit('handshake', (
             settings.get('global'),
