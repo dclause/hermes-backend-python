@@ -1,3 +1,43 @@
+[project]
+name = "hermes"
+description = "HERMES - a Robot Management System (RMS)"
+dynamic = ["version"]
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Dominique CLAUSE", email = "contact@acino.fr" },
+]
+
+dependencies = [
+    "func-timeout >=4.3.5, <5.0.0",
+    "logzero >=1.7.0, <2.0.0",
+    "mergedeep >=1.3.4, <2.0.0",
+    "pyserial >=3.5, <4.0",
+    "ruamel.yaml >=0.17.21, <1.0.0",
+    "nicegui >=1.1.9, <2.0.0",
+    "fastAPI >=0.92.0, <1.0.0",
+    "uvicorn >=0.20.0, <1.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest >=7.2.2, <8.0.0",
+    "pytest-cov >=4.0.0, <5.0.0",
+    "coverage[toml] >=7.2.1, <8.0.0",
+]
+dev = [
+    "pur >=7.1.0, <8.0.0",
+    "mypy >=1.0.1, <2.0.0",
+    "ruff >=0.0.254, <1.0.0",
+]
+
+[project.urls]
+repository = "https://github.com/dclause/hermes"
+
+[tool.setuptools]
+packages = ["hermes", "documentation"]
+
 [tool.ruff]
 select = [
     "D", # pydocstyle
@@ -55,3 +95,28 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "hermes.gui"
 implicit_reexport = true
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+python_files = "test_*.py"
+addopts = [
+    "--color=yes",
+    "--cov=hermes",
+    "--cov-report=term",
+    "--cov-report=html",
+]
+log_cli = 1
+log_cli_level = "INFO"
+
+[tool.coverage.run]
+branch = true
+source = ["hermes"]
+
+[coverage.report]
+exclude_lines = [
+    "pragma",
+    "if __name__ == .__main__."
+]
+
+[tool.coverage.html]
+directory = "tests/report"
