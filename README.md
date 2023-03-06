@@ -10,11 +10,12 @@ Hermes - _a Robot Management System (RMS)_ - is a set of tools to remotely pilot
 electronic devices build on one of supported boards.
 
 It's primary focus is robots or systems with a single (embedded or not) master _head_ (computer, raspberry,
-etc..) sending orders to a set of _slaves_ - sub-systems - (arduino for instance) connected via a supported protocol 
+etc..) sending orders to a set of _slaves_ - sub-systems - (arduino for instance) connected via a supported protocol
 (serial at the moment).
 The main project structure is:
 
 @todo: rework and rewrite this doc part:
+
 - `arduino`: an arduino "slave" client - _designed to receive and execute orders from the control script to actuators
   (servos, sensors, etc...)._
 - `backend`: a python control script - _designed to pilot de robot by sending appropriate orders to the appropriate
@@ -48,7 +49,7 @@ HERMES is an experimentation of my own to unify the control of some of my person
   Haas._
 - a full [InMoov robot](https://inmoov.fr) - _an open-source project by Gaël Langevin._
 
-It is also biased by my experience as an escape room creator since a room can be seen in the context of this 
+It is also biased by my experience as an escape room creator since a room can be seen in the context of this
 software as a robot where game master PC is the _head_ and the various puzzles are _slaves_.
 
 Inspired by [MyRobotLab](http://myrobotlab.org/), it _<ins>tries</ins>_ to be lighter (to be used on a raspberry),
@@ -69,6 +70,7 @@ It operates in coordination with the arduino code defined in the `arduino` folde
 ## Developers
 
 1. Clone the repository:
+
 ```
 git clone https://github.com/dclause/hermes.git
 cd hermes
@@ -79,7 +81,7 @@ cd hermes
 ```
 python3 -m venv .venv
 source ./.venv/Scripts/activate # can vary depending on your system
-pip install -r requirements.txt && pip install -r dev_requirements.txt
+pip install -e .[dev,test]
 ```
 
 2. Start the program:
@@ -89,26 +91,13 @@ python3 -m hermes
 ```
 
 * Open GUI: `python3 -m hermes --open`
-* Run in debug mode: `python3 -m hermes --debug`
+* Run in debug mode: `python3 -m hermes --dev --debug`
 * Help: `python3 -m hermes --help`
 
-3. For your convenience, you can use `make` commands in the project:
+3. For your convenience, you can use `make` commands in the project. Use `make help` for help.
 
 ```
-$ make
-Available commands:
-help                      Print help for each target
-documentation             Open documentation
-install                   Install everything
-run                       Run the code
-env                       Source the virtual environment
-debug                     Debug the code
-clean                     Cleanup
-test                      Run all tests
-lint                      Lint the code
-deps-install              Install the dependencies
-dev-deps-install          Install the dev dependencies
-deps-update               Update the dependencies
-dev-deps-update           Update the dependencies
-feedback                  Provide feedback
+make env
+make install
+make run
 ```
