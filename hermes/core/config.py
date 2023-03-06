@@ -8,27 +8,42 @@ given "space".
  - Finally the upmost specific configuration is the one given as parameters of the commandline when starting the
   application.
 """
-from typing import Any, Dict, List
+from typing import Any
 
 from mergedeep import merge
 
-from hermes.core import storage, logger, cli
-from hermes.core.helpers import HermesException
+from hermes.core import cli, logger, storage
+from hermes.core.logger import HermesError
 from hermes.core.struct import MetaSingleton
 
 
-class ConfigException(HermesException):
-    """ Base class for plugin related exceptions. """
+class ConfigError(HermesError):
+    """Base class for plugin related exceptions."""
+
+
+class ConfigKeyError(ConfigError):
+    """Key does not exist in the settings."""
+
+    def __init__(self, key: str):
+        super().__init__(f'No settings for key {key}.')
+
+
+class ConfigOverrideError(ConfigKeyError):
+    """Do not override settings object."""
+
+    def __init__(self) -> None:
+        super().__init__('Path cannot be empty: no settings override.')
 
 
 class _Settings(metaclass=MetaSingleton):
-    """ Global config object """
-    data: Dict[str, Any] = {}
+    """Global config object."""
+
+    data: dict[str, Any] = {}
 
     @staticmethod
-    def init():
+    def init() -> None:
         """
-        Initializes global config objects.
+        Initialize global config objects.
 
         By order of importance, the configurations are :
             - extracted from commandline data
@@ -44,8 +59,9 @@ class _Settings(metaclass=MetaSingleton):
         logger.debug(_Settings.data)
 
     @staticmethod
-    def get(path: str | List[str] = None) -> dict[str, Any]:
-        """ Gets a configuration value following the given path. """
+    def get(path: str | list[Any] | None = None) -> dict[Any, Any]:
+        """Get a configuration value following the given path."""
+
         if path is None:
             return _Settings.data
         if isinstance(path, str):
@@ -54,22 +70,23 @@ class _Settings(metaclass=MetaSingleton):
         current = _Settings.data
         for key in path:
             if key not in current:
-                raise ConfigException(f"No settings for key {key}.")
+                raise ConfigError(f'No settings for key {key}.')
             current = current[key]
         return current
 
     @staticmethod
-    def set(path: str | List[str], value: Any) -> None:
-        """ Sets a configuration value following the given path. """
+    def set(path: str | list[str], value: Any) -> None:
+        """Set a configuration value following the given path."""
+
         if isinstance(path, str):
             path = [path]
         if len(path) == 0:
-            raise ConfigException('Path cannot be empty.')
+            raise ConfigOverrideError()
 
         current = _Settings.data
         for key in path[:-1]:
             if key not in current:
-                raise ConfigException(f'No settings for key {key}.')
+                raise ConfigError(f'No settings for key {key}.')
             current = current[key]
 
         key = path[-1]

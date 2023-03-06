@@ -50,15 +50,16 @@ clean: ## Cleanup
 	@rm -f **/*.pyc
 	@rm -rf **/__pycache__
 	@rm -rf *.pyc __pycache__ .pytest_cache .mypy_cache .coverage coverage.xml
+	@$(VENV)/ruff clean
 
 test: ## Run all tests
 	@type $(VENV)/pytest >/dev/null 2>&1 || (echo "Run 'make install' first." >&2 ; exit 1)
-	$(VENV)/pytest --cov-report term-missing:skip-covered; rm -rf .coverage
+	$(VENV)/pytest
 	@make clean
 
 lint: ## Lint the code
 	$(info Running Mypy against source files...)
-	-@if type $(VENV)/mypy >/dev/null 2>&1 ; then $(VENV)/mypy --show-error-codes --ignore-missing-imports $(APPLICATION) ; \
+	-@if type $(VENV)/mypy >/dev/null 2>&1 ; then $(VENV)/mypy --show-error-codes $(APPLICATION) ; \
 	else echo "SKIPPED. Run 'make install' first." >&2 ; fi
 
 	$(info Running Ruff against source files...)
@@ -70,22 +71,14 @@ lint: ## Lint the code
 deps-install: ## Install the dependencies
 	@make env
 	@type $(PIP) >/dev/null 2>&1 || (echo "Run 'curl https://bootstrap.pypa.io/get-pip.py|sudo python3' first." >&2 ; exit 1)
-	@$(PIP) install -r requirements.txt
+	@$(PIP) -e .
+	@make clean
 
 dev-deps-install: ## Install the dev dependencies
 	@make env
 	@type $(PIP) >/dev/null 2>&1 || (echo "Run 'curl https://bootstrap.pypa.io/get-pip.py|sudo python3' first." >&2 ; exit 1)
-	@$(PIP) install -r dev_requirements.txt
-
-deps-update: ## Update the dependencies
-	@make env
-	@if type pur >/dev/null 2>&1 ; then pur -r requirements.txt ; \
-	else echo "SKIPPED. Run '$(PIP) install pur' first." >&2 ; fi
-
-dev-deps-update: ## Update the dependencies
-	@make env
-	@if type pur >/dev/null 2>&1 ; then pur -o dev_requirements.txt -r dev_requirements.txt ; \
-	else echo "SKIPPED. Run '$(PIP) install pur' first." >&2 ; fi
+	@$(PIP) -e .[dev,test]
+	@make clean
 
 feedback: ## Provide feedback
 	@$(PY) -m webbrowser https://github.com/dclause/hermes/issues

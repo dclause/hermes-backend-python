@@ -1,14 +1,17 @@
+"""Provide various default layout to guarantee a consistent design across pages."""
+
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Any
 
 from nicegui import ui
 
 from hermes import __app__, __tagline__, gui
 
 
-@contextmanager
-def _header(menu_items: dict = None):
-    """ Header default layout and styling. """
+def _header(menu_items: dict[str, Any] | None = None) -> None:
+    """Header default layout and styling."""
 
     if menu_items is None:
         menu_items = {}
@@ -60,17 +63,15 @@ def _header(menu_items: dict = None):
                     .props('flat round href="https://github.com/dclause/hermes" target="_blank"') \
                     .classes('star-container'):
                 gui.icon('star', 24, 24).classes('fill-white m-2')
-                with ui.tooltip('').classes('bg-[#486991] w-96 p-4'):
-                    with ui.row().classes('items-center no-wrap'):
-                        gui.icon('logo').classes('w-14 stroke-white stroke-[1pt]')
-                        with ui.column().classes('p-2 gap-2'):
-                            ui.label('Star us on GitHub!').classes('text-[180%]')
-                            ui.label('And tell others about HERMES.').classes('text-[140%]')
+                with ui.tooltip('').classes('bg-[#486991] w-96 p-4'), ui.row().classes('items-center no-wrap'):
+                    gui.icon('logo').classes('w-14 stroke-white stroke-[1pt]')
+                    with ui.column().classes('p-2 gap-2'):
+                        ui.label('Star us on GitHub!').classes('text-[180%]')
+                        ui.label('And tell others about HERMES.').classes('text-[140%]')
 
 
-@contextmanager
-def _sidebar(menu_items: dict = None):
-    """ Sidebar default layout and styling. """
+def _sidebar() -> None:
+    """Sidebar default layout and styling."""
 
     with ui.left_drawer(top_corner=True, bottom_corner=True, fixed=True) \
             .props('no-swipe-open no-swipe-close mini behavior=desktop persistent :mini-width="70"') \
@@ -83,15 +84,15 @@ def _sidebar(menu_items: dict = None):
 
 
 @contextmanager
-def _main():
-    """ Main area default layout and styling. """
+def _main() -> Generator[None, None, None]:
+    """Content area default layout and styling."""
     with ui.column().classes('full-width full-height p-4 mx-auto', remove='gap-4'):
         yield
 
 
 @contextmanager
-def layout():
-    """ Custom page frame to share the same styling and behavior across all pages """
+def layout() -> Generator[None, None, None]:
+    """Page layout: share the same styling and behavior across all pages."""
     _header()
     _sidebar()
     with _main():

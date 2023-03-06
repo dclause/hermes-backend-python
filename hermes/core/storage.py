@@ -3,40 +3,33 @@ Defines the storage interface used to load/dump configs. It currently uses YAML 
 
 The purpose to separate it to its own module is to later be able to swap to a different dumper style if needed.
 """
-import glob
 import io
-import os.path
+from pathlib import Path
 from typing import Any
 
 import ruamel.yaml
 from mergedeep import merge
 
 from hermes.core import logger
-from hermes.core.helpers import ROOT_DIR, CONFIG_DIR
+from hermes.core.helpers import CONFIG_DIR, ROOT_DIR
 from hermes.core.plugins import AbstractPlugin
 from hermes.core.struct import StringEnum
 
 _storage = ruamel.yaml.YAML(typ='safe')
-_storage.sort_base_mapping_type_on_output = False
-
-
-class StorageNamespace(StringEnum):
-    """ Defines the existing namespace within the application. """
-    CORE = os.path.join('configs')  # Any configuration provided by core.
-    MODULE = os.path.join('modules', 'configs')  # Any configuration provided by a module.
-    PROFILE = os.path.join('..', 'configs')  # Any configuration from the active profile.
+_storage.sort_base_mapping_type_on_output = False  # type: ignore[assignment]
 
 
 class StorageType(StringEnum):
-    """ Defines the existing configuration types within the application. """
+    """Defines the existing configuration types within the application."""
+
     GLOBAL = 'global'  # Configurations relative to the application itself (port, host, ...)
     PROFILE = 'profile'  # Configurations relative to the application itself (port, host, ...)
     BOARD = 'boards'  # Configurations relative to boards within the robot (arduino, ...)
     DEVICE = 'devices'  # Configurations relative to devices connected to the boards (led, servo, ...)
 
 
-def init():
-    """ Init the YAML loader/dumper. """
+def init() -> None:
+    """Init the YAML loader/dumper."""
     logger.info(' > Init storage')
 
     # This is needed for storage to know about the storable classes.
@@ -53,15 +46,15 @@ def load() -> dict[str, Any]:
     """
     Load all available configurations and merge/concatenate it accordingly
     Returns:
-       List(str, Any): A list of configurations
+       List(str, Any): A list of configurations.
     """
     config: dict[str, Any] = {}
-    for namespace in StorageNamespace:
-        # Find all files corresponding to the config_type for the given namespace.
-        filenames = glob.glob(os.path.join(ROOT_DIR, namespace, '*.yml'), recursive=False)
-        for filename in filenames:
-            plugin_name = os.path.basename(filename)[:-4]
-            with open(filename, 'r', encoding='utf-8') as file:
+
+    for scope in ['', 'hermes', 'modules']:  # @todo also load properly from modules
+        loadable_config_files = Path(ROOT_DIR, scope, 'configs').glob('*.yml')
+        for filename in loadable_config_files:
+            plugin_name = filename.name[:-4]
+            with filename.open(encoding='utf-8') as file:
                 if plugin_name not in config:
                     config[plugin_name] = {}
                 data = _storage.load_all(file)
@@ -71,9 +64,8 @@ def load() -> dict[str, Any]:
                     elif isinstance(plugin, list):
                         data = {}
                         for index, item in enumerate(plugin):
-                            if 'id' in item:
-                                index = item['id']
-                            data[index] = item
+                            key = item['id'] if 'id' in item else index
+                            data[key] = item
                         config[plugin_name] = {**config[plugin_name], **data}
                     else:
                         data = {plugin.id: plugin}
@@ -83,29 +75,25 @@ def load() -> dict[str, Any]:
 
 def write(config_type: StorageType, data: Any) -> None:
     """
-    Stores the given config data to the active profile.
+    Store the given config data to the active profile.
 
-    Args:
-        config_type (StorageType):
-            The configuration type.
-        data (Any):
-            The data to store.
+    :param StorageType config_type: The configuration type.
+    :param Any data: The data to store.
     """
-    filename = os.path.join(CONFIG_DIR, StorageNamespace.PROFILE, f'{config_type}.yml')
-    with open(filename, 'w', encoding='utf-8') as file:
+    filename = Path(CONFIG_DIR, f'{config_type}.yml')
+    with filename.open(mode='w', encoding='utf-8') as file:
         if config_type is StorageType.GLOBAL:
             _storage.dump(data, file)
         else:
             _storage.dump_all(data, file)
 
 
-def dump(data) -> Any:
+# @todo evaluate when storage will write configs.
+def dump(data: Any) -> Any:
     """
-    Returns the given data dump.
+    Dump the given data dump.
 
-    Args:
-        data (Any):
-            The data to dump.
+    :param any data: The data to dump.
     """
     buffer = io.StringIO()
     _storage.dump(data, buffer)

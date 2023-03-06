@@ -18,19 +18,20 @@ from typing import Any
 
 from hermes.core import logger
 from hermes.core.dictionary import MessageCode
-from hermes.core.helpers import HermesException
+from hermes.core.logger import HermesError
 from hermes.core.plugins import AbstractPlugin
-from hermes.core.struct import MetaSingleton, MetaPluginType
+from hermes.core.struct import MetaPluginType, MetaSingleton
+from hermes.protocols import AbstractProtocol
 
 
-class CommandException(HermesException):
-    """ Base class for command related exceptions. """
+class CommandError(HermesError):
+    """Base class for command related exceptions."""
 
 
 class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
-    """ Manages plugins of type commands. """
+    """Manages plugins of type commands."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self.default: Any = None
         self.value: Any = None
@@ -38,22 +39,22 @@ class AbstractCommand(AbstractPlugin, metaclass=MetaPluginType):
     @property
     @abstractmethod
     def code(self) -> MessageCode:
-        """ Each command type must be a 8bit code from the MessageCode dictionary. """
+        """Each command type must be a 8bit code from the MessageCode dictionary."""
 
-    def receive(self, connexion):
-        """ Reads the additional data sent with the command. """
+    def receive(self, protocol: AbstractProtocol) -> None:
+        """Read the additional data sent with the command."""
 
-    def process(self):
-        """ Processes the command """
+    def process(self) -> None:
+        """Process the command."""
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Command {self.name}'
 
 
 class CommandFactory(metaclass=MetaSingleton):
-    """ Command factory class: instantiates a Command of a given type """
+    """Command factory class: instantiates a Command of a given type."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.__commands: dict[MessageCode, AbstractCommand] = {}
 
         # Self registers all AbstractCommand defined plugins.
@@ -61,42 +62,40 @@ class CommandFactory(metaclass=MetaSingleton):
             self.__commands[command().code] = command()
 
     def get_by_code(self, code: MessageCode) -> AbstractCommand:
-        """ Instantiates a AbstractCommand based on a given MessageCode
+        """
+        Instantiate a AbstractCommand based on a given MessageCode.
 
-        Args:
-            code (MessageCode): The MessageCode of the Command to instantiate.
-        Returns:
-            AbstractCommand | None
-        Raises:
-            CommandException: the command code does not exist.
+        :param MessageCode code: The MessageCode of the Command to instantiate.
 
-        See Also:
-            :class:`MessageCode`
+        :return: AbstractCommand | None
+
+        :reaise: CommandError: the command code does not exist.
+
+        **See Also:**  :class:`MessageCode`
         """
         command = self.__commands.get(code)
         if command is None:
             logger.error(f'Command {code} do not exists.')
-            raise CommandException(f'Command with code `{code}` do not exists.')
+            raise CommandError(f'Command with code `{code}` do not exists.')
         return command
 
     def get_by_name(self, name: str) -> AbstractCommand:
-        """ Instantiates a AbstractCommand based on a given name
-
-        Args
-            name (str): The name of the Command to instantiate.
-        Returns
-            AbstractCommand or None
-        Raises:
-            CommandException: the command name does not exist.
-
-        See Also:
-            :class:`MessageCode`
         """
-        command = next((command for command in self.__commands.values() if getattr(command, 'name') == name), None)
+        Instantiate a AbstractCommand based on a given name.
+
+        :param str name: The name of the Command to instantiate.
+
+        :return: AbstractCommand | None
+
+        :raise: CommandError: the command name does not exist.
+
+        **See Also:** :class:`MessageCode`
+        """
+        command = next((command for command in self.__commands.values() if command.name == name), None)
         if command is None:
             logger.error(f'Command {name} do not exists.')
-            raise CommandException(f'Command with name `{name}` do not exists.')
+            raise CommandError(f'Command with name `{name}` do not exists.')
         return command
 
 
-__ALL__ = ['AbstractCommand', 'CommandFactory', 'CommandException']
+__ALL__ = ['AbstractCommand', 'CommandFactory', 'CommandError']

@@ -11,19 +11,18 @@ from hermes.protocols import AbstractProtocol
 
 
 class DebugCommand(AbstractCommand):
-    """ Displays debug data send from slave board. """
+    """Displays debug data send from slave board."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-        self._data = ""
+        self._data = ''
 
     @property
-    def code(self) -> MessageCode:
+    def code(self) -> MessageCode:  # noqa: D102
         return MessageCode.DEBUG
 
-    def receive(self, connexion: AbstractProtocol):
+    def receive(self, connexion: AbstractProtocol) -> None:  # noqa: D102
         self._data = connexion.read_line()
 
-    def process(self):
-        """ Processes the command """
-        logger.info(f'## DEBUG ROBOT: {self._data} ##', )
+    def process(self) -> None:  # noqa: D102
+        logger.info(f'## DEBUG ROBOT: {self._data} ##')

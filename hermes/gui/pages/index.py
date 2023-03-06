@@ -1,4 +1,4 @@
-""" Index page. """
+"""Index page."""
 
 from nicegui import ui
 
@@ -7,8 +7,8 @@ from hermes.gui import AbstractPage, pages
 
 @pages.page(path='/', title=None)
 class IndexPage(AbstractPage):
-    """ Index page """
+    """Index page."""
 
-    def content(self) -> None:
+    def content(self) -> None:  # noqa: 102
         with ui.row().classes('absolute-center'):
             ui.label('Welcome to HERMES').classes('text-h4 font-bold text-grey-8')

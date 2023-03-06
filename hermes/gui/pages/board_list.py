@@ -1,4 +1,4 @@
-""" Board list page. """
+"""Board list page."""
 from nicegui import ui
 
 from hermes.core.config import settings
@@ -7,9 +7,9 @@ from hermes.gui import AbstractPage, pages
 
 @pages.page(path='/boards', title='My boards', subtitle='test a subtitle')
 class BoardListPage(AbstractPage):
-    """ Board list page """
+    """Board list page."""
 
-    def content(self) -> None:
+    def content(self) -> None:  # noqa: D102
         for _, board in settings.get('boards').items():
             ui.label().bind_text(board, 'name')
             for _, action in board.actions.items():
