@@ -27,12 +27,11 @@ def main() -> None:
 
         logger.info('\033[96m == Starting HERMES == \033[0m')
         with server.server.run_in_thread():
-
-            # @todo: certificate to use the GUI through https.
             host = settings.get(['server', 'host'])
             port = settings.get(['server', 'port'])
             reload = settings.get(['server', 'reload'])
-            addr = f'http://{host}:{port}'
+            ssl = settings.get(['server', 'ssl'])
+            addr = f'http{"s" if ssl else ""}://{host}:{port}'
             logger.info(f' > Server running {"with autoreload" if reload else ""} on {addr} (Ctrl+C to quit)')
 
             # Auto open the browser.

@@ -8,11 +8,15 @@ import contextlib
 import threading
 import time
 from collections.abc import Generator
+from pathlib import Path
 from socket import socket
-from typing import Any
+from typing import Any, cast
 
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware.gzip import GZipMiddleware
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 from uvicorn import Config
 from uvicorn.supervisors import ChangeReload
 
@@ -75,6 +79,7 @@ def init() -> None:
     """Initialize the server."""
     global server  # noqa: PLW0603
 
+    certfiles = cast(str, settings.get(['server', 'ssl']))
     config = Config(
         'hermes.core.server:reload_factory' if settings.get(['server', 'reload']) else 'hermes.core.server:factory',
         factory=True,
@@ -82,7 +87,10 @@ def init() -> None:
         port=settings.get(['server', 'port']),  # type: ignore[arg-type]
         log_level='warning',
         reload=settings.get(['server', 'reload']),  # type: ignore[arg-type]
-        reload_includes=['*.py', '*.css'] if settings.get(['server', 'reload']) else None)
+        reload_includes=['*.py', '*.css'] if settings.get(['server', 'reload']) else None,
+        ssl_keyfile=Path(certfiles, 'privatekey.pem').absolute().__str__() if certfiles else None,
+        ssl_certfile=Path(certfiles, 'certificate.pem').absolute() if certfiles else None,
+    )
 
     server = _Server(config=config)  # noqa: PLW0603
     if config.should_reload:
@@ -96,6 +104,11 @@ def factory() -> FastAPI:
     @see --factory option in uvicorn: https://www.uvicorn.org/#application-factories.
     """
     app = FastAPI()
+
+    app.add_middleware(HTTPSRedirectMiddleware)
+    print(settings.get(['server', 'trusted']))
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.get(['server', 'trusted']))
+    app.add_middleware(GZipMiddleware)
 
     @app.get('/version')
     def healthcheck() -> dict[str, str]:

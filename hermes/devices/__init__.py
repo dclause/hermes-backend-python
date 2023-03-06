@@ -80,7 +80,7 @@ class AbstractDevice(AbstractPlugin, metaclass=MetaPluginType):
 
     def render_icon(self) -> str:
         """Render the board icon (@see https://fonts.google.com/icons)."""
-        return 'brightness_high'
+        return 'auto_mode'  # brightness_high
 
     def render_name(self) -> None:
         """Render the board name."""
