@@ -2,7 +2,7 @@
 #define ARDUINO_COMMAND_H
 
 #include "../helper/debugger.h"
-#include "../helper/ioserial.h"
+#include "../protocols/io.h"
 #include <Arduino.h>
 
 

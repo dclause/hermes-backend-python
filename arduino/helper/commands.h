@@ -1,7 +1,7 @@
 #ifndef ARDUINO_COMMANDS_H
 #define ARDUINO_COMMANDS_H
 
-#include "ioserial.h"
+#include "../protocols/io.h"
 #include "map.h"
 #include "dictionary.h"
 #include "../commands/AbstractCommand.h"

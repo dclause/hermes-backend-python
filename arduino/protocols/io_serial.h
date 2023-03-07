@@ -1,20 +1,20 @@
-#ifndef ARDUINO_IO_H
-#define ARDUINO_IO_H
+#ifndef ARDUINO_IO_SERIAL_H
+#define ARDUINO_IO_SERIAL_H
+
+#ifdef USE_SERIAL_PROTOCOL
 
 /**
- * IO files aim to provide a unified interface to read/write operation methods.
+ * SERIAL protocol for arduino-to-server communication.
  *
- * This file is dedicated to Input/Output arduino serial operations.
- * (currently, it is the only supported communication protocol)
- *
- * By exposing a unified interface for IO operations, switching between io files (when implemented) will be
- * transparent for the main code. This is made to help supporting various communication protocols, may it be Serial
- * (as here) or WIFI (to be implementation) or else.
+ * IO files aim to provide a unified interface to read/write operations. This allows
+ * the protocol to be transparently switched from the main .ino code.
  */
 
+#error USE_SERIAL_PROTOCOL
+
 #include <HardwareSerial.h>
-#include "debugger.h"
-#include "dictionary.h"
+#include "../helper/debugger.h"
+#include "../helper/dictionary.h"
 
 #define BAUDRATE 115200
 
@@ -154,6 +154,7 @@ namespace IO {
         Serial.write(buffer, length);
     }
 
-}// namespace IO
+} // namespace IO
 
-#endif// ARDUINO_IO_H
+#endif // USE_SERIAL_PROTOCOL
+#endif // ARDUINO_IO_SERIAL_H

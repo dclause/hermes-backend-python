@@ -6,7 +6,7 @@
 #include "../helper/dictionary.h"
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
-#include "../helper/ioserial.h"
+#include "../protocols/io.h"
 
 /**
  * HANDSHAKE Command: performs the HANDSHAKE sequence.

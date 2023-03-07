@@ -1,0 +1,6 @@
+#ifndef ARDUINO_IO_WIFI_H
+#define ARDUINO_IO_WIFI_H
+
+
+
+#endif // ARDUINO_IO_WIFI_H
