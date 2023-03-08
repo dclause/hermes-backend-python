@@ -76,7 +76,7 @@ namespace IO {
      *  Returns the available number of bytes in the receive buffer.
      */
     uint8_t available() {
-        return Udp.available();
+        return Udp.available() || Udp.parsePacket();
     }
 
     /**
@@ -116,8 +116,27 @@ namespace IO {
      * @param length (uint8_t) The number of bytes to read.
      */
     void read_bytes(uint8_t *buffer, const uint8_t length) {
-        Udp.read(buffer, length);
+        uint8_t index = 0;
+        uint8_t byte;
+        while (index < length) {
+            byte = Udp.read();
+            if (byte < 0) break;
+            buffer[index] = (int8_t) byte;
+            index++;
+        }
     }
+        /*
+        Udp.read(buffer, length);
+#ifdef ACTIVATE_DEBUG
+        String debug = "";
+        char tmp[3];
+        for (uint8_t i = 0; i < length; i++) {
+            itoa(buffer[i], tmp, 10);
+            debug += String(tmp);
+        }
+        TRACE("read_bytes: " + String(length) + " to read: " + debug);
+#endif
+    }*/
 
     /**
      * Waits for incoming given amount of bytes, or exit if timeout.
@@ -145,7 +164,9 @@ namespace IO {
      */
     void send_command(const MessageCode command) {
         TRACE("Send command: " + String((uint8_t) command));
+        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(static_cast<uint8_t>(command));
+        Udp.endPacket();
     }
 
     /**
@@ -155,7 +176,9 @@ namespace IO {
      * @param length (uint8_t) The number of bytes to write.
      */
     void send_bytes(const uint8_t *buffer, const uint8_t length) {
+        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
         Udp.write(buffer, length);
+        Udp.endPacket();
     }
 
 } // namespace IO
