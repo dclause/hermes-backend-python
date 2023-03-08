@@ -41,7 +41,7 @@ class BoardError(HermesError):
 
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     """
-    Handles the serial communication with an external board.
+    Abstract class to represent a board.
 
     The properties of a boards are :
      - *id*:            the board ID
@@ -67,22 +67,22 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         self._exit_event = threading.Event()
         # Number of messages we can send to the board without receiving an acknowledgment
         self._n_received_semaphore = threading.Semaphore(5)
-        # Lock for accessing serial file (to avoid reading and writing at the same time)
-        serial_lock = threading.Lock()
+        # Lock for accessing protocol (to avoid reading and writing at the same time)
+        protocol_lock = threading.Lock()
         # Threads for arduino communication
         self._threads = [
-            SerialSenderThread(
+            BoardSenderThread(
                 self.protocol,
                 self._command_queue,
                 self._exit_event,
                 self._n_received_semaphore,
-                serial_lock,
+                protocol_lock,
             ),
-            SerialListenerThread(
+            BoardListenerThread(
                 self.protocol,
                 self._exit_event,
                 self._n_received_semaphore,
-                serial_lock,
+                protocol_lock,
             ),
         ]
 
@@ -93,7 +93,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         :raise ProtocolError: Raised if the connexion could not be opened.
         """
 
-        # Open serial port (for communication with Arduino)
+        # Open protocol (for communication with the board)
         try:
             self.protocol.open()
         except ProtocolError:
@@ -139,6 +139,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     @func_set_timeout(5)  # type: ignore[misc]
     def handshake(self) -> None:
         """Perform handshake between the board and the application."""
+        # @todo move this to a command
 
         # Handshake: send all devices to board via PATCH.
         logger.debug(f'Handshake for board `{self.name}`.')
@@ -149,7 +150,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         devices.update(self.inputs)
 
         # NOTE: We cannot use the standard way to send command via the command send() method here.
-        # because that one uses the self._command_queue (via SerialSenderThread) which yet started at this state.
+        # because that one uses the self._command_queue (via BoardSenderThread) which yet started at this state.
         self.protocol.send(bytearray([MessageCode.HANDSHAKE, len(devices)]))
 
         # Send all commands the device can do.
@@ -201,18 +202,17 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
 _RATE = 0
 
 
-# @todo move threads out of the board in the protocol.
-class SerialSenderThread(threading.Thread):
+class BoardSenderThread(threading.Thread):
     """
     Thread that send orders to the arduino.
 
     Note: it blocks if there is no more send_token left (here it is the n_received_semaphore).
 
-    :param protocol: (Serial object)
+    :param protocol: (Protocol object)
     :param command_queue: (Queue)
     :param exit_event: (Threading.Event object)
     :param n_received_semaphore: (threading.Semaphore)
-    :param serial_lock: (threading.Lock).
+    :param protocol_lock: (threading.Lock).
     """
 
     def __init__(
@@ -221,7 +221,7 @@ class SerialSenderThread(threading.Thread):
             command_queue: ClearableQueue,
             exit_event: threading.Event,
             n_received_semaphore: threading.Semaphore,
-            serial_lock: threading.Lock,
+            protocol_lock: threading.Lock,
     ) -> None:
         threading.Thread.__init__(self)
         self.deamon = True
@@ -229,7 +229,7 @@ class SerialSenderThread(threading.Thread):
         self.command_queue = command_queue
         self.exit_event = exit_event
         self.n_received_semaphore = n_received_semaphore
-        self.serial_lock = serial_lock
+        self.protocol_lock = protocol_lock
 
     def run(self) -> None:  # noqa: D102
         while not self.exit_event.is_set():
@@ -245,15 +245,15 @@ class SerialSenderThread(threading.Thread):
                 self.n_received_semaphore.release()
                 continue
 
-            with self.serial_lock:
+            with self.protocol_lock:
                 # @todo should be close connexion on the board if this fails ?
                 self.protocol.send(data)
 
             time.sleep(_RATE)
-        logger.debug('SerialSenderThread: thread stops.')
+        logger.debug('BoardSenderThread: thread stops.')
 
 
-class SerialListenerThread(threading.Thread):
+class BoardListenerThread(threading.Thread):
     """
     Thread that listens to communication protocol for commands and executes it.
 
@@ -264,7 +264,7 @@ class SerialListenerThread(threading.Thread):
     :param AbstractProtocol protocol:
     :param threading.Event object exit_event:
     :param threading.Semaphore n_received_semaphore:
-    :param threading.Lock serial_lock:
+    :param threading.Lock protocol_lock:
     """
 
     def __init__(
@@ -272,27 +272,27 @@ class SerialListenerThread(threading.Thread):
             protocol: AbstractProtocol,
             exit_event: threading.Event,
             n_received_semaphore: threading.Semaphore,
-            serial_lock: threading.Lock,
+            protocol_lock: threading.Lock,
     ):
         threading.Thread.__init__(self)
         self.deamon = True
         self.protocol = protocol
         self.exit_event = exit_event
         self.n_received_semaphore = n_received_semaphore
-        self.serial_lock = serial_lock
+        self.protocol_lock = protocol_lock
 
     def run(self) -> None:  # noqa: D102
-        logger.debug('SerialListenerThread: thread started.')
+        logger.debug('BoardListenerThread: thread started.')
 
         while not self.exit_event.is_set():
             try:
                 command_code: MessageCode = MessageCode(self.protocol.read_byte())
-                logger.debug(f'SerialListenerThread: receive command code {command_code}')
+                logger.debug(f'BoardListenerThread: receive command code {command_code}')
             except HermesError:
                 time.sleep(_RATE)
                 continue
 
-            with self.serial_lock:
+            with self.protocol_lock:
                 command = CommandFactory().get_by_code(command_code)
                 logger.debug(command)
                 command.receive(self.protocol)
@@ -301,7 +301,7 @@ class SerialListenerThread(threading.Thread):
                 if command_code == MessageCode.ACK:
                     self.n_received_semaphore.release()
             time.sleep(_RATE)
-        logger.debug('SerialListenerThread: thread stops.')
+        logger.debug('BoardListenerThread: thread stops.')
 
 
 __ALL__ = ['BoardError', 'AbstractBoard']
