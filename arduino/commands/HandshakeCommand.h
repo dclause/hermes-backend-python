@@ -6,7 +6,7 @@
 #include "../helper/dictionary.h"
 #include "AbstractCommand.h"
 #include "CommandFactory.h"
-#include "../helper/ioserial.h"
+#include "../protocols/io.h"
 
 /**
  * HANDSHAKE Command: performs the HANDSHAKE sequence.
@@ -28,6 +28,7 @@ class HandshakeCommand : public AbstractCommand {
             TRACE("Process HANDSHAKE command:");
 
             for (uint8_t i = 0; i < payload[0]; ++i) {
+                TRACE("Handshake: waiting for a SETTINGS now.");
                 if (IO::wait_for_bytes(1)) {
                     MessageCode code = IO::read_command();
                     if (code != MessageCode::SETTINGS) {
@@ -38,7 +39,8 @@ class HandshakeCommand : public AbstractCommand {
                     command->process();
                 }
             }
-            IO::send_command(MessageCode::ACK);
+
+            TRACE("Handshake: done");
         }
 };
 

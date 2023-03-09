@@ -2,7 +2,7 @@
 #define ARDUINO_COMMAND_H
 
 #include "../helper/debugger.h"
-#include "../helper/ioserial.h"
+#include "../protocols/io.h"
 #include <Arduino.h>
 
 
@@ -32,7 +32,6 @@
  */
 class AbstractCommand {
     protected:
-        uint8_t id_ = 0;
         int expected_payload_size_;
         uint8_t effective_payload_size_;
         uint8_t *payload_;
@@ -63,13 +62,6 @@ class AbstractCommand {
         virtual String getName() const = 0;
 
         /**
-         * Returns the ID of this command.
-         *
-         * @return String
-         */
-        uint8_t getId() const { return this->id_; };
-
-        /**
          * Processes the command when received from the serial port. That means receive the payload and execute it.
          */
         void process() {
@@ -84,7 +76,7 @@ class AbstractCommand {
          * @return String
          */
         operator String() const {
-            return "Command (" + String(this->getId()) + ") " + this->getName() + " ";
+            return "Command " + this->getName();
         }
 
     private:
@@ -114,7 +106,7 @@ class AbstractCommand {
                 IO::read_bytes(this->payload_, this->effective_payload_size_);
             }
             TRACE("Payload size: " + String(this->effective_payload_size_));
-#ifdef TRACE
+#if ACTIVATE_DEBUG
             String payloadAsInts = "";
             for (uint8_t i = 0; i < this->effective_payload_size_; i++) {
                 payloadAsInts += String(this->payload_[i]) + " ";

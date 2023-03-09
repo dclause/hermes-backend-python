@@ -1,22 +1,18 @@
-#ifndef ARDUINO_IO_H
-#define ARDUINO_IO_H
+#ifndef ARDUINO_IO_SERIAL_H
+#define ARDUINO_IO_SERIAL_H
+
+#ifdef USE_SERIAL_PROTOCOL
 
 /**
- * IO files aim to provide a unified interface to read/write operation methods.
+ * SERIAL protocol for arduino-to-server communication.
  *
- * This file is dedicated to Input/Output arduino serial operations.
- * (currently, it is the only supported communication protocol)
- *
- * By exposing a unified interface for IO operations, switching between io files (when implemented) will be
- * transparent for the main code. This is made to help supporting various communication protocols, may it be Serial
- * (as here) or WIFI (to be implementation) or else.
+ * IO files aim to provide a unified interface to read/write operations. This allows
+ * the protocol to be transparently switched from the main .ino code.
  */
 
 #include <HardwareSerial.h>
-#include "debugger.h"
-#include "dictionary.h"
-
-#define BAUDRATE 115200
+#include "../helper/debugger.h"
+#include "../helper/dictionary.h"
 
 namespace IO {
 
@@ -68,10 +64,34 @@ namespace IO {
     }
 
     /**
+     * Start processing the next available incoming packet.
+     *
+     * Note: As of the serial protocol, there is no packet but a stream of
+     * data. parsePacket therefore simply means
+     *
+     * @return uint8_t: the size of the remaining receive buffer in bytes.
+     */
+    uint8_t parsePacket() {
+        return Serial.available();
+    }
+
+    /**
+     * Returns the available number of bytes in the receive buffer.
+     *
+     * @return uint8_t: the size of the remaining receive buffer in bytes.
+     */
+    uint8_t available() {
+        return Serial.available();
+    }
+
+
+    /**
      * Waits for incoming given amount of bytes from the serial port, or exit if timeout.
      *
      * @param num_bytes (uint8_t): The number of bytes to wait for.
      * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
+     *
+     * @return bool: true/false if the number of bytes available matches the expectency.
      */
     bool wait_for_bytes(const uint32_t length, const uint32_t timeout = 100) {
         const uint32_t startTime = millis();
@@ -116,25 +136,6 @@ namespace IO {
     }
 
     /**
-     * Waits for incoming given amount of bytes from the serial port, or exit if timeout.
-     *
-     * @param num_bytes (uint8_t): The number of bytes to wait for.
-     * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
-     */
-    uint32_t read_until_endl(uint8_t *buffer) {
-        uint32_t index = 0;
-        uint8_t byte;
-        while (wait_for_bytes(1)) {
-            byte = Serial.read();
-            if (byte < 0 || byte == ((uint8_t) MessageCode::END_OF_LINE)) break;
-            buffer[index] = (int8_t) byte;
-            index++;
-            TRACE("read_until_endl:" + String(byte));
-        }
-        return index;
-    }
-
-    /**
      * Sends an 8bit word MessageCode.
      *
      * @param command (MessageCode)
@@ -154,6 +155,7 @@ namespace IO {
         Serial.write(buffer, length);
     }
 
-}// namespace IO
+} // namespace IO
 
-#endif// ARDUINO_IO_H
+#endif // USE_SERIAL_PROTOCOL
+#endif // ARDUINO_IO_SERIAL_H

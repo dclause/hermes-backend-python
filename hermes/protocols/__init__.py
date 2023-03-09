@@ -5,6 +5,7 @@ This package contains all implemented communication protocols provided by defaul
 A "communication protocol" defines a way for a board to communicate with this server, therefore a protocol is designed
 to be embedded in a board (see AbstractBoard) and must implement the AbstractProtocol interface. (ex: SerialProtocol)
 """
+from __future__ import annotations
 
 from abc import abstractmethod
 
@@ -16,8 +17,8 @@ from hermes.core.struct import MetaPluginType
 class ProtocolError(HermesError):
     """Base class for protocol related exceptions."""
 
-    def __init__(self, name: str):
-        super().__init__(f'Board {name}: Connexion could not be opened.')
+    def __init__(self, protocol: AbstractProtocol, message: str):
+        super().__init__(f'{protocol.__class__.__name__}: {message}')
 
 
 class AbstractProtocol(AbstractPlugin, metaclass=MetaPluginType):

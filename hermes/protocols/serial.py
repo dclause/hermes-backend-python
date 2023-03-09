@@ -1,6 +1,7 @@
 """
 Serial communication handling.
-Used by boards with SERIAL protocol type (only supported mode as of today).
+
+Used by boards connected to the server via a USB serial cable.
 """
 
 import glob
@@ -9,7 +10,6 @@ import sys
 from serial import Serial, SerialException
 
 from hermes.core import logger
-from hermes.core.logger import HermesError
 from hermes.protocols import AbstractProtocol, ProtocolError
 
 
@@ -18,23 +18,23 @@ class SerialProtocol(AbstractProtocol):
 
     def __init__(self, port: str, baudrate: int = 115200, timeout: int = 0) -> None:
         super().__init__()
-        self._serial_port: str = port
-        self._baudrate: int = baudrate
+        self.port: str = port
+        self.baudrate: int = baudrate
         self._timeout: int = timeout
         self._serial: Serial = Serial()
 
     def open(self) -> None:  # noqa: D102
         try:
             self._serial = Serial(
-                port=self._serial_port,
-                baudrate=self._baudrate,
+                port=self.port,
+                baudrate=self.baudrate,
                 timeout=self._timeout,
                 writeTimeout=self._timeout,
             )
             self._serial.flush()
         except SerialException as error:
             logger.exception(f'Available ports are {self.get_serial_ports()}')
-            raise ProtocolError(f'Port {self._serial_port} could not be opened: {error}') from error
+            raise ProtocolError(self, f'Port {self.port} could not be opened: {error}') from error
 
     def close(self) -> None:  # noqa: D102
         self._serial.close()
@@ -54,7 +54,7 @@ class SerialProtocol(AbstractProtocol):
         try:
             self._serial.write(data)
         except SerialException:
-            HermesError(f'Serial protocol: Error sending command {data} - {list(data)}')
+            ProtocolError(self, f'Error sending command {data} - {list(data)}')
 
     def read_line(self) -> str:  # noqa: D102
         response = ''

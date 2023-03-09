@@ -105,10 +105,10 @@ def factory() -> FastAPI:
     """
     app = FastAPI()
 
-    app.add_middleware(HTTPSRedirectMiddleware)
-    print(settings.get(['server', 'trusted']))
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.get(['server', 'trusted']))
     app.add_middleware(GZipMiddleware)
+    if settings.get(['server', 'ssl']):
+        app.add_middleware(HTTPSRedirectMiddleware)
 
     @app.get('/version')
     def healthcheck() -> dict[str, str]:

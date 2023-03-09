@@ -2,7 +2,7 @@
 #define ARDUINO_DEVICE_H
 
 #include "../helper/debugger.h"
-#include "../helper/ioserial.h"
+#include "../protocols/io.h"
 #include <Arduino.h>
 
 
@@ -135,7 +135,7 @@ class AbstractDevice {
                 IO::read_bytes(this->payload_, this->effective_payload_size_);
             }
             TRACE("Payload size: " + String(this->effective_payload_size_));
-#ifdef TRACE
+#if ACTIVATE_DEBUG
             String payloadAsInts = "";
             for (uint8_t i = 0; i < this->effective_payload_size_; i++) {
                 payloadAsInts += String(this->payload_[i]) + " ";

@@ -1,7 +1,7 @@
 #ifndef ARDUINO_COMMANDS_H
 #define ARDUINO_COMMANDS_H
 
-#include "ioserial.h"
+#include "../protocols/io.h"
 #include "map.h"
 #include "dictionary.h"
 #include "../commands/AbstractCommand.h"
@@ -20,7 +20,7 @@ namespace Commands {
      * Once done, an ACK is sent.
      */
     void receive_and_process_next_command() {
-        if (IO::available() > 0) {
+        if (IO::parsePacket() > 0) {
             // Read incoming byte: this represents an order.
             MessageCode code = IO::read_command();
 
@@ -30,7 +30,8 @@ namespace Commands {
                 return;
             }
 
-            TRACE(*command);
+            // @todo support multi-line trace.
+            // TRACE(*command);
 
             // Execute the command
             command->process();

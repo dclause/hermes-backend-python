@@ -6,7 +6,6 @@ HERMES application entry point.
     https://github.com/charliermarsh/ruff/issues/2413
     https://github.com/ott-jax/ott/pull/269.
 """
-
 import webbrowser
 
 from hermes.core import logger, plugins, server, storage
