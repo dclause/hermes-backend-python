@@ -4,6 +4,7 @@
 *
 * To be used with a USB cable connection: uncomment the following to use it. */
 // #define USE_SERIAL_PROTOCOL
+// #define BAUDRATE 9600
 
 /*****************************************************************************
  *                               ETHERNET                                    *
@@ -30,7 +31,7 @@
  #define PORT 5000
  #define MAC { (byte)random(255), (byte)random(255), (byte)random(255), (byte)random(255), (byte)random(255), (byte)random(255) }
  #define CS_PIN 10
- // #define USE_ENC28J60     // Uncomment only for ENC28J60 type shields (most likely when using arduino NANO)
+// #define USE_ENC28J60     // Uncomment only for ENC28J60 type shields (most likely when using arduino NANO)
 
 /*****************************************************************************
  *                                 WIFI                                      *
@@ -46,7 +47,7 @@
 
 void setup() {
 
-#if defined(ACTIVATE_DEBUG) && !defined(USE_SERIAL_PROTOCOL)
+#if ACTIVATE_DEBUG && FORCE_SERIAL_DEBUG && !defined(USE_SERIAL_PROTOCOL)
     Serial.begin(9600);
 #endif
 

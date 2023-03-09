@@ -38,6 +38,9 @@ from hermes.protocols import AbstractProtocol, ProtocolError
 class BoardError(HermesError):
     """Base class for board related exceptions."""
 
+    def __init__(self, board: AbstractBoard, message: str | None = None) -> None:
+        super().__init__(f'Board `{board.name}`: {message}')
+
 
 class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
     """
@@ -97,7 +100,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         try:
             self.protocol.open()
         except ProtocolError:
-            ProtocolError(self.name)
+            BoardError(self, 'Could not open connexion')
             return not self.close()
 
         # Wait to give time for the arduino to receive the message and open connection properly.
@@ -110,7 +113,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
             logger.debug(f'Board {self.name} - Try handshake')
             self.handshake()
         except FunctionTimedOut as error:
-            HermesError(f'Board {self.name} - Handshake error: {error}')
+            BoardError(self, f'Handshake error: {error}')
             return not self.close()
 
         # Starts the send/receive threads.
@@ -136,7 +139,7 @@ class AbstractBoard(AbstractPlugin, metaclass=MetaPluginType):
         logger.info(f' > Board {self.name} - DISCONNECTED')
         return not self.connected
 
-    @func_set_timeout(5)  # type: ignore[misc]
+    @func_set_timeout(10)  # type: ignore[misc]
     def handshake(self) -> None:
         """Perform handshake between the board and the application."""
         # @todo move this to a command

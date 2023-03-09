@@ -49,8 +49,7 @@ class SettingsCommand : public AbstractCommand {
             AbstractDevice *existingDevice = DeviceManager::getInstance().getDevice(payload[1]);
             if (existingDevice != NULL) {
                 TRACE("  > Device needs update.");
-                TRACE(
-                        "  > Updated " + String(*existingDevice));
+                TRACE("  > Updated " + String(*existingDevice));
                 // @todo implement the update.
             } else {
                 TRACE("  > Device needs create.");

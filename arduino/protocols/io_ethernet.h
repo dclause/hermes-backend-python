@@ -17,7 +17,6 @@
 #include <EthernetENC.h>
 #else
 #include <Ethernet.h>
-#include <EthernetUdp.h>
 #endif
 
 
@@ -42,17 +41,16 @@ namespace IO {
      * @param info
      */
     void debug(const String &info) {
-        Serial.println("# " + info);
+        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+        Udp.print("# " + info);
+        Udp.endPacket();
     }
 
     /**
      * Initializes the communication protocol.
      */
     void begin() {
-
-#ifdef CS_PIN
         Ethernet.init(CS_PIN);
-#endif
         byte mac[] = MAC;
         IPAddress ip(IP);
         Ethernet.begin(mac, ip);
@@ -73,26 +71,42 @@ namespace IO {
     }
 
     /**
-     *  Returns the available number of bytes in the receive buffer.
+     * Start processing the next available incoming packet.
+     * Note: Because of the nature of Udp, this will also discard all existing
+     * data in the current packet and start using the new one.
+     *
+     * @return
+     *      Returns the size of the packet in bytes, or 0 if no packets are available
+     */
+    uint8_t parsePacket() {
+        return Udp.parsePacket();
+    }
+
+    /**
+     * Returns the available bytes in the current packet.
+     *
+     * @return uint8_t: the size of the remaining bytes to read in the current packet.
      */
     uint8_t available() {
-        return Udp.available() || Udp.parsePacket();
+        return Udp.available();
     }
 
     /**
      * Waits for incoming given amount of bytes, or exit if timeout.
      *
+     * Note1: This is the number of bytes that is still to be read in
+     * the current packet. This is because we do not read all data at once.
+     * Note2: The signature of this method is not really meaningfull as of
+     * UDP socket because this can be obtained in o(1): either we have
+     * length-bytes remaning in the current packet or not.
+     *
      * @param num_bytes (uint8_t): The number of bytes to wait for.
      * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
+     *
+     * @return bool: true/false if the number of bytes available matches the expectency.
      */
     bool wait_for_bytes(const uint32_t length, const uint32_t timeout = 100) {
-        const uint32_t startTime = millis();
-        while (Udp.available() < length) {
-            if ((millis() - startTime) >= timeout) {
-                return false;
-            }
-        }
-        return true;
+        return (Udp.available() >= length);
     }
 
     /**
@@ -116,45 +130,7 @@ namespace IO {
      * @param length (uint8_t) The number of bytes to read.
      */
     void read_bytes(uint8_t *buffer, const uint8_t length) {
-        uint8_t index = 0;
-        uint8_t byte;
-        while (index < length) {
-            byte = Udp.read();
-            if (byte < 0) break;
-            buffer[index] = (int8_t) byte;
-            index++;
-        }
-    }
-        /*
         Udp.read(buffer, length);
-#ifdef ACTIVATE_DEBUG
-        String debug = "";
-        char tmp[3];
-        for (uint8_t i = 0; i < length; i++) {
-            itoa(buffer[i], tmp, 10);
-            debug += String(tmp);
-        }
-        TRACE("read_bytes: " + String(length) + " to read: " + debug);
-#endif
-    }*/
-
-    /**
-     * Waits for incoming given amount of bytes, or exit if timeout.
-     *
-     * @param num_bytes (uint8_t): The number of bytes to wait for.
-     * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
-     */
-    uint32_t read_until_endl(uint8_t *buffer) {
-        uint32_t index = 0;
-        uint8_t byte;
-        while (wait_for_bytes(1)) {
-            byte = Udp.read();
-            if (byte < 0 || byte == ((uint8_t) MessageCode::END_OF_LINE)) break;
-            buffer[index] = (int8_t) byte;
-            index++;
-            TRACE("read_until_endl:" + String(byte));
-        }
-        return index;
     }
 
     /**

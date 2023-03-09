@@ -10,13 +10,9 @@
  * the protocol to be transparently switched from the main .ino code.
  */
 
-#error USE_SERIAL_PROTOCOL
-
 #include <HardwareSerial.h>
 #include "../helper/debugger.h"
 #include "../helper/dictionary.h"
-
-#define BAUDRATE 115200
 
 namespace IO {
 
@@ -68,10 +64,34 @@ namespace IO {
     }
 
     /**
+     * Start processing the next available incoming packet.
+     *
+     * Note: As of the serial protocol, there is no packet but a stream of
+     * data. parsePacket therefore simply means
+     *
+     * @return uint8_t: the size of the remaining receive buffer in bytes.
+     */
+    uint8_t parsePacket() {
+        return Serial.available();
+    }
+
+    /**
+     * Returns the available number of bytes in the receive buffer.
+     *
+     * @return uint8_t: the size of the remaining receive buffer in bytes.
+     */
+    uint8_t available() {
+        return Serial.available();
+    }
+
+
+    /**
      * Waits for incoming given amount of bytes from the serial port, or exit if timeout.
      *
      * @param num_bytes (uint8_t): The number of bytes to wait for.
      * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
+     *
+     * @return bool: true/false if the number of bytes available matches the expectency.
      */
     bool wait_for_bytes(const uint32_t length, const uint32_t timeout = 100) {
         const uint32_t startTime = millis();
@@ -113,25 +133,6 @@ namespace IO {
             buffer[index] = (int8_t) byte;
             index++;
         }
-    }
-
-    /**
-     * Waits for incoming given amount of bytes from the serial port, or exit if timeout.
-     *
-     * @param num_bytes (uint8_t): The number of bytes to wait for.
-     * @param timeout (uint32_t): The timeout (in milliseconds) for the whole operation.
-     */
-    uint32_t read_until_endl(uint8_t *buffer) {
-        uint32_t index = 0;
-        uint8_t byte;
-        while (wait_for_bytes(1)) {
-            byte = Serial.read();
-            if (byte < 0 || byte == ((uint8_t) MessageCode::END_OF_LINE)) break;
-            buffer[index] = (int8_t) byte;
-            index++;
-            TRACE("read_until_endl:" + String(byte));
-        }
-        return index;
     }
 
     /**
