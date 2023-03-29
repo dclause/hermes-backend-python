@@ -48,7 +48,7 @@ def _header(menu_items: dict[str, Any] | None = None) -> None:
             for item_title, item_target in menu_items.items():
                 ui.link(item_title, item_target).classes(replace='text-lg text-white')
 
-        with ui.row().classes(remove='gap-4'):
+        with ui.row().classes(remove='gap-4', add='gap-1'):
 
             # @todo add dynamic menu here
             # ui.button().props('flat round color="white" :size="1rem" icon="shopping_cart"')
@@ -56,13 +56,13 @@ def _header(menu_items: dict[str, Any] | None = None) -> None:
             # GITHUB LOGO
             with ui.button() \
                     .props('flat round href="https://github.com/dclause/hermes" target="_blank"'):
-                gui.icon('github', 24, 24).classes('fill-white m-2')
+                gui.icon('github', 30, 30).classes('fill-white m-1')
 
             # STAR LOGO
             with ui.button() \
                     .props('flat round href="https://github.com/dclause/hermes" target="_blank"') \
                     .classes('star-container'):
-                gui.icon('star', 24, 24).classes('fill-white m-2')
+                gui.icon('star', 30, 30).classes('fill-white m-1')
                 with ui.tooltip('').classes('bg-[#486991] w-96 p-4'), ui.row().classes('items-center no-wrap'):
                     gui.icon('logo').classes('w-14 stroke-white stroke-[1pt]')
                     with ui.column().classes('p-2 gap-2'):
