@@ -9,7 +9,7 @@ from hermes.core.config import settings
 from hermes.gui import AbstractPage, pages
 
 
-@pages.page(path='/board/{bid}')
+@pages.page(path='/board/{bid}')  # type: ignore
 class BoardPage(AbstractPage):
     """Board list page."""
 
@@ -21,7 +21,6 @@ class BoardPage(AbstractPage):
         self.board = cast(AbstractBoard, settings.get(['boards', bid]))
         if self.board:
             self.title = self.board.name
-            self.subtitle = self.board.controller
         self.build()
 
     def content(self) -> None:  # noqa: D102
@@ -54,5 +53,5 @@ class BoardPage(AbstractPage):
             with ui.tab_panel(name='history'):
                 ui.label('This is the history tab')
 
-    def render_subtitle(self) -> None:  # noqa: D102
-        ui.html().classes('font-light text-overline text-uppercase').bind_content(self, 'subtitle')
+    # def render_subtitle(self) -> None:  # noqa: D102
+    #     ui.html().classes('font-light text-overline text-uppercase').bind_content(self, 'subtitle')

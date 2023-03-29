@@ -5,7 +5,7 @@ from nicegui import ui
 from hermes.gui import AbstractPage, pages
 
 
-@pages.page(path='/', title=None)
+@pages.page(path='/', title=None)  # type: ignore
 class IndexPage(AbstractPage):
     """Index page."""
 

@@ -16,6 +16,7 @@ Example:
 from __future__ import annotations
 
 from abc import abstractmethod
+from collections.abc import Callable
 from typing import Any
 
 from nicegui import ui
@@ -25,10 +26,12 @@ from hermes.core.struct import MetaPluginType
 from hermes.gui import layout
 
 
-def page(path: str, title: str | None = None, subtitle: str | None = None) -> Any:
+def page(path: str,
+         title: str | None = None,
+         subtitle: str | None = None) -> Callable[[AbstractPage], AbstractPage]:
     """Add properties to a AbstractPage subclass implementation."""
 
-    def decorator(klass: Any) -> Any:
+    def decorator(klass: AbstractPage) -> AbstractPage:
         klass.path = path
         klass.title = title
         klass.subtitle = subtitle
@@ -39,12 +42,12 @@ def page(path: str, title: str | None = None, subtitle: str | None = None) -> An
 
 class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
     """Manage plugins of type commands."""
+    path: str | None
+    title: str | None
+    subtitle: str | None
 
     def __init__(self) -> None:
         super().__init__()
-        self.path: str | None = None
-        self.title: str | None = None
-        self.subtitle: str | None = None
 
     def create(self) -> None:
         # @todo def create(self, *arg, **kwarg) -> None: issue to nicegui.io
@@ -61,7 +64,7 @@ class AbstractPage(AbstractPlugin, metaclass=MetaPluginType):
         While this _can_ be overriden but is not meant to.
         """
         with layout.layout():
-            with ui.column().classes(remove='gap-4'):
+            with ui.column().classes('mb-4'):
                 self.render_title()
                 self.render_subtitle()
             self.content()
