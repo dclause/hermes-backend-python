@@ -1,5 +1,32 @@
+/* NICEGUI */
+.nicegui-column,
+.nicegui-row {
+    gap: 0;
+}
+
+.nicegui-separator {
+    width: auto;
+}
+
 /* TABS */
 .q-tab__label {
     font-size: 1em;
     font-weight: inherit;
+}
+
+/* Q-TABLES */
+
+.q-table th {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.q-table tbody td {
+    font-size: 1em;
+}
+
+.q-table tbody td a:link,
+.q-table tbody td a:visited {
+    color: var(--q-primary) !important;
+    font-weight: bold;
 }

@@ -48,7 +48,7 @@ def _header(menu_items: dict[str, Any] | None = None) -> None:
             for item_title, item_target in menu_items.items():
                 ui.link(item_title, item_target).classes(replace='text-lg text-white')
 
-        with ui.row().classes(remove='gap-4', add='gap-1'):
+        with ui.row().classes('gap-1'):
 
             # @todo add dynamic menu here
             # ui.button().props('flat round color="white" :size="1rem" icon="shopping_cart"')
@@ -75,18 +75,18 @@ def _sidebar() -> None:
 
     with ui.left_drawer(top_corner=True, bottom_corner=True, fixed=True) \
             .props('no-swipe-open no-swipe-close mini behavior=desktop persistent :mini-width="70"') \
-            .classes(add='q-pa-0', remove='q-pa-md'):
+            .classes('px-0'):
         # Logo with link
-        with ui.link(target='/').classes('row gap-3 items-center no-wrap q-mr-auto').classes('q-my-md'):
-            gui.icon('logo', 50, 50).classes('w-8 stroke-white stroke-2').classes('mx-auto')
+        with ui.link(target='/').classes('row items-center no-wrap q-mr-auto q-mb-md'):
+            gui.icon('logo', 50, 50).classes('w-8 stroke-white stroke-2 mx-auto')
 
-        ui.separator().classes(remove='w-full').classes('q-mx-sm q-mb-md')
+        ui.separator().classes('q-mx-sm q-mb-md')
 
 
 @contextmanager
 def _main() -> Generator[None, None, None]:
     """Content area default layout and styling."""
-    with ui.column().classes('full-width full-height p-4 mx-auto', remove='gap-4'):
+    with ui.column().classes('full-width full-height p-4 mx-auto'):
         yield
 
 
