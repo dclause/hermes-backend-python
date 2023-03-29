@@ -87,7 +87,7 @@ def init() -> None:
         port=settings.get(['server', 'port']),  # type: ignore[arg-type]
         log_level='warning',
         reload=settings.get(['server', 'reload']),  # type: ignore[arg-type]
-        reload_includes=['*.py', '*.css'] if settings.get(['server', 'reload']) else None,
+        reload_includes=['*.py', '*.css', '*.js'] if settings.get(['server', 'reload']) else None,
         ssl_keyfile=Path(certfiles, 'privatekey.pem').absolute().__str__() if certfiles else None,
         ssl_certfile=Path(certfiles, 'certificate.pem').absolute() if certfiles else None,
     )
