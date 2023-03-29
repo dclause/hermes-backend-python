@@ -35,8 +35,8 @@ env: ## Make virtual environment
 
 install: ## Install everything
 	@make env
-	@make deps-install
-	@make dev-deps-install
+	@$(PIP) install -r requirements.txt
+	@make clean
 
 run: ## Run the code
 	@if [ -d "./.venv" ]; then $(PYTHON) -m $(APPLICATION); \
@@ -68,17 +68,11 @@ lint: ## Lint the code
 
 	@make clean
 
-deps-install: ## Install the dependencies
+update: ## Update the dependencies
 	@make env
-	@type $(PIP) >/dev/null 2>&1 || (echo "Run 'curl https://bootstrap.pypa.io/get-pip.py|sudo python3' first." >&2 ; exit 1)
-	@$(PIP) -e .
-	@make clean
-
-dev-deps-install: ## Install the dev dependencies
-	@make env
-	@type $(PIP) >/dev/null 2>&1 || (echo "Run 'curl https://bootstrap.pypa.io/get-pip.py|sudo python3' first." >&2 ; exit 1)
-	@$(PIP) -e .[dev,test]
-	@make clean
+	@if type pur >/dev/null 2>&1 ; then pur -r requirements.txt ; \
+	@if type pur >/dev/null 2>&1 ; then pur -o dev_requirements.txt -r dev_requirements.txt ; \
+	else echo "SKIPPED. Run '$(PIP) install pur' first." >&2 ; fi
 
 feedback: ## Provide feedback
 	@$(PY) -m webbrowser https://github.com/dclause/hermes/issues
