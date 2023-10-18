@@ -21,9 +21,10 @@ namespace Commands {
      */
     void receive_and_process_next_command() {
         if (IO::parsePacket() > 0) {
+//            IO::blink(3);
             // Read incoming byte: this represents an order.
             MessageCode code = IO::read_command();
-
+//            IO::blink(3);
             // Make a command out of it.
             AbstractCommand *command = CommandFactory::getInstance().createCommand(code);
             if (command == NULL) {

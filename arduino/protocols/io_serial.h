@@ -57,7 +57,9 @@ namespace IO {
     }
 
     /**
-     *  Returns the available number of bytes in the receive buffer.
+     * Returns the available number of bytes in the receive buffer.
+     *
+     * @return uint8_t: the size of the remaining receive buffer in bytes.
      */
     uint8_t available() {
         return Serial.available();
@@ -74,16 +76,6 @@ namespace IO {
     uint8_t parsePacket() {
         return Serial.available();
     }
-
-    /**
-     * Returns the available number of bytes in the receive buffer.
-     *
-     * @return uint8_t: the size of the remaining receive buffer in bytes.
-     */
-    uint8_t available() {
-        return Serial.available();
-    }
-
 
     /**
      * Waits for incoming given amount of bytes from the serial port, or exit if timeout.

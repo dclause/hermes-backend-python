@@ -13,6 +13,7 @@
 #include "../helper/debugger.h"
 #include "../helper/dictionary.h"
 
+#include <SPI.h>
 #ifdef USE_ENC28J60
 #include <EthernetENC.h>
 #else
@@ -20,9 +21,19 @@
 #endif
 
 
-EthernetUDP Udp; // Create a UDP Object
 
 namespace IO {
+    EthernetUDP udp; // Create a udp Object
+
+//    blink(uint8_t loop) {
+//        for (uint8_t i = 0; i < loop ; i++) {
+//            digitalWrite(9, HIGH);
+//            delay(100);
+//            digitalWrite(9, LOW);
+//            delay(100);
+//        }
+//        delay(500);
+//    }
 
     /**
      * Debugs the data via the protocol.
@@ -41,20 +52,28 @@ namespace IO {
      * @param info
      */
     void debug(const String &info) {
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.print("# " + info);
-        Udp.endPacket();
+        udp.beginPacket(udp.remoteIP(), udp.remotePort());
+        udp.print("# " + info);
+        udp.endPacket();
     }
 
     /**
      * Initializes the communication protocol.
      */
     void begin() {
+        pinMode(9, OUTPUT);
+        IO::blink(1);
         Ethernet.init(CS_PIN);
+        IO::blink(1);
         byte mac[] = MAC;
         IPAddress ip(IP);
+        IO::blink(1);
         Ethernet.begin(mac, ip);
-        Udp.begin(PORT);
+        IO::blink(1);
+        if (udp.begin(PORT) == 0) {
+            IO::blink(5);
+        }
+        IO::blink(1);
         TRACE("Opening IO communication");
     }
 
@@ -65,21 +84,24 @@ namespace IO {
      * if the sender is spamming at that moment.
      */
     void clear() {
-        while (Udp.available() > 0) {
-            Udp.read();
+        while (udp.available() > 0) {
+            udp.read();
         }
     }
 
     /**
      * Start processing the next available incoming packet.
-     * Note: Because of the nature of Udp, this will also discard all existing
+     * Note: Because of the nature of udp, this will also discard all existing
      * data in the current packet and start using the new one.
      *
      * @return
      *      Returns the size of the packet in bytes, or 0 if no packets are available
      */
     uint8_t parsePacket() {
-        return Udp.parsePacket();
+        IO::blink(3);
+        uint8_t truc = udp.parsePacket();
+        IO::blink(3);
+        return truc;
     }
 
     /**
@@ -88,7 +110,7 @@ namespace IO {
      * @return uint8_t: the size of the remaining bytes to read in the current packet.
      */
     uint8_t available() {
-        return Udp.available();
+        return udp.available();
     }
 
     /**
@@ -97,7 +119,7 @@ namespace IO {
      * Note1: This is the number of bytes that is still to be read in
      * the current packet. This is because we do not read all data at once.
      * Note2: The signature of this method is not really meaningfull as of
-     * UDP socket because this can be obtained in o(1): either we have
+     * udp socket because this can be obtained in o(1): either we have
      * length-bytes remaning in the current packet or not.
      *
      * @param num_bytes (uint8_t): The number of bytes to wait for.
@@ -106,7 +128,7 @@ namespace IO {
      * @return bool: true/false if the number of bytes available matches the expectency.
      */
     bool wait_for_bytes(const uint32_t length, const uint32_t timeout = 100) {
-        return (Udp.available() >= length);
+        return (udp.available() >= length);
     }
 
     /**
@@ -115,7 +137,7 @@ namespace IO {
      * @return MessageCode
      */
     MessageCode read_command() {
-        const MessageCode code = static_cast<MessageCode>(Udp.read());
+        const MessageCode code = static_cast<MessageCode>(udp.read());
         TRACE("Command code received: " + String((uint8_t) code));
         return code;
     }
@@ -130,7 +152,7 @@ namespace IO {
      * @param length (uint8_t) The number of bytes to read.
      */
     void read_bytes(uint8_t *buffer, const uint8_t length) {
-        Udp.read(buffer, length);
+        udp.read(buffer, length);
     }
 
     /**
@@ -140,9 +162,9 @@ namespace IO {
      */
     void send_command(const MessageCode command) {
         TRACE("Send command: " + String((uint8_t) command));
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.write(static_cast<uint8_t>(command));
-        Udp.endPacket();
+        udp.beginPacket(udp.remoteIP(), udp.remotePort());
+        udp.write(static_cast<uint8_t>(command));
+        udp.endPacket();
     }
 
     /**
@@ -152,9 +174,9 @@ namespace IO {
      * @param length (uint8_t) The number of bytes to write.
      */
     void send_bytes(const uint8_t *buffer, const uint8_t length) {
-        Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-        Udp.write(buffer, length);
-        Udp.endPacket();
+        udp.beginPacket(udp.remoteIP(), udp.remotePort());
+        udp.write(buffer, length);
+        udp.endPacket();
     }
 
 } // namespace IO
