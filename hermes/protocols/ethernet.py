@@ -14,7 +14,7 @@ from hermes.protocols import AbstractProtocol
 class EthernetProtocol(AbstractProtocol):
     """Implements an :class:AbstractProtocol class using the ethernet port."""
 
-    def __init__(self, ip: str, port: int = 5000, timeout: int = 0) -> None:
+    def __init__(self, ip: str, port: int = 5000, timeout: int = 1) -> None:
         super().__init__()
         self.ip: str = ip
         self.port: int = port

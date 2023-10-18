@@ -82,6 +82,8 @@ cd hermes
 python3 -m venv .venv
 source ./.venv/Scripts/activate # can vary depending on your system
 pip install -e .[dev,test]
+pip install -r requirements.txt
+pip install -r dev_requirements.txt
 ```
 
 2. Start the program:
