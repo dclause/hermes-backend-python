@@ -4,6 +4,9 @@
 
 [![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://github.com/dclause/hermes#readme "Go to project documentation")
 
+> [!CAUTION]
+**DEPRECATED:** This repository is archived and no longer maintained. It has been superseded by [**Hermes-Five - IoT & Robotics platform**](https://github.com/dclause/hermes-five) for developer-focused, hardware-agnostic board control API, or [**Hermes-Studio**](https://github.com/dclause/hermes-studio) for an all-in-one, UI-driven solution.
+
 # HERMES - a Robot Management System (RMS)
 
 Hermes - _a Robot Management System (RMS)_ - is a set of tools to remotely pilot a robot, or at least a set of
